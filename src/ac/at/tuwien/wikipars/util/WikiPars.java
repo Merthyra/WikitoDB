@@ -38,6 +38,7 @@ import ac.at.tuwien.wikipars.db.TermDAOWikiDB;
 public class WikiPars {
 
 	private static final Logger logger = LogManager.getLogger(WikiPars.class.getName());
+	private static WikiXMLParser wxsp;
 
 	public static void main(String args[]) throws SQLException {
 
@@ -71,24 +72,25 @@ public class WikiPars {
 		
 		WikiPageStore pageStore = new WikiPageStore(new DictDAOWikiDB(dbConnect), new DocDAOWikiDB(dbConnect), new TermDAOWikiDB(dbConnect));
 		
-		do {
-			
-			try {
-				WikiXMLParser wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
-				file = files.getNextFile();	
-				
-					wxsp.setPageCallback(new PageCallbackHandler() {
+		try {
+			wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
+		} catch (MalformedURLException e1) {
+			logger.fatal("file path is not valid " + e1.getMessage());
+			return;
+		}
+		try {
+			wxsp.setPageCallback(new PageCallbackHandler() {
 						
 						@Override
 						public void process(WikiPage page) {
 							
-							if (!props.skipPageDueToOffset() && !props.allowNextPage()) {
+							if (!props.skipPageDueToOffset() && props.allowNextPage()) {
 								if (props.getMaxPages() <10)
 								logger.debug("processing wiki-page " + page.getID()+ " title: " + page.getTitle() + " timestamp: "+ page.getTimestamp());
 								String text = page.getText() + " " + page.getTitle();
 //								byte[] bytetext = (page.getTitle() + " " + page.getText()).getBytes(Charset.forName("US-ASCII"));
 //								String text = new String(bytetext, Charset.forName("US-ASCII"));
-								text = text.replaceAll("[^\\p{L}\\p{Z}]", " ").replaceAll("[[\\s{2,}][?]+]", " ").toLowerCase();
+								text = text.replaceAll("[[^\\p{L}\\p{Z}][?]+]", " ").replaceAll("[\\s{2,}]", " ").toLowerCase();
 
 								String[] textArray = text.split(" ");				 
 								long docid = Integer.parseInt(page.getID());		
@@ -114,12 +116,13 @@ public class WikiPars {
 								logger.trace("All " +  props.getMaxPages() +  " pages processed, exiting program");
 								pageStore.flush();
 								dbConnect.closeConnection();
+								wxsp = null;
 								return;
 							}		 
 							 
 						}		
 					});
-					wxsp.parse();
+					
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -127,9 +130,31 @@ public class WikiPars {
 				logger.fatal(e.getMessage() + " caused by " + e.getMessage());
 				return;
 			}
-			
 		
-		} while (file!=null && props.allowPage());
+		while (props.allowPage() && file!=null){
+
+
+			try {
+				wxsp.parse();
+			} catch (Exception e) {
+				if (e instanceof NullPointerException) {
+					logger.trace("exiting program");
+				}
+				else e.printStackTrace();
+				break;
+			}		
+			file = files.getNextFile();
+			
+			if (file != null) {
+				try {
+					wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		} 
 		
 
 	}

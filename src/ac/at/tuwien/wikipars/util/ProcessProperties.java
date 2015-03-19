@@ -86,11 +86,11 @@ public class ProcessProperties {
 	 * @return true if one more page allowed for processing
 	 */
 	public boolean allowPage() {
-		return processed_Page > this.max_Pages;
+		return processed_Page < this.max_Pages;
 	}
 	
 	public boolean allowNextPage() {
-		return ++processed_Page > this.max_Pages;
+		return ++processed_Page < this.max_Pages;
 	}
 
 }

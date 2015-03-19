@@ -23,8 +23,8 @@ public class DBConnectionHandler {
 	private static final Logger logger = LogManager.getLogger(DBConnectionHandler.class.getName());
 	
 	private Connection con;
-	private Statement st;
 	private ResultSet rs;
+	private int bufferSize;
 	
 	public DBConnectionHandler() {
 
@@ -45,21 +45,25 @@ public class DBConnectionHandler {
 			String dbuser= prop.getProperty("db_user");
 			String dbpw = prop.getProperty("db_pw");
 			String dbname = prop.getProperty("db_name");
+			try {
+				this.bufferSize = Integer.parseInt(prop.getProperty("db_batchsize"));
+			} catch (NumberFormatException nfex) {
+				logger.error("Wrong Number in DataBase Properties File for BatchSize");
+				this.bufferSize = 1;
+			}
+			
 			logger.debug("propterties loaded");
 				
 			Class.forName(dbdriver);
 	
 			logger.debug("establishing connection to monetdb db");
 			this.con = DriverManager.getConnection(dbloc +"/"+dbname , dbuser, dbpw);
-			this.st = con.createStatement();
 			logger.trace("connection to monetdb and jdbc driver loaded");
 		}
 
 	}
-	
-	
-	public Statement getStatement() { 
-		return this.st;
+	public int getDBBatchSize() {
+		return this.bufferSize;
 	}
 	
 	public Connection getConnection() {
@@ -68,11 +72,27 @@ public class DBConnectionHandler {
 	
 	public void closeConnection() {
 		try {
-			st.close();
 			con.close();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+	
+	public void setAutoCommit(boolean flag) {
+		try {
+			this.con.setAutoCommit(flag);
+		} catch (SQLException e) {
+			logger.error("AutoCommit Cannot be Set to " + flag);
+		}
+	}
+	
+	public void commit() {
+		try {
+			con.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			logger.error("AutoCommit Cannot be Set to ");
 		}
 	}
 

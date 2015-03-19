@@ -8,13 +8,17 @@ public class Dict {
 
 	@Id
 	@Column(name = "tid")
-	private int id;
+	private long id;
 	
 	@Column(name="term")
 	private String term;
 	
 	
-	public Dict() {}
+	public Dict(long id, String term) {
+		
+		this.id = id;
+		this.term = term;
+	}
 	
 	
 	public long getId() {

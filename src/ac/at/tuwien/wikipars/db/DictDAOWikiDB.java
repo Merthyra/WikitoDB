@@ -41,7 +41,7 @@ public class DictDAOWikiDB implements DictDAO{
 	}
 
 	@Override
-	public boolean add(List<Dict> dicts) {
+	public boolean writeDict(List<Dict> dicts) {
 		// TODO Auto-generated method stub
 
 		return true;
@@ -49,17 +49,18 @@ public class DictDAOWikiDB implements DictDAO{
 
 
 	@Override
-	public Set<String> readAll() {
+	public HashMap<String, Dict> readAll() {
 		
-		HashSet<String> dictTable = new HashSet<String>();
+		HashMap<String, Dict> dictTable = new HashMap<String, Dict>();
 		
-		Statement st = this.dbConnect.getStatement();
+		Statement st = null;
 		ResultSet rs;
 		try {
+			st = this.dbConnect.getConnection().createStatement();
 			rs = st.executeQuery("SELECT * FROM dict");
 			
 			while (rs.next()) {
-				dictTable.add(rs.getString(2));
+				dictTable.put(rs.getString(2), new Dict(rs.getInt(1), rs.getString(2)));
 			}
 			logger.debug("Entire Dict Loaded and Stored in Java Map");
 			

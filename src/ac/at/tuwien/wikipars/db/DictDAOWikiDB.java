@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,8 @@ public class DictDAOWikiDB implements DictDAO{
 	@Override
 	public boolean writeDict(List<Dict> dicts) {
 		// TODO Auto-generated method stub
-		PreparedStatement prepStmt;
+		long time = System.currentTimeMillis();
+		PreparedStatement prepStmt =null;
 		try {
 			 prepStmt = dbConnect.getConnection().prepareStatement("INSERT INTO DICT (term) VALUES (?)", PreparedStatement.RETURN_GENERATED_KEYS);		
 			for (Dict dic : dicts) {
@@ -55,18 +57,32 @@ public class DictDAOWikiDB implements DictDAO{
 				ResultSet rs = prepStmt.getGeneratedKeys();
 				if (rs != null && rs.next()) {
 				   dic.setId(rs.getLong(1));
+				   logger.debug("id: " + dic.getId() + " was assigned to dict entry : " + dic.getTerm() );			   
 				}					
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			logger.error("Cannot create Statement to write in DICT");
+			return false;
 		}
-		return false;
+		finally {
+			try {
+				if (prepStmt!=null) {
+					prepStmt.close();
+					logger.trace("Statement closed");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		logger.info("All DictTerms persisted -> took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-time) + " seconds");
+		return true;
 	}
 
 	@Override
 	public HashMap<String, Dict> readAll() {
 		
+		long time = System.currentTimeMillis();
 		HashMap<String, Dict> dictTable = new HashMap<String, Dict>();
 		
 		Statement st = null;
@@ -79,8 +95,7 @@ public class DictDAOWikiDB implements DictDAO{
 				dictTable.put(rs.getString(2), new Dict(rs.getInt(1), rs.getString(2)));
 			}
 			logger.debug("Entire Dict Loaded and Stored in Java Map");
-			
-			st.close();
+			logger.info("All DictTerms persisted -> took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-time) + " seconds");	
 			return dictTable;
 		
 		}
@@ -91,9 +106,11 @@ public class DictDAOWikiDB implements DictDAO{
 		
 		finally {
 			try {
-				st.close();
+				if (st!=null) {
+					st.close();
+					logger.trace("Statement closed");
+				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

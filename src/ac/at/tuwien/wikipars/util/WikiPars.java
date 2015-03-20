@@ -6,7 +6,11 @@ import java.net.MalformedURLException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -86,8 +90,19 @@ public class WikiPars {
 								String text = page.getTitle() + " " + page.getWikiText();
 								text = text.replaceAll("[^\\p{L}\\p{Z}]", " ").replaceAll("\\s{2,}", " "); 
 								String[] textArray = text.split(" ");				 
-								long docid = Integer.parseInt(page.getID());								 
-								pageStore.addPage(docid, page.getTitle(), page.getTimestamp(), textArray);						
+								long docid = Integer.parseInt(page.getID());		
+								
+								// Timestamp conversion
+								SimpleDateFormat dateFormat = new SimpleDateFormat(props.getDateFormatPattern());
+								Timestamp tstmp = null;
+							    try {
+									tstmp = new java.sql.Timestamp(dateFormat.parse(page.getTimestamp()).getTime());
+								} catch (ParseException e) {
+									logger.error("Cannot convert to Timeestamp " + page.getTimestamp());
+									tstmp = new Timestamp(System.currentTimeMillis());
+								}
+								
+								pageStore.addPage(docid, page.getTitle(), tstmp, textArray);						
 								
 								if (props.isBatchSeries()) {
 									logger.debug("flushing "+ props.getBatchSize() + " pages");

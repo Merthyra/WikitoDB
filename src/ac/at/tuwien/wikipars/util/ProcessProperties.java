@@ -17,6 +17,7 @@ public class ProcessProperties {
 	private final long start_offset;
 	private long max_Pages;
 	private int processed_Page = 0;
+	private String date_format;
 	
 	public ProcessProperties () {
 		
@@ -25,7 +26,7 @@ public class ProcessProperties {
 		
 		logger.trace("accessing properties file");
 		try {
-			input = new FileInputStream("files.properties");
+			input = new FileInputStream("project-settings.properties");
 			prop.load(input);			
 		} catch (FileNotFoundException e) {
 			logger.fatal("Cannot Finde Properties for IO Files" + " " + e.getMessage() + " cause >" + e.getCause());
@@ -36,6 +37,7 @@ public class ProcessProperties {
 		logger.debug("batch_size = " + this.batch_size);
 		this.start_offset = Long.parseLong(prop.getProperty("start_pages_offset"));
 		logger.debug("start_offset = " + this.start_offset);
+		this.date_format = prop.getProperty("date_format");
 		
 		String max_Pages = prop.getProperty("max_pages");
 		if (max_Pages.equals("all")) {
@@ -53,6 +55,10 @@ public class ProcessProperties {
 			}
 		}	
 		
+	}
+	
+	public String getDateFormatPattern() {
+		return this.date_format;
 	}
 	
 	public int getBatchSize() {

@@ -32,7 +32,7 @@ public class FileProvider {
 		
 		logger.trace("accessing properties file");
 		try {
-			input = new FileInputStream("files.properties");
+			input = new FileInputStream("project-settings.properties");
 			prop.load(input);			
 		} catch (FileNotFoundException e) {
 			logger.fatal("Cannot Finde Properties for IO Files" + " " + e.getMessage() + " cause >" + e.getCause());

@@ -1,5 +1,6 @@
 package ac.at.tuwien.wikipars.util;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +48,7 @@ public class WikiPageStore {
 		this.termDAO = termDAO;
 	}	
 	
-	public void addPage (long docid, String title, String timestamp, String[] text) {
+	public void addPage (long docid, String title, Timestamp timestamp, String[] text) {
 		if (!persistedDocs.contains(docid)) {
 			logger.trace("adding page " + docid + " to pagestore");
 			for (int i = 0; i < text.length; i++) {

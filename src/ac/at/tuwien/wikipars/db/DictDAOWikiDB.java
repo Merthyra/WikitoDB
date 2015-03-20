@@ -1,5 +1,6 @@
 package ac.at.tuwien.wikipars.db;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,12 +21,14 @@ public class DictDAOWikiDB implements DictDAO{
 	private DBConnectionHandler dbConnect;
 	private long tID = 0;
 	private static final Logger logger = LogManager.getLogger(DictDAOWikiDB.class.getName());
+	private PreparedStatement instertStmt;
+	private PreparedStatement updateStmt;
 	
 	public DictDAOWikiDB() {
 		
 	}
 
-	public DictDAOWikiDB(DBConnectionHandler dbConnect) {
+	public DictDAOWikiDB(DBConnectionHandler dbConnect) throws SQLException {
 		this.dbConnect = dbConnect;
 	}
 	

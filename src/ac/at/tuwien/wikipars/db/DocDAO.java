@@ -10,6 +10,6 @@ public interface DocDAO {
 	
 	public boolean updateDoc(Document doc);
 	
-	public Set<Document> readAll();
+	public Set<Long> readAll();
 	
 }

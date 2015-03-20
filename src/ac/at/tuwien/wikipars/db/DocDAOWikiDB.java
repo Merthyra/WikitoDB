@@ -20,7 +20,7 @@ public class DocDAOWikiDB implements DocDAO {
 	}
 
 	@Override
-	public Set<Document> readAll() {
+	public Set<Long> readAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

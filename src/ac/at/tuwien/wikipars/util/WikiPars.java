@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.StringTokenizer;
 
 import ac.at.tuwien.wikipars.entity.*;
 import ac.at.tuwien.wikipars.io.FileProvider;
+import ac.at.tuwien.wikipars.io.ProcessProperties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,8 +31,7 @@ import ac.at.tuwien.wikipars.db.DictDAOWikiDB;
 
 public class WikiPars {
 
-	private static final Logger logger = LogManager.getLogger(WikiPars.class
-			.getName());
+	private static final Logger logger = LogManager.getLogger(WikiPars.class.getName());
 
 	public static void main(String args[]) throws SQLException {
 
@@ -56,81 +57,57 @@ public class WikiPars {
 		logger.trace("Successfully connected to DB");
 		DictDAO dict = new DictDAOWikiDB(dbConnect);
 
-		// logger.trace("Start Parsing Documents");
-
 		FileProvider files = new FileProvider();
+		ProcessProperties props = new ProcessProperties();
 
 		File file = files.getNextFile();
-
+		if (file == null) {
+			logger.fatal("no file provided -> exiting");
+			return;
+		}
 		logger.debug("parsing " + file.getAbsolutePath());
-
-		// table containing all dict values from db to prevent infinite access
-		// to db
-		HashMap<String, Dict> dicttable = dict.readAll();
-		// list of docs and terms to be written in one batch update
-		ArrayList<Document> docList = new ArrayList<Document>();
-		ArrayList<Term> termList = new ArrayList<Term>();
-
 		
-		try {
-			WikiXMLParser wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
+		WikiPageStore pageStore = new WikiPageStore();
+		
+		int pageCount = 0;
+		
+		do {
 			
-				wxsp.setPageCallback(new PageCallbackHandler() {
-
-					@Override
-					public void process(WikiPage page) {
-						logger.debug("processing wiki-page " + page.getID()+ " title: " + page.getTitle() + " timestamp: "+ page.getTimestamp());
-						String text = page.getTitle() + page.getWikiText();
-						text = text.replaceAll("[^\\p{L}\\p{Z}]", " ").replaceAll("\\s{2,}", " ");
-						 // System.out.println(text);
-						 
-						 String[] textArray = text.split(" ");
-						 
-						 PreparedStatement dictinsertstmt = null;
-						 PreparedStatement docinsertstmt = null;
-						 PreparedStatement terminsertstmt = null;
-						 
-						 long docid = Integer.parseInt(page.getID());
-						 
-						 try {
-							dictinsertstmt = dbConnect.getConnection().prepareStatement("INSERT INTO dict (term) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
-							docinsertstmt = dbConnect.getConnection().prepareStatement("INSERT INTO docs (docid, added, removed, name, leng) VALUES (?,?,?,?,?)");
-							terminsertstmt = dbConnect.getConnection().prepareStatement("INSERT INTO terms (tid, did, pos) VALUES (?,?,?)");
+			try {
+				WikiXMLParser wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
+				
+					wxsp.setPageCallback(new PageCallbackHandler() {
+						
+						@Override
+						public void process(WikiPage page) {
 							
-							for (int i = 0; i < textArray.length; i++) {
-								if (!dicttable.containsKey(textArray[i])) {
-									dictinsertstmt.setString(1, textArray[i]);
-									long id = dictinsertstmt.executeUpdate();
-									dicttable.put(textArray[i], new Dict(id,textArray[i]));
-								}
-								
-								terminsertstmt.setLong(1, dicttable.get(textArray[i]).getId());		
-								terminsertstmt.setLong(2, docid);
-								terminsertstmt.setInt(3, i);
-								terminsertstmt.execute();
-								
+							if (props.allowPage()) {
+								if (props.getMaxPages() <10)
+								logger.debug("processing wiki-page " + page.getID()+ " title: " + page.getTitle() + " timestamp: "+ page.getTimestamp());
+								String text = page.getTitle() + " " + page.getWikiText();
+								text = text.replaceAll("[^\\p{L}\\p{Z}]", " ").replaceAll("\\s{2,}", " "); 
+								String[] textArray = text.split(" ");				 
+								long docid = Integer.parseInt(page.getID());								 
+								 pageStore.addPage(docid, page.getTitle(), page.getTimestamp(), textArray);
 							}
-							docList.add(new Document(docid, page.getTitle(), page.getTimestamp(),textArray.length));
-						 }
-						 catch (SQLException ex) {
-							 logger.error("Error executing Statement " + ex.getMessage() + " cause > " + ex.getCause());
-						 }
-
-					}		
-				});
-			 
+							else {
+								logger.trace("All " +  props.getMaxPages() +  " pages processed, exiting program");
+								return;
+							}
+							 
+							 
+						}		
+					});
+					wxsp.parse();
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (SQLException sqlex) {
-			
-		}
-		catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		file = files.getNextFile();	
+		} while (file!=null);
+		
 
 	}
 }

@@ -20,8 +20,7 @@ public class FileProvider {
 	
 	private final String file_path;
 	private final String file_type;
-	private final String file_load_mode;
-	private int maxFilesRead = 1;
+	private int max_Files;
 	private ArrayList<File> files = null;
 	private Iterator<File> it;
 	
@@ -42,9 +41,17 @@ public class FileProvider {
 		}
 		this.file_path = prop.getProperty("file_location").toLowerCase();
 		this.file_type = prop.getProperty("file_type").toLowerCase();
-		this.file_load_mode = prop.getProperty("file_load_mode").toLowerCase();
+
+		
+		String maxfiles = prop.getProperty("max_files");		
+		if (maxfiles.equals("all")) {
+			this.max_Files = Integer.MAX_VALUE;	
+		}
+		else {
+			this.max_Files = Integer.parseInt(maxfiles);
+		}
 		logger.debug("file-location = " + this.file_path);
-		logger.debug("load-files = " + this.file_load_mode);
+
 		logger.trace("propterties file loaded");
 		File[] files = new File(this.file_path).listFiles();
 		
@@ -52,25 +59,13 @@ public class FileProvider {
 		this.it = this.files.iterator();
 		logger.trace("Found " + this.files.size() + " Files in directory " + this.file_path);
 		
-		if (this.file_load_mode.equals("all")) {
-			this.maxFilesRead = Integer.MAX_VALUE;
-			logger.trace("reading all files in directory");
-		}
-		else {
-			try {
-				this.maxFilesRead = Integer.parseInt(this.file_load_mode);
-				logger.trace("Reading " + this.maxFilesRead + " Files");
-			}
-			catch (NumberFormatException ioex) {
-				logger.trace("Wrong parameter in properties file : load_value must be either a number or 'max'");
-			}
-		}	
+		
 	}
 	
 	
 	public File getNextFile() {
-		if (it.hasNext() && this.maxFilesRead > 0) {
-			this.maxFilesRead--;
+		if (it.hasNext() && this.max_Files > 0) {
+			this.max_Files--;
 			return (File) this.it.next();
 		}
 		return null;

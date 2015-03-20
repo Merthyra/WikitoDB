@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import ac.at.tuwien.wikipars.entity.Document;
+import ac.at.tuwien.wikipars.io.DocDAO;
 
 public class DocDAOWikiDB implements DocDAO {
 

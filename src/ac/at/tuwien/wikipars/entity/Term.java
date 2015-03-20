@@ -2,12 +2,12 @@ package ac.at.tuwien.wikipars.entity;
 
 public class Term {
 	
-	private long termid;
+	private Dict dic;
 	private long docid;
 	private int position;
 	
-	public Term(long termid, long docid, int position) {
-		this.termid = termid;
+	public Term(Dict dic, long docid, int position) {
+		this.dic = dic;
 		this.docid = docid;
 		this.position = position;
 	}
@@ -16,11 +16,11 @@ public class Term {
 		
 	}
 	
-	public long getTermid() {
-		return termid;
+	public Dict getDict() {
+		return dic;
 	}
-	public void setTermid(long termid) {
-		this.termid = termid;
+	public void setDict(Dict dic) {
+		this.dic = dic;
 	}
 	public long getDocid() {
 		return docid;

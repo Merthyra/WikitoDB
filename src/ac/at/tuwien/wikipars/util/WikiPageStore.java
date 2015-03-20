@@ -9,22 +9,22 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ac.at.tuwien.wikipars.db.DictDAO;
-import ac.at.tuwien.wikipars.db.DocDAO;
-import ac.at.tuwien.wikipars.db.TermDAO;
 import ac.at.tuwien.wikipars.entity.Dict;
 import ac.at.tuwien.wikipars.entity.Document;
 import ac.at.tuwien.wikipars.entity.Term;
+import ac.at.tuwien.wikipars.io.DictDAO;
+import ac.at.tuwien.wikipars.io.DocDAO;
+import ac.at.tuwien.wikipars.io.TermDAO;
 
 public class WikiPageStore {
 	
-	private static final Logger logger = LogManager.getLogger(WikiPars.class.getName());
+	private static final Logger logger = LogManager.getLogger(WikiPageStore.class.getName());
 	// persisted dict table read from database in order to improve processing time
 	private HashMap<String, Dict> persistedDict;
 	// Set of IDs stored in database 
 	private Set<Long> persistedDocs = new HashSet<Long>();
-	
-	private HashSet<String> tempDict = new HashSet<String>();
+	// temporary collections storing pages for the next batch update of the database
+	private ArrayList<Dict> tempDict = new ArrayList<Dict>();
 	private ArrayList<Document> tempDocs = new ArrayList<Document>();
 	private ArrayList<Term> tempTerms = new ArrayList<Term>();
 	
@@ -53,8 +53,9 @@ public class WikiPageStore {
 			for (int i = 0; i < text.length; i++) {
 				// check if dict already contains term
 				if (!persistedDict.containsKey(text[i])) {
-					tempDict.add(text[i]);
-					tempTerms.add(new Term(-1, docid, i));
+					Dict tmpdic = new Dict(-1,text[i]);
+					tempDict.add(tmpdic);
+					tempTerms.add(new Term(tmpdic, docid, i));
 				}
 			}
 			tempDocs.add(new Document(docid, title, timestamp, text.length));
@@ -66,19 +67,27 @@ public class WikiPageStore {
 	}
 	
 	public boolean flush() {
-		
+
 		if (this.tempDocs!=null && this.tempDocs.size()>0) {
-			
-			
-			
-			
+				dictDAO.writeDict(this.tempDict);
+				logger.trace("all dict entries persisted");
+				docDAO.writeDocs(this.tempDocs);
+				logger.trace("all doc entries persisted");
+				termDAO.writeTerms(this.tempTerms);			
+				logger.trace("batch insert completed");
+				// resetting all temp collections
+				this.tempDict.clear();
+				this.tempDocs.clear();
+				this.tempTerms.clear();
+				return true;		
 		}
 		
 		return false;
 		
 	}
 	
-	public Set<String> getNewDictEntries() {
+	
+	public ArrayList<Dict> getNewDictEntries() {
 		return this.tempDict;
 	}
 	

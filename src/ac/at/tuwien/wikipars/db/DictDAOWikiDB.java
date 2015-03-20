@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import ac.at.tuwien.wikipars.entity.Dict;
+import ac.at.tuwien.wikipars.io.DictDAO;
 import ac.at.tuwien.wikipars.util.WikiPars;
 
 public class DictDAOWikiDB implements DictDAO{
@@ -34,8 +35,7 @@ public class DictDAOWikiDB implements DictDAO{
 	
 	public void setConnectionHandler(DBConnectionHandler conn) {
 		this.dbConnect=conn;
-	}
-	
+	}	
 	
 	@Override
 	public boolean update(Dict dict) {
@@ -46,10 +46,23 @@ public class DictDAOWikiDB implements DictDAO{
 	@Override
 	public boolean writeDict(List<Dict> dicts) {
 		// TODO Auto-generated method stub
-
-		return true;
+		PreparedStatement prepStmt;
+		try {
+			 prepStmt = dbConnect.getConnection().prepareStatement("INSERT INTO DICT (term) VALUES (?)", PreparedStatement.RETURN_GENERATED_KEYS);		
+			for (Dict dic : dicts) {
+				prepStmt.setString(1, dic.getTerm());
+				prepStmt.executeUpdate();				
+				ResultSet rs = prepStmt.getGeneratedKeys();
+				if (rs != null && rs.next()) {
+				   dic.setId(rs.getLong(1));
+				}					
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			logger.error("Cannot create Statement to write in DICT");
+		}
+		return false;
 	}
-
 
 	@Override
 	public HashMap<String, Dict> readAll() {

@@ -15,8 +15,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import ac.at.tuwien.wikipars.entity.*;
+import ac.at.tuwien.wikipars.io.DictDAO;
 import ac.at.tuwien.wikipars.io.FileProvider;
-import ac.at.tuwien.wikipars.io.ProcessProperties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +26,6 @@ import edu.jhu.nlp.wikipedia.WikiPage;
 import edu.jhu.nlp.wikipedia.WikiXMLParser;
 import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 import ac.at.tuwien.wikipars.db.DBConnectionHandler;
-import ac.at.tuwien.wikipars.db.DictDAO;
 import ac.at.tuwien.wikipars.db.DictDAOWikiDB;
 
 public class WikiPars {
@@ -88,13 +87,17 @@ public class WikiPars {
 								text = text.replaceAll("[^\\p{L}\\p{Z}]", " ").replaceAll("\\s{2,}", " "); 
 								String[] textArray = text.split(" ");				 
 								long docid = Integer.parseInt(page.getID());								 
-								 pageStore.addPage(docid, page.getTitle(), page.getTimestamp(), textArray);
+								pageStore.addPage(docid, page.getTitle(), page.getTimestamp(), textArray);						
+								
+								if (props.isBatchSeries()) {
+									logger.debug("flushing "+ props.getBatchSize() + " pages");
+									pageStore.flush();
+								}
 							}
 							else {
 								logger.trace("All " +  props.getMaxPages() +  " pages processed, exiting program");
 								return;
-							}
-							 
+							}		 
 							 
 						}		
 					});
@@ -103,6 +106,8 @@ public class WikiPars {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.fatal(e.getMessage() + " caused by " + e.getMessage());
+				return;
 			}
 			
 		file = files.getNextFile();	

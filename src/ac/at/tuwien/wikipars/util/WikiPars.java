@@ -3,6 +3,7 @@ package ac.at.tuwien.wikipars.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,6 +32,8 @@ import edu.jhu.nlp.wikipedia.WikiXMLParser;
 import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 import ac.at.tuwien.wikipars.db.DBConnectionHandler;
 import ac.at.tuwien.wikipars.db.DictDAOWikiDB;
+import ac.at.tuwien.wikipars.db.DocDAOWikiDB;
+import ac.at.tuwien.wikipars.db.TermDAOWikiDB;
 
 public class WikiPars {
 
@@ -43,17 +46,13 @@ public class WikiPars {
 		try {
 			dbConnect.connect();
 		} catch (SQLException sqlex) {
-			logger.fatal("Cannot Access Database: " + sqlex.getMessage()
-					+ " : cause > " + sqlex.getCause().getMessage());
+			logger.fatal("Cannot Access Database: " + sqlex.getMessage() + " : cause > " + sqlex.getCause().getMessage());
 			return;
 		} catch (IOException ioex) {
-			logger.fatal("Error Accesssing Properties File: "
-					+ ioex.getMessage() + " : cause '> "
-					+ ioex.getCause().getMessage());
+			logger.fatal("Error Accesssing Properties File: " + ioex.getMessage() + " : cause '> " + ioex.getCause().getMessage());
 			return;
 		} catch (ClassNotFoundException clex) {
-			logger.fatal("ClassLoader Error: " + clex.getMessage()
-					+ " : cause '> " + clex.getCause().getMessage());
+			logger.fatal("ClassLoader Error: " + clex.getMessage() + " : cause '> " + clex.getCause().getMessage());
 			return;
 		}
 		
@@ -70,7 +69,7 @@ public class WikiPars {
 		}
 		logger.debug("parsing " + file.getAbsolutePath());
 		
-		WikiPageStore pageStore = new WikiPageStore();
+		WikiPageStore pageStore = new WikiPageStore(new DictDAOWikiDB(dbConnect), new DocDAOWikiDB(dbConnect), new TermDAOWikiDB(dbConnect));
 		
 		int pageCount = 0;
 		
@@ -84,11 +83,14 @@ public class WikiPars {
 						@Override
 						public void process(WikiPage page) {
 							
-							if (props.allowPage()) {
+							if (!props.allowPage()) {
 								if (props.getMaxPages() <10)
 								logger.debug("processing wiki-page " + page.getID()+ " title: " + page.getTitle() + " timestamp: "+ page.getTimestamp());
-								String text = page.getTitle() + " " + page.getWikiText();
-								text = text.replaceAll("[^\\p{L}\\p{Z}]", " ").replaceAll("\\s{2,}", " "); 
+								String text = page.getText() + " " + page.getTitle();
+//								byte[] bytetext = (page.getTitle() + " " + page.getText()).getBytes(Charset.forName("US-ASCII"));
+//								String text = new String(bytetext, Charset.forName("US-ASCII"));
+								text = text.replaceAll("[^\\p{L}\\p{Z}]", " ").replaceAll("[[\\s{2,}][?]+]", " ").toLowerCase();
+
 								String[] textArray = text.split(" ");				 
 								long docid = Integer.parseInt(page.getID());		
 								
@@ -111,6 +113,8 @@ public class WikiPars {
 							}
 							else {
 								logger.trace("All " +  props.getMaxPages() +  " pages processed, exiting program");
+								pageStore.flush();
+								dbConnect.closeConnection();
 								return;
 							}		 
 							 

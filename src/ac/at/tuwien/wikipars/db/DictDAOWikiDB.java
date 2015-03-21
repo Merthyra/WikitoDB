@@ -53,13 +53,15 @@ public class DictDAOWikiDB implements DictDAO{
 			 prepStmt = dbConnect.getConnection().prepareStatement("INSERT INTO DICT (term) VALUES (?)", PreparedStatement.RETURN_GENERATED_KEYS);		
 			for (Dict dic : dicts) {
 				prepStmt.setString(1, dic.getTerm());
-				prepStmt.executeUpdate();				
+				prepStmt.executeUpdate();
 				ResultSet rs = prepStmt.getGeneratedKeys();
 				if (rs != null && rs.next()) {
 				   dic.setId(rs.getLong(1));
-				   logger.debug("id: " + dic.getId() + " was assigned to dict entry : " + dic.getTerm() );			   
-				}					
+				   //logger.debug("id: " + dic.getId() + " was assigned to dict entry : " + dic.getTerm() );			   
+				}	
+				
 			}
+			logger.trace("wrote " + dicts.size() + " documents to dict table");	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			logger.error("Cannot create Statement to write in DICT");
@@ -95,7 +97,7 @@ public class DictDAOWikiDB implements DictDAO{
 				dictTable.put(rs.getString(2), new Dict(rs.getInt(1), rs.getString(2)));
 			}
 			logger.debug("Entire Dict Loaded and Stored in Java Map");
-			logger.info("All DictTerms persisted -> took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-time) + " seconds");	
+			logger.info("All DictTerms read from db -> took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-time) + " seconds");	
 			return dictTable;
 		
 		}

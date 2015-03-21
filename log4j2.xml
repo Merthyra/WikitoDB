@@ -9,7 +9,7 @@
 				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
 			</PatternLayout>
 		</Console>
-		<RollingFile name="trace-log" fileName="${log-path}/mycuteblog-trace.log" filePattern="${log-path}/trace-log-%d{yyyy-MM-dd}.log">
+		<RollingFile name="trace-log" fileName="${log-path}/error.log" filePattern="${log-path}/trace-log-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
 				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
 			</PatternLayout>
@@ -17,7 +17,7 @@
 				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
 			</Policies>
 		</RollingFile>
-		<RollingFile name="error-log" fileName="${log-path}/dating-error.log" filePattern="${log-path}/error-log-%d{yyyy-MM-dd}.log">
+		<RollingFile name="error-log" fileName="${log-path}/trace-log.log" filePattern="${log-path}/error-log-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
 				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
 			</PatternLayout>
@@ -34,6 +34,7 @@
 		</Logger>
 		<Root level="trace" additivity="false">
 			<AppenderRef ref="console-log" />
+			<appender-ref ref="error-log" level="error" />
 		</Root>
 	</Loggers>
 </Configuration>

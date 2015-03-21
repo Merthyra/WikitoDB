@@ -30,10 +30,11 @@ public class DocDAOWikiDB implements DocDAO {
 		// TODO Auto-generated method stub
 		
 		long time = System.currentTimeMillis();
-		
+		String docinfo ="";
 		try {
 			PreparedStatement prepStmt = this.dbConnect.getConnection().prepareStatement("INSERT INTO DOCS (docid, added, removed, name, len) VALUES (?,?,?,?,?)");
 			for (Document doc : docs) {
+				docinfo = doc.getId() + " / " +  doc.getTitle();
 				prepStmt.setLong(1, doc.getId());
 				prepStmt.setTimestamp(2, doc.getAdded_timestamp());
 				prepStmt.setTimestamp(3, null);
@@ -43,7 +44,8 @@ public class DocDAOWikiDB implements DocDAO {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.error("Error writing Documents to database");
+			e.printStackTrace();
+			logger.error("Error writing Documents to database " + docinfo);
 			return false;
 		}
 			logger.info("All docs persisted -> took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-time) + " seconds");	
@@ -62,17 +64,18 @@ public class DocDAOWikiDB implements DocDAO {
 		long time = System.currentTimeMillis();
 		Statement st;
 		ResultSet rs = null;
-		HashSet<Long> docids = null;
+		HashSet<Long> docids = new HashSet<Long>();
 		try {
 			st = dbConnect.getConnection().createStatement();
-			rs = st.executeQuery("SELECT * FROM docs WHERE removed=null");
+			rs = st.executeQuery("SELECT * FROM docs WHERE removed IS NULL");
 			
 			while(rs.next()) {
 				docids.add(rs.getLong(2));
 			}
-			logger.info("Read all " +  docids.size() + " documents from docs table and it took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-time) + " seconds");		
+			logger.info("Read all " + docids.size() + " documents from docs table and it took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-time) + " seconds");		
 		} catch (Exception e) {
-			logger.error("Cannot read documents from docs table");
+			e.printStackTrace();
+			logger.error("Cannot read documents from docs table " + e.getMessage() + " cause: " + e.getCause());
 			return null;
 		} 
 		return docids;

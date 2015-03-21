@@ -46,6 +46,7 @@ public class WikiPageStore {
 		this.dictDAO = dictDAO;
 		this.docDAO = docDAO;
 		this.termDAO = termDAO;
+		init();
 	}	
 	
 	public void addPage (long docid, String title, Timestamp timestamp, String[] text) {
@@ -53,11 +54,15 @@ public class WikiPageStore {
 			logger.trace("adding page " + docid + " to pagestore");
 			for (int i = 0; i < text.length; i++) {
 				// check if dict already contains term
-				if (!persistedDict.containsKey(text[i])) {
-					Dict tmpdic = new Dict(-1,text[i]);
+				Dict tmpdic = new Dict(-1,text[i]);
+				if (!persistedDict.containsKey(text[i])) {					
 					tempDict.add(tmpdic);
-					tempTerms.add(new Term(tmpdic, docid, i));
+					persistedDict.put(text[i], tmpdic);
 				}
+				else {
+					tmpdic.setId(persistedDict.get(text[i]).getId()); 
+				}
+				tempTerms.add(new Term(tmpdic, docid, i+1));
 			}
 			tempDocs.add(new Document(docid, title, timestamp, text.length));
 			logger.debug("page "+ docid + " title: " + title + " timestamp:  " + timestamp+ "added");
@@ -68,7 +73,6 @@ public class WikiPageStore {
 	}
 	
 	public boolean flush() {
-
 		if (this.tempDocs!=null && this.tempDocs.size()>0) {
 				dictDAO.writeDict(this.tempDict);
 				logger.trace("all dict entries persisted");
@@ -82,9 +86,7 @@ public class WikiPageStore {
 				this.tempTerms.clear();
 				return true;		
 		}
-		
-		return false;
-		
+		return false;		
 	}
 	
 	

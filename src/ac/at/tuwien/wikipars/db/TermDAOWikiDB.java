@@ -16,6 +16,7 @@ public class TermDAOWikiDB implements TermDAO{
 
 	private static final Logger logger = LogManager.getLogger(TermDAOWikiDB.class.getName());
 	DBConnectionHandler dbConnect;
+	private PreparedStatement prepStmt;
 	
 	public TermDAOWikiDB(DBConnectionHandler dbconn) {
 		this.dbConnect = dbconn;
@@ -25,7 +26,7 @@ public class TermDAOWikiDB implements TermDAO{
 	public boolean writeTerms(List<Term> terms) {
 
 	long time = System.currentTimeMillis();			
-	PreparedStatement prepStmt = null;
+	prepStmt = null;
 			try {
 				prepStmt = this.dbConnect.getConnection().prepareStatement("INSERT INTO terms (tid, did, pos) VALUES (?,?,?)");
 			} catch (SQLException e) {
@@ -36,18 +37,20 @@ public class TermDAOWikiDB implements TermDAO{
 						prepStmt.setLong(1, term.getDict().getId());
 						prepStmt.setLong(2, term.getDocid());
 						prepStmt.setInt(3, term.getPosition());
+						logger.debug("trying to write term : " + term.getDict().getId() + " / " + term.getDict().getTerm() + " from doc: " + term.getDocid());
 						prepStmt.executeUpdate();
 					}
 					catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						logger.error(e.getMessage() + " caused by " + e.getCause());
 						logger.error("Error writing Term with docid " + term.getDocid() + " & termid: "+ term.getDict().getId() +"/"+ term.getDict().getTerm() + " to database");
 
 					}
 				}
 			try {
-				if (prepStmt== null) {
-					prepStmt.closeOnCompletion();
+				if (prepStmt!= null) {
+					prepStmt.close();;
 				}
 			}catch (SQLException ex) {
 				logger.trace("Term Statement Closed");

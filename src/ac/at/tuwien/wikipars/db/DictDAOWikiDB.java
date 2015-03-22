@@ -58,7 +58,9 @@ public class DictDAOWikiDB implements DictDAO{
 				if (rs != null && rs.next()) {
 				   dic.setId(rs.getLong(1));
 				   //logger.debug("id: " + dic.getId() + " was assigned to dict entry : " + dic.getTerm() );			   
-				}	
+				} else {
+					logger.error("no id for " + dic.getTerm() + "assigned");
+				}
 				
 			}
 			logger.trace("wrote " + dicts.size() + " documents to dict table");	

@@ -54,13 +54,14 @@ public class WikiPageStore {
 			logger.trace("adding page " + docid + " to pagestore");
 			for (int i = 0; i < text.length; i++) {
 				// check if dict already contains term
-				Dict tmpdic = new Dict(-1,text[i]);
-				if (!persistedDict.containsKey(text[i])) {					
+				Dict tmpdic = null;
+				if (!persistedDict.containsKey(text[i])) {	
+					tmpdic = new Dict(-1, text[i]);
 					tempDict.add(tmpdic);
 					persistedDict.put(text[i], tmpdic);
 				}
-				else {
-					tmpdic.setId(persistedDict.get(text[i]).getId()); 
+				else {				
+					tmpdic = persistedDict.get(text[i]);
 				}
 				tempTerms.add(new Term(tmpdic, docid, i+1));
 			}

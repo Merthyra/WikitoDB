@@ -14,7 +14,7 @@ public class ProcessProperties {
 	private static final Logger logger = LogManager.getLogger(ProcessProperties.class.getName());
 	
 	private final int batch_size;
-	private final long start_offset;
+	private long start_offset;
 	private long max_Pages;
 	private int processed_Page = 0;
 	private String date_format;
@@ -57,6 +57,10 @@ public class ProcessProperties {
 		
 	}
 	
+	public boolean skipPageDueToOffset() {
+		return this.start_offset-- > 0;
+	}
+	
 	public String getDateFormatPattern() {
 		return this.date_format;
 	}
@@ -82,6 +86,10 @@ public class ProcessProperties {
 	 * @return true if one more page allowed for processing
 	 */
 	public boolean allowPage() {
+		return processed_Page > this.max_Pages;
+	}
+	
+	public boolean allowNextPage() {
 		return ++processed_Page > this.max_Pages;
 	}
 

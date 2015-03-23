@@ -71,19 +71,18 @@ public class WikiPars {
 		
 		WikiPageStore pageStore = new WikiPageStore(new DictDAOWikiDB(dbConnect), new DocDAOWikiDB(dbConnect), new TermDAOWikiDB(dbConnect));
 		
-		int pageCount = 0;
-		
 		do {
 			
 			try {
 				WikiXMLParser wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
+				file = files.getNextFile();	
 				
 					wxsp.setPageCallback(new PageCallbackHandler() {
 						
 						@Override
 						public void process(WikiPage page) {
 							
-							if (!props.allowPage()) {
+							if (!props.skipPageDueToOffset() && !props.allowNextPage()) {
 								if (props.getMaxPages() <10)
 								logger.debug("processing wiki-page " + page.getID()+ " title: " + page.getTitle() + " timestamp: "+ page.getTimestamp());
 								String text = page.getText() + " " + page.getTitle();
@@ -129,8 +128,8 @@ public class WikiPars {
 				return;
 			}
 			
-		file = files.getNextFile();	
-		} while (file!=null);
+		
+		} while (file!=null && props.allowPage());
 		
 
 	}

@@ -116,6 +116,12 @@ public class WikiPars {
 								logger.trace("All " +  props.getMaxPages() +  " pages processed, exiting program");
 								pageStore.flush();
 								dbConnect.closeConnection();
+								try {
+									wxsp.setPageCallback(null);
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 								wxsp = null;
 								return;
 							}		 

@@ -3,7 +3,7 @@ WITH
 validdocs AS (SELECT * FROM DOCS WHERE added <= '2019-01-14 10:46:14' AND (removed IS NULL OR removed > '2019-01-14 10:46:14')),
 
 ## valid terms containing one of the search strings
-qterms AS (SELECT terms.tid, terms.did, tdic.term FROM (SELECT tid, term FROM dict WHERE dict.term IN ('usa', 'as', 'car')) AS tdic JOIN terms ON terms.tid = tdic.tid JOIN validdocs ON validdocs.docid = terms.did ),
+qterms AS (SELECT terms.tid, terms.did, tdic.term FROM (SELECT tid, term FROM dict WHERE dict.term IN ('computer', 'as')) AS tdic JOIN terms ON terms.tid = tdic.tid JOIN validdocs ON validdocs.docid = terms.did ),
 
 ## average document length (avg(len))
 len_avg AS (SELECT avg(len) AS anr FROM validdocs),

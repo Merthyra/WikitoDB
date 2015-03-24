@@ -1,2 +1,9 @@
 /bin/
 /target/
+
+/logs
+.classpath
+.project
+dbprops.properties
+project-settings.properties
+/.settings/

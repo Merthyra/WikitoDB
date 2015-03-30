@@ -1,0 +1,54 @@
+The subfolders contains two different setups for 2 different reproducible(=time sensitive) IR-ranking approaches
+First approach is a lightweight database, where the tf-idf values are being calculated within the IR retrieval/querie and the validity of time is only stored in the document table.
+The second approach adds timestamp and tf-idf values to the dict table which should reduce processing time for a trade off in storage consumption.
+
+Scenariopath Nr 1 (sc1)
+
+Consists of three tables dict, terms and docs
+
+1) dict contains all distinct terms that are used in all documents. 
+
+			  dict
+|-------------------------------|
+|		tid		|		term	|
+|_______________|_______________|
+
+2) table terms maps the dict entries to the documents and also states the position of the terms in the document
+
+			  terms
+|-----------------------------------------------|
+|		tid		|		did		|		pos		|
+|_______________|_______________|_______________|
+
+3) table documents stores information about the document including the time it was added and removed (if it was at all)
+
+			  docs
+|-------------------------------------------------------------------------------|
+|		did		|		name	|		added	|		rem		|		len		|
+|_______________|_______________|_______________|_______________|_______________|
+
+
+Scenariopath Nr 2 (sc2)
+
+Also consists of three tables dict, terms and docs
+
+1) in addition to the dict table in scenario 1, information about timely validity and the tf-idf values are added to the dict table
+
+			  dict
+|-----------------------------------------------------------------------------------------------|
+|		tid		|		term	|		added	|		rem		|		df		|		tf		|
+|_______________|_______________|_______________|_______________|_______________|_______________|
+
+2) the table terms remains unchanged to scenario 1
+
+			  terms
+|-----------------------------------------------|
+|		tid		|		did		|		pos		|
+|_______________|_______________|_______________|
+
+3) the table terms remains unchanged to scenario 1
+
+			  docs
+|-------------------------------------------------------------------------------|
+|		did		|		name	|		added	|		rem		|		len		|
+|_______________|_______________|_______________|_______________|_______________|

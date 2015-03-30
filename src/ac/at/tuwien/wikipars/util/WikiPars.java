@@ -3,37 +3,24 @@ package ac.at.tuwien.wikipars.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.charset.Charset;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import ac.at.tuwien.wikipars.entity.*;
-import ac.at.tuwien.wikipars.io.DictDAO;
-import ac.at.tuwien.wikipars.io.FileProvider;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import edu.jhu.nlp.wikipedia.PageCallbackHandler;
-import edu.jhu.nlp.wikipedia.WikiPage;
-import edu.jhu.nlp.wikipedia.WikiXMLParser;
-import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 import ac.at.tuwien.wikipars.db.DBConnectionHandler;
 import ac.at.tuwien.wikipars.db.DictDAOWikiDB;
 import ac.at.tuwien.wikipars.db.DocDAOWikiDB;
 import ac.at.tuwien.wikipars.db.TermDAOWikiDB;
+import ac.at.tuwien.wikipars.io.DictDAO;
+import ac.at.tuwien.wikipars.io.FileProvider;
+import edu.jhu.nlp.wikipedia.PageCallbackHandler;
+import edu.jhu.nlp.wikipedia.WikiPage;
+import edu.jhu.nlp.wikipedia.WikiXMLParser;
+import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 
 public class WikiPars {
 
@@ -90,7 +77,7 @@ public class WikiPars {
 								String text = page.getText() + " " + page.getTitle();
 //								byte[] bytetext = (page.getTitle() + " " + page.getText()).getBytes(Charset.forName("US-ASCII"));
 //								String text = new String(bytetext, Charset.forName("US-ASCII"));
-								text = text.replaceAll("[[^\\p{L}\\p{Z}][?]+]", " ").replaceAll("[\\s{2,}]", " ").toLowerCase();
+								text = text.replaceAll("[[^\\p{L}\\p{Z}]]", " ").replaceAll("(?<=\\s|^).{1,2}?(?=\\s|$)", "").replaceAll("\\s{2,}", " ").toLowerCase().trim();
 
 								String[] textArray = text.split(" ");				 
 								long docid = Integer.parseInt(page.getID());		
@@ -139,7 +126,7 @@ public class WikiPars {
 		
 		while (props.allowPage() && file!=null){
 
-
+			file = files.getNextFile();
 			try {
 				wxsp.parse();
 			} catch (Exception e) {
@@ -147,9 +134,10 @@ public class WikiPars {
 					logger.trace("exiting program");
 				}
 				else e.printStackTrace();
+				file = null;
 				break;
 			}		
-			file = files.getNextFile();
+			
 			
 			if (file != null) {
 				try {

@@ -3,7 +3,7 @@ WITH
 validdocs AS (SELECT * FROM DOCS WHERE added <= '2019-01-14 10:46:14' AND (removed IS NULL OR removed > '2019-01-14 10:46:14')),
 
 ## valid terms containing one of the search strings
-qterms AS (SELECT terms.tid, terms.did, tdic.term FROM (SELECT tid, term FROM dict WHERE dict.term IN ('computer', 'as')) AS tdic JOIN terms ON terms.tid = tdic.tid JOIN validdocs ON validdocs.docid = terms.did ),
+qterms AS (SELECT terms.tid, terms.did, tdic.term FROM (SELECT tid, term FROM dict WHERE dict.term IN ('computer', 'computers' , 'usa')) AS tdic JOIN terms ON terms.tid = tdic.tid JOIN validdocs ON validdocs.docid = terms.did ),
 
 ## average document length (avg(len))
 len_avg AS (SELECT avg(len) AS anr FROM validdocs),
@@ -27,5 +27,5 @@ JOIN term_df ON term_df.tid = term_tf.tid)
 
 ## suming up document scores
 SELECT subscores.docid, sum(subscores.subscore) AS rnk 
-FROM subscores GROUP BY subscores.docid ORDER BY rnk desc;
-#SELECT * from subscores ORDER BY subscores.docid;
+FROM subscores GROUP BY subscores.docid ORDER BY rnk desc LIMIT 50;
+#SELECT * from subscores ORDER BY subscores.docid LIMIT 20;

@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.db;
+package at.ac.tuwien.docspars.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ac.at.tuwien.wikipars.entity.Dict;
-import ac.at.tuwien.wikipars.io.DictDAO;
-import ac.at.tuwien.wikipars.util.WikiPars;
+import at.ac.tuwien.docspars.entity.Dict;
+import at.ac.tuwien.docspars.io.DictDAO;
+import at.ac.tuwien.docspars.util.DocumentPars;
 
 public class DictDAOWikiDB implements DictDAO{
 

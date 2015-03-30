@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.db;
+package at.ac.tuwien.docspars.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,9 +12,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ac.at.tuwien.wikipars.entity.Document;
-import ac.at.tuwien.wikipars.io.DocDAO;
-import ac.at.tuwien.wikipars.util.WikiPageStore;
+import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.io.DocDAO;
+import at.ac.tuwien.docspars.util.DocumentStore;
 
 public class DocDAOWikiDB implements DocDAO {
 	

@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.util;
+package at.ac.tuwien.docspars.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +26,7 @@ public class ProcessProperties {
 		
 		logger.trace("accessing properties file");
 		try {
-			input = new FileInputStream("project-settings.properties");
+			input = new FileInputStream("res/project-settings.properties");
 			prop.load(input);			
 		} catch (FileNotFoundException e) {
 			logger.fatal("Cannot Finde Properties for IO Files" + " " + e.getMessage() + " cause >" + e.getCause());

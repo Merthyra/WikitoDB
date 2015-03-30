@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.util;
+package at.ac.tuwien.docspars.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -10,16 +10,16 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ac.at.tuwien.wikipars.entity.Dict;
-import ac.at.tuwien.wikipars.entity.Document;
-import ac.at.tuwien.wikipars.entity.Term;
-import ac.at.tuwien.wikipars.io.DictDAO;
-import ac.at.tuwien.wikipars.io.DocDAO;
-import ac.at.tuwien.wikipars.io.TermDAO;
+import at.ac.tuwien.docspars.entity.Dict;
+import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.Term;
+import at.ac.tuwien.docspars.io.DictDAO;
+import at.ac.tuwien.docspars.io.DocDAO;
+import at.ac.tuwien.docspars.io.TermDAO;
 
-public class WikiPageStore {
+public class DocumentStore {
 	
-	private static final Logger logger = LogManager.getLogger(WikiPageStore.class.getName());
+	private static final Logger logger = LogManager.getLogger(DocumentStore.class.getName());
 	// persisted dict table read from database in order to improve processing time
 	private HashMap<String, Dict> persistedDict;
 	// Set of IDs stored in database 
@@ -33,7 +33,7 @@ public class WikiPageStore {
 	private DocDAO docDAO = null;
 	private TermDAO termDAO = null;
 	
-	public WikiPageStore() {
+	public DocumentStore() {
 		init();
 	}	
 	
@@ -42,7 +42,7 @@ public class WikiPageStore {
 		this.persistedDocs = docDAO.readAll();
 	}
 	
-	public WikiPageStore(DictDAO dictDAO, DocDAO docDAO, TermDAO termDAO) {
+	public DocumentStore(DictDAO dictDAO, DocDAO docDAO, TermDAO termDAO) {
 		this.dictDAO = dictDAO;
 		this.docDAO = docDAO;
 		this.termDAO = termDAO;

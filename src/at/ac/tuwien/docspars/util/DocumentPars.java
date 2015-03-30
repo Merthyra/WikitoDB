@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.util;
+package at.ac.tuwien.docspars.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,20 +11,20 @@ import java.text.SimpleDateFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ac.at.tuwien.wikipars.db.DBConnectionHandler;
-import ac.at.tuwien.wikipars.db.DictDAOWikiDB;
-import ac.at.tuwien.wikipars.db.DocDAOWikiDB;
-import ac.at.tuwien.wikipars.db.TermDAOWikiDB;
-import ac.at.tuwien.wikipars.io.DictDAO;
-import ac.at.tuwien.wikipars.io.FileProvider;
+import at.ac.tuwien.docspars.db.DBConnectionHandler;
+import at.ac.tuwien.docspars.db.DictDAOWikiDB;
+import at.ac.tuwien.docspars.db.DocDAOWikiDB;
+import at.ac.tuwien.docspars.db.TermDAOWikiDB;
+import at.ac.tuwien.docspars.io.DictDAO;
+import at.ac.tuwien.docspars.io.FileProvider;
 import edu.jhu.nlp.wikipedia.PageCallbackHandler;
 import edu.jhu.nlp.wikipedia.WikiPage;
 import edu.jhu.nlp.wikipedia.WikiXMLParser;
 import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 
-public class WikiPars {
+public class DocumentPars {
 
-	private static final Logger logger = LogManager.getLogger(WikiPars.class.getName());
+	private static final Logger logger = LogManager.getLogger(DocumentPars.class.getName());
 	private static WikiXMLParser wxsp;
 
 	public static void main(String args[]) throws SQLException {
@@ -57,7 +57,7 @@ public class WikiPars {
 		}
 		logger.debug("parsing " + file.getAbsolutePath());
 		
-		WikiPageStore pageStore = new WikiPageStore(new DictDAOWikiDB(dbConnect), new DocDAOWikiDB(dbConnect), new TermDAOWikiDB(dbConnect));
+		DocumentStore pageStore = new DocumentStore(new DictDAOWikiDB(dbConnect), new DocDAOWikiDB(dbConnect), new TermDAOWikiDB(dbConnect));
 		
 		try {
 			wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());

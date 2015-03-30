@@ -1,5 +1,5 @@
 The subfolders contains two different setups for 2 different reproducible(=time sensitive) IR-ranking approaches
-First approach is a lightweight database, where the tf-idf values are being calculated within the IR retrieval/querie and the validity of time is only stored in the document table.
+First approach is a lightweight database, where the tf-idf values are being calculated within the IR retrieval/querie and the validity time frame is only stored in the document table.
 The second approach adds timestamp and tf-idf values to the dict table which should reduce processing time for a trade off in storage consumption.
 
 Scenariopath Nr 1 (sc1)

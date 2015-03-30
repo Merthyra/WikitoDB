@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.db;
+package at.ac.tuwien.docspars.db;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
 
-import ac.at.tuwien.wikipars.util.WikiPars;
+import at.ac.tuwien.docspars.util.DocumentPars;
 
 public class DBConnectionHandler {
 	
@@ -37,7 +37,7 @@ public class DBConnectionHandler {
 			InputStream input = null;
 			
 			logger.debug("accessing properties file");
-			input = new FileInputStream("dbprops.properties");
+			input = new FileInputStream("res/dbprops.properties");
 			prop.load(input);
 			logger.debug("propterties file loaded");
 			String dbdriver = prop.getProperty("db_driver");

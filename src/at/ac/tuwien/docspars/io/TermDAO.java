@@ -1,8 +1,8 @@
-package ac.at.tuwien.wikipars.io;
+package at.ac.tuwien.docspars.io;
 
 import java.util.List;
 
-import ac.at.tuwien.wikipars.entity.Term;
+import at.ac.tuwien.docspars.entity.Term;
 
 public interface TermDAO {
 	

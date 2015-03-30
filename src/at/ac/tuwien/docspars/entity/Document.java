@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.entity;
+package at.ac.tuwien.docspars.entity;
 
 import java.sql.Timestamp;
 

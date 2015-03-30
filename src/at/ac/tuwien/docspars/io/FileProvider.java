@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.io;
+package at.ac.tuwien.docspars.io;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +14,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ac.at.tuwien.wikipars.db.DBConnectionHandler;
+import at.ac.tuwien.docspars.db.DBConnectionHandler;
 
 public class FileProvider {
 	

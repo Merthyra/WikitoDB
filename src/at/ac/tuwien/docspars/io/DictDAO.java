@@ -1,9 +1,9 @@
-package ac.at.tuwien.wikipars.io;
+package at.ac.tuwien.docspars.io;
 
 import java.util.HashMap;
 import java.util.List;
 
-import ac.at.tuwien.wikipars.entity.Dict;
+import at.ac.tuwien.docspars.entity.Dict;
 
 public interface DictDAO {
 

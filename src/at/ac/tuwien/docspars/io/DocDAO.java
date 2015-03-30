@@ -1,8 +1,8 @@
-package ac.at.tuwien.wikipars.io;
+package at.ac.tuwien.docspars.io;
 import java.util.List;
 import java.util.Set;
 
-import ac.at.tuwien.wikipars.entity.Document;
+import at.ac.tuwien.docspars.entity.Document;
 
 public interface DocDAO {
 	

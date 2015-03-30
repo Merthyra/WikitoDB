@@ -1,4 +1,4 @@
-package ac.at.tuwien.wikipars.db;
+package at.ac.tuwien.docspars.db;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

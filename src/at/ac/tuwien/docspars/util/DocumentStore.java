@@ -13,9 +13,9 @@ import org.apache.logging.log4j.Logger;
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.entity.Term;
-import at.ac.tuwien.docspars.io.DictDAO;
-import at.ac.tuwien.docspars.io.DocDAO;
-import at.ac.tuwien.docspars.io.TermDAO;
+import at.ac.tuwien.docspars.io.daos.DictDAO;
+import at.ac.tuwien.docspars.io.daos.DocDAO;
+import at.ac.tuwien.docspars.io.daos.TermDAO;
 
 public class DocumentStore {
 	

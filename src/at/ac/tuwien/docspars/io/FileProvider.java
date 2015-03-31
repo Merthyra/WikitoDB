@@ -1,5 +1,6 @@
 package at.ac.tuwien.docspars.io;
 
+import java.beans.ConstructorProperties;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,7 +15,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import at.ac.tuwien.docspars.db.DBConnectionHandler;
+import at.ac.tuwien.docspars.io.db.DBConnectionHandler;
 
 public class FileProvider {
 	
@@ -25,7 +26,21 @@ public class FileProvider {
 	private Iterator<File> it;
 	
 	private static final Logger logger = LogManager.getLogger(FileProvider.class.getName());
+		
+	@ConstructorProperties({"file_path", "file_type", "max_Files"})
+	public FileProvider(String file_path, String file_type, int max_Files) {
+		super();
+		this.file_path = file_path;
+		this.file_type = file_type;
+		this.max_Files = max_Files;
+		
+		File[] files = new File(this.file_path).listFiles();		
+		this.files = new ArrayList<File>(Arrays.asList(files));		
+		this.it = this.files.iterator();
+		logger.trace("Found " + this.files.size() + " Files in directory " + this.file_path);	
+	}
 	
+	@Deprecated
 	public FileProvider() {
 		Properties prop = new Properties();
 		InputStream input = null;
@@ -57,11 +72,8 @@ public class FileProvider {
 		
 		this.files = new ArrayList<File>(Arrays.asList(files));		
 		this.it = this.files.iterator();
-		logger.trace("Found " + this.files.size() + " Files in directory " + this.file_path);
-		
-		
+		logger.trace("Found " + this.files.size() + " Files in directory " + this.file_path);	
 	}
-	
 	
 	public File getNextFile() {
 		if (it.hasNext() && this.max_Files > 0) {

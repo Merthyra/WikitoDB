@@ -1,4 +1,4 @@
-package at.ac.tuwien.docspars.db;
+package at.ac.tuwien.docspars.io.db;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.util.DocumentPars;
 
+@Deprecated
 public class DBConnectionHandler {
 	
 	private static final Logger logger = LogManager.getLogger(DBConnectionHandler.class.getName());

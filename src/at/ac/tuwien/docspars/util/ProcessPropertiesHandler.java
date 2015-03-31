@@ -9,20 +9,33 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ProcessProperties {
+public class ProcessPropertiesHandler {
 	
-	private static final Logger logger = LogManager.getLogger(ProcessProperties.class.getName());
+	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getName());
 	
-	private final int batch_size;
+	private int batch_size;
 	private long start_offset;
 	private long max_Pages;
-	private int processed_Page = 0;
+	private int processed_Page;
 	private String date_format;
+	private final String lan;
 	
-	public ProcessProperties () {
+	public ProcessPropertiesHandler(int batch_size, long start_offset, long max_Pages, String date_format, String lang) {
+		super();
+		this.batch_size = batch_size;
+		this.start_offset = start_offset;
+		this.max_Pages = max_Pages;
+		this.processed_Page = 0;
+		this.date_format = date_format;
+		this.lan = lang;
+	}
+	
+	@Deprecated
+	public ProcessPropertiesHandler () {
 		
 		Properties prop = new Properties();
 		InputStream input = null;
+		this.lan = "en";
 		
 		logger.trace("accessing properties file");
 		try {

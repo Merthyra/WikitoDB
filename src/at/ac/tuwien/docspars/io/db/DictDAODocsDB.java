@@ -1,4 +1,4 @@
-package at.ac.tuwien.docspars.db;
+package at.ac.tuwien.docspars.io.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,22 +15,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.entity.Dict;
-import at.ac.tuwien.docspars.io.DictDAO;
+import at.ac.tuwien.docspars.io.daos.DictDAO;
 import at.ac.tuwien.docspars.util.DocumentPars;
 
-public class DictDAOWikiDB implements DictDAO{
+public class DictDAODocsDB implements DictDAO{
 
 	private DBConnectionHandler dbConnect;
 	private long tID = 0;
-	private static final Logger logger = LogManager.getLogger(DictDAOWikiDB.class.getName());
+	private static final Logger logger = LogManager.getLogger(DictDAODocsDB.class.getName());
 	private PreparedStatement instertStmt;
 	private PreparedStatement updateStmt;
 	
-	public DictDAOWikiDB() {
+	public DictDAODocsDB() {
 		
 	}
 
-	public DictDAOWikiDB(DBConnectionHandler dbConnect) throws SQLException {
+	public DictDAODocsDB(DBConnectionHandler dbConnect) throws SQLException {
 		this.dbConnect = dbConnect;
 	}
 	

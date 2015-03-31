@@ -1,4 +1,4 @@
-package at.ac.tuwien.docspars.io;
+package at.ac.tuwien.docspars.io.daos;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package at.ac.tuwien.docspars.db;
+package at.ac.tuwien.docspars.io.db;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -10,15 +10,15 @@ import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.entity.Term;
-import at.ac.tuwien.docspars.io.TermDAO;
+import at.ac.tuwien.docspars.io.daos.TermDAO;
 
-public class TermDAOWikiDB implements TermDAO{
+public class TermDAODocsDB implements TermDAO{
 
-	private static final Logger logger = LogManager.getLogger(TermDAOWikiDB.class.getName());
+	private static final Logger logger = LogManager.getLogger(TermDAODocsDB.class.getName());
 	DBConnectionHandler dbConnect;
 	private PreparedStatement prepStmt;
 	
-	public TermDAOWikiDB(DBConnectionHandler dbconn) {
+	public TermDAODocsDB(DBConnectionHandler dbconn) {
 		this.dbConnect = dbconn;
 	}
 

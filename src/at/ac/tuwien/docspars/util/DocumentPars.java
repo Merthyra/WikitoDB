@@ -10,13 +10,15 @@ import java.text.SimpleDateFormat;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import at.ac.tuwien.docspars.db.DBConnectionHandler;
-import at.ac.tuwien.docspars.db.DictDAOWikiDB;
-import at.ac.tuwien.docspars.db.DocDAOWikiDB;
-import at.ac.tuwien.docspars.db.TermDAOWikiDB;
-import at.ac.tuwien.docspars.io.DictDAO;
 import at.ac.tuwien.docspars.io.FileProvider;
+import at.ac.tuwien.docspars.io.daos.DictDAO;
+import at.ac.tuwien.docspars.io.db.DBConnectionHandler;
+import at.ac.tuwien.docspars.io.db.DictDAODocsDB;
+import at.ac.tuwien.docspars.io.db.DocDAODocsDB;
+import at.ac.tuwien.docspars.io.db.TermDAODocsDB;
 import edu.jhu.nlp.wikipedia.PageCallbackHandler;
 import edu.jhu.nlp.wikipedia.WikiPage;
 import edu.jhu.nlp.wikipedia.WikiXMLParser;
@@ -29,6 +31,11 @@ public class DocumentPars {
 
 	public static void main(String args[]) throws SQLException {
 
+		ApplicationContext context =  new ClassPathXmlApplicationContext("META-INF/application-context.xml", DocumentPars.class);
+		FileProvider files = (FileProvider) context.getBean("fileProvider");
+		ProcessPropertiesHandler props = (ProcessPropertiesHandler) context.getBean("processProperties");
+		
+		
 		logger.trace("Trying to establish connection to DB");
 		DBConnectionHandler dbConnect = new DBConnectionHandler();
 		try {
@@ -43,12 +50,8 @@ public class DocumentPars {
 			logger.fatal("ClassLoader Error: " + clex.getMessage() + " : cause '> " + clex.getCause().getMessage());
 			return;
 		}
-		
-		logger.trace("Successfully connected to DB");
-		DictDAO dict = new DictDAOWikiDB(dbConnect);
 
-		FileProvider files = new FileProvider();
-		ProcessProperties props = new ProcessProperties();
+		
 
 		File file = files.getNextFile();
 		if (file == null) {
@@ -57,7 +60,7 @@ public class DocumentPars {
 		}
 		logger.debug("parsing " + file.getAbsolutePath());
 		
-		DocumentStore pageStore = new DocumentStore(new DictDAOWikiDB(dbConnect), new DocDAOWikiDB(dbConnect), new TermDAOWikiDB(dbConnect));
+		DocumentStore pageStore = new DocumentStore(new DictDAODocsDB(dbConnect), new DocDAODocsDB(dbConnect), new TermDAODocsDB(dbConnect));
 		
 		try {
 			wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
@@ -149,6 +152,7 @@ public class DocumentPars {
 			}
 			
 		} 
+
 		
 
 	}

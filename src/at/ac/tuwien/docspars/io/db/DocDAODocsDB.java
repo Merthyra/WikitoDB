@@ -1,4 +1,4 @@
-package at.ac.tuwien.docspars.db;
+package at.ac.tuwien.docspars.io.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,15 +13,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.entity.Document;
-import at.ac.tuwien.docspars.io.DocDAO;
+import at.ac.tuwien.docspars.io.daos.DocDAO;
 import at.ac.tuwien.docspars.util.DocumentStore;
 
-public class DocDAOWikiDB implements DocDAO {
+public class DocDAODocsDB implements DocDAO {
 	
-	private static final Logger logger = LogManager.getLogger(DocDAOWikiDB.class.getName());
+	private static final Logger logger = LogManager.getLogger(DocDAODocsDB.class.getName());
 	DBConnectionHandler dbConnect;
 	
-	public DocDAOWikiDB(DBConnectionHandler dbconn) {
+	public DocDAODocsDB(DBConnectionHandler dbconn) {
 		this.dbConnect = dbconn;
 	}
 	

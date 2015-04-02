@@ -35,5 +35,4 @@ public class Term {
 		this.position = position;
 	}
 		
-
 }

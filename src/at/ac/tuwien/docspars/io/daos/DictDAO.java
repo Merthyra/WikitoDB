@@ -1,16 +1,12 @@
 package at.ac.tuwien.docspars.io.daos;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import at.ac.tuwien.docspars.entity.Dict;
 
 public interface DictDAO {
 
-	public boolean update(Dict dict);
-	
-	public boolean writeDict (List<Dict> dicts);
-	
-	public HashMap<String, Dict> readAll();
+	public Map<String, Dict> getAll();
 	
 }

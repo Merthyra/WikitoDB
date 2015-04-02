@@ -6,10 +6,12 @@ import at.ac.tuwien.docspars.entity.Document;
 
 public interface DocDAO {
 	
-	public boolean writeDocs(List<Document> docs);
+	public boolean add(List<Document> docs);
 	
-	public boolean updateDoc(Document doc);
+	public boolean update(List<Document> docs);
 	
-	public Set<Long> readAll();
+	public boolean remove(List<Document> docs);
+	
+	public Set<Long> getDocIDs();
 	
 }

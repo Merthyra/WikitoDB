@@ -35,23 +35,6 @@ public class DocumentPars {
 		FileProvider files = (FileProvider) context.getBean("fileProvider");
 		ProcessPropertiesHandler props = (ProcessPropertiesHandler) context.getBean("processProperties");
 		
-		
-		logger.trace("Trying to establish connection to DB");
-		DBConnectionHandler dbConnect = new DBConnectionHandler();
-		try {
-			dbConnect.connect();
-		} catch (SQLException sqlex) {
-			logger.fatal("Cannot Access Database: " + sqlex.getMessage() + " : cause > " + sqlex.getCause().getMessage());
-			return;
-		} catch (IOException ioex) {
-			logger.fatal("Error Accesssing Properties File: " + ioex.getMessage() + " : cause '> " + ioex.getCause().getMessage());
-			return;
-		} catch (ClassNotFoundException clex) {
-			logger.fatal("ClassLoader Error: " + clex.getMessage() + " : cause '> " + clex.getCause().getMessage());
-			return;
-		}
-
-		
 
 		File file = files.getNextFile();
 		if (file == null) {
@@ -60,7 +43,7 @@ public class DocumentPars {
 		}
 		logger.debug("parsing " + file.getAbsolutePath());
 		
-		DocumentStore pageStore = new DocumentStore(new DictDAODocsDB(dbConnect), new DocDAODocsDB(dbConnect), new TermDAODocsDB(dbConnect));
+		DocumentHandler docHandler = (DocumentHandler) context.getBean("documentHandler"); 
 		
 		try {
 			wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());

@@ -1,6 +1,8 @@
 package at.ac.tuwien.docspars.entity;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Document {
 	
@@ -9,18 +11,51 @@ public class Document {
 	private long id;
 	private String title;
 	private int length;
+	private List<Dict> dict;
+	private List<Term> terms;
 	
 	public Document(long id, String title, Timestamp added, int length) {
 		this.added_timestamp = added;
 		this.id = id;
 		this.title = title;
 		this.length = length;
+		this.dict = new ArrayList<Dict>();
+		this.terms = new ArrayList<Term>();
 	}
 	
-	public Document() {
+	@SuppressWarnings("unused")
+	private Document() {
 		
 	}
 	
+	/**
+	 * @return the dict
+	 */
+	public List<Dict> getDict() {
+		return dict;
+	}
+
+	/**
+	 * @param dict the dict to set
+	 */
+	public void setDict(List<Dict> dict) {
+		this.dict = dict;
+	}
+
+	/**
+	 * @return the terms
+	 */
+	public List<Term> getTerms() {
+		return terms;
+	}
+
+	/**
+	 * @param terms the terms to set
+	 */
+	public void setTerms(List<Term> terms) {
+		this.terms = terms;
+	}
+
 	public Timestamp getAdded_timestamp() {
 		return added_timestamp;
 	}

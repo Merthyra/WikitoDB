@@ -1,0 +1,7 @@
+Open Issues to be implemented
+- logging aop
+- scenario 2 implementation
+- update behavior (of existing databases)
+- Spring AOP and JDBC Template for DAOS
+- PerformanceMonitorInterceptor implementation (for performance logging)
+- real time updates (live wiki update stream)

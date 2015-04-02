@@ -25,19 +25,31 @@
 	    <constructor-arg name="start_offset" value="${doc.start_doc_offset}"/>
 	    <constructor-arg name="max_Pages" value="${doc.max}"/>
 	    <constructor-arg name="date_format" value="${doc.date_format}"/>
+	    <constructor-arg name="scenario" value="${doc.scenario}"/>
+	    <constructor-arg name="language" value="${doc.lang}"/>
+	</bean>
+	
+	<bean id="documentHandler" class="at.ac.tuwien.docspars.util.DocumentHandler">
+		<constructor-arg name="dictDAO" ref="dictDAO"/>
+		<constructor-arg name="docDAO" ref="docDAO"/>
+		<constructor-arg name="termDAO" ref="termDAO"/>
 	</bean>
 
-    <!-- this is the service object that we want to make transactional -->
-	<bean id="dictDAO" class="at.ac.tuwien.docspars.io.db.DictDAODocsDB">
-		<property name="dataSource" ref="dataSource" />
+    <!-- these are the service objects that we want to make transactional -->
+	<bean id="dictDAO" class="at.ac.tuwien.docspars.io.db.${doc.scneario}DictDAODocsDB">
+		<constructor-arg name="dataSource" ref="dataSource" />
+		<constructor-arg name="query" ref="${sql.query_dict}"/>
+		<constructor-arg name="insert_sc1" ref="${sql.insert_dict_sc1}"/>
+		<constructor-arg name="insert_sc2" ref="${sql.insert_dict_sc2}"/>
+		<constructor-arg name="update_sc2" ref="${sql.update_dict_sc2}"/>
 	</bean>
 
-	<bean id="doctDAO" class="at.ac.tuwien.docspars.io.db.DocDAODocsDB">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="docDAO" class="at.ac.tuwien.docspars.io.db.DocDAODocsDB">
+		<constructor-arg name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="termDAO" class="at.ac.tuwien.docspars.io.db.TermDAODocsDB">
-		<property name="dataSource" ref="dataSource" />
+		<constructor-arg name="dataSource" ref="dataSource" />
 	</bean>    
 	    
     <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below) -->
@@ -54,8 +66,8 @@
     <!-- ensure that the above transactional advice runs for any execution
         of an operation defined by the FooService interface -->
     <aop:config>
-        <aop:pointcut id="fooServiceOperation" expression="execution(* ac.at.tuwien.docspars.io.dao.*.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="fooServiceOperation"/>
+        <aop:pointcut id="daoService" expression="execution(* ac.at.tuwien.docspars.io.dao.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoService"/>
     </aop:config>
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -71,5 +83,7 @@
 
     <context:property-placeholder location="jdbc.properties"/>
     <context:property-placeholder location="project-settings.properties"/>
-
+    <context:property-placeholder location="dict_statements.sql"/>
+    <context:property-placeholder location="doc_statements.sql"/>
+    <context:property-placeholder location="terms_statements.sql"/>
 </beans>

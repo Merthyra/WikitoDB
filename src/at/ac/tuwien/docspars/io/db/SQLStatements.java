@@ -1,7 +1,5 @@
 package at.ac.tuwien.docspars.io.db;
 
-
-
 	import java.util.MissingResourceException;
 	import java.util.ResourceBundle;
 

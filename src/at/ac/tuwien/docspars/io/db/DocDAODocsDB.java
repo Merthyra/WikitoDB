@@ -3,25 +3,20 @@ package at.ac.tuwien.docspars.io.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
-import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
 
 public class DocDAODocsDB implements DocDAO {
@@ -39,11 +34,6 @@ public class DocDAODocsDB implements DocDAO {
 		this.jdbcTemplate = new JdbcTemplate(datasource);
 	}
 	
-	@Override
-	public boolean add(List<Document> docs) {
-		throw new UnsupportedOperationException();
-		
-		}
 
 	@Override
 	public boolean update(List<Document> doc) {
@@ -60,8 +50,7 @@ public class DocDAODocsDB implements DocDAO {
 					docids.add(res.getLong("docid"));
 				}
 			return docids;		
-			}
-
+			}	
 		};
 		return (Set<Long>) this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"),resEx);	
 	}
@@ -69,6 +58,26 @@ public class DocDAODocsDB implements DocDAO {
 	@Override
 	public boolean remove(List<Document> docs) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean add(List<Document> docs) {
+		 int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.insert"),
+	            new BatchPreparedStatementSetter() {
+	                public void setValues(PreparedStatement ps, int i) throws SQLException {
+	                		//(docid, added, removed, name, len) 
+	                        ps.setLong(1, docs.get(i).getId());
+	                        ps.setTimestamp(2, docs.get(i).getAdded_timestamp());
+	                        ps.setTimestamp(3, docs.get(i).getRemoved_timestamp());
+	                        ps.setString(4, docs.get(i).getTitle());
+	                        ps.setInt(5, docs.get(i).getLength());
+	                    }
+
+	                    public int getBatchSize() {
+	                        return docs.size();
+	                    }
+	                });
+	        return docs.size()==updateCounts.length;
 	}
 
 }

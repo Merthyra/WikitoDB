@@ -13,13 +13,16 @@ import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.Scenario;
 import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.entity.Term;
+import at.ac.tuwien.docspars.entity.TimestampedDict;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
 
-public class DocumentHandler {
+public abstract class DocumentHandler {
 	
 	private static final Logger logger = LogManager.getLogger(DocumentHandler.class.getName());
 	// persisted dict table read from database in order to improve processing time
@@ -31,66 +34,32 @@ public class DocumentHandler {
 	private ArrayList<Document> tempDocs = new ArrayList<Document>();
 	private ArrayList<Term> tempTerms = new ArrayList<Term>();
 	
-	private DictDAO dictDAO = null;
-	private DocDAO docDAO = null;
-	private TermDAO termDAO = null;
+	private PersistanceService persistService;
 	
 	@Deprecated
 	public DocumentHandler() {
-		init();
 	}	
 	
-	private void init() {
-		this.persistedDict = dictDAO.getAll();
-		this.persistedDocs = docDAO.getDocIDs();
-	}
-	
-	public DocumentHandler(DictDAO dictDAO, DocDAO docDAO, TermDAO termDAO) {
-		this.dictDAO = dictDAO;
-		this.docDAO = docDAO;
-		this.termDAO = termDAO;
-		init();
+	public DocumentHandler(PersistanceService persistService) {
+		this.persistService = persistService;
 	}	
 	
-	public void addPage (long docid, String title, Timestamp timestamp, String[] text) {
-		if (!persistedDocs.contains(docid)) {
-			logger.trace("adding page " + docid + " to pagestore");
-			for (int i = 0; i < text.length; i++) {
-				// check if dict already contains term
-				Dict tmpdic = null;
-				if (!persistedDict.containsKey(text[i])) {	
-					tmpdic = new SimpleDict(-1, text[i]);
-					tempDict.add(tmpdic);
-					persistedDict.put(text[i], tmpdic);
-				}
-				else {				
-					tmpdic = persistedDict.get(text[i]);
-				}
-				tempTerms.add(new Term(tmpdic, docid, i+1));
-			}
-			tempDocs.add(new Document(docid, title, timestamp, text.length));
-			logger.debug("page "+ docid + " title: " + title + " timestamp:  " + timestamp+ "added");
-		}
-		else {
-			logger.debug("page "+ docid + " title: " + title + " timestamp:  " + timestamp+ "already in database");
-		}
-	}
+	public abstract void addPage (long docid, String title, Timestamp timestamp, final List<String> text);
 	
-	public boolean flush() {
+	
+	public boolean flushInsert() {
 		if (this.tempDocs!=null && this.tempDocs.size()>0) {
-				dictDAO.add(this.tempDict);
-				logger.trace("all dict entries persisted");
-				docDAO.add(this.tempDocs);
-				logger.trace("all doc entries persisted");
-				termDAO.add(this.tempTerms);			
-				logger.trace("batch insert completed");
-				// resetting all temp collections
-				this.tempDict.clear();
-				this.tempDocs.clear();
-				this.tempTerms.clear();
-				return true;		
+				return persistService.addBatch(this.tempDocs, this.tempDict, this.tempTerms);		
 		}
 		return false;		
+	}
+	
+	public boolean flushUpdate() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public boolean flushRemove() {
+		throw new UnsupportedOperationException();
 	}
 	
 	public void reset() {
@@ -111,4 +80,11 @@ public class DocumentHandler {
 		return this.tempTerms;
 	}
 	
+	public Map<String, Dict> getPersistedDict() {
+		return this.persistedDict;
+	}
+	
+	public Set<Long> getPersistedDocs() {
+		return this.persistedDocs;
+	}
 }

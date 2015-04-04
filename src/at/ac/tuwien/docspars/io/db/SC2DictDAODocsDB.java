@@ -3,6 +3,7 @@ package at.ac.tuwien.docspars.io.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -37,6 +38,26 @@ public class SC2DictDAODocsDB implements DictDAO {
 
 		};
 		return (Map<String,Dict>) this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read_SC2"),resEx);
+	}
+
+	@Override
+	public boolean update(Dict dict) {
+		throw new UnsupportedOperationException("not implmented yet");
+	}
+
+	@Override
+	public boolean add(List<Dict> dicts) {
+		throw new UnsupportedOperationException("not implmented yet");
+	}
+
+	@Override
+	public boolean remove(List<Dict> dicts) {
+		throw new UnsupportedOperationException("not implmented yet");
+	}
+
+	@Override
+	public long getNextTermID() {
+		throw new UnsupportedOperationException("not implmented yet");
 	}
 
 }

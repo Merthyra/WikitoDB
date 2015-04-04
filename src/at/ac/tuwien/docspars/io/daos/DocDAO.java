@@ -2,7 +2,9 @@ package at.ac.tuwien.docspars.io.daos;
 import java.util.List;
 import java.util.Set;
 
+import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.Term;
 
 public interface DocDAO {
 	

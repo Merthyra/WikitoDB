@@ -1,6 +1,10 @@
 package at.ac.tuwien.docspars.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import at.ac.tuwien.docspars.io.db.SQLStatements;
 
 public class TimestampedDict extends Dict {
 
@@ -63,6 +67,21 @@ public class TimestampedDict extends Dict {
 	 */
 	public void setDocTF(int docTF) {
 		this.docTF = docTF;
+	}
+
+	@Override
+	public void setDict(ResultSet rs) throws SQLException {
+		super.setDict(rs);
+		this.addedTimestamp = rs.getTimestamp(3);
+		this.removedTimestamp = rs.getTimestamp(4);
+		this.docFQ = rs.getInt(5);
+		this.docTF = rs.getInt(6);
+	}
+
+	@Override
+	public String getInsertString() {
+		// TODO Auto-generated method stub
+		return SQLStatements.getString("sql.dict.insert_SC2");
 	}
 	
 }

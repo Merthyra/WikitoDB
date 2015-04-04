@@ -1,5 +1,7 @@
 package at.ac.tuwien.docspars.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 
@@ -80,5 +82,12 @@ public abstract class Dict {
 	public abstract int getDocFQ(); 
 	
 	public abstract int getDocTF();
+	
+	public void setDict(ResultSet rs) throws SQLException {
+		this.id = (rs.getLong(1));
+		this.term = (rs.getString(2));
+	}
+	
+	public abstract String getInsertString();
 	
 }

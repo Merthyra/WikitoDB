@@ -1,6 +1,10 @@
 package at.ac.tuwien.docspars.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import at.ac.tuwien.docspars.io.db.SQLStatements;
 
 public class SimpleDict extends Dict{
 
@@ -29,5 +33,11 @@ public class SimpleDict extends Dict{
 	public int getDocTF() {
 		return -1;	
 	}
+
+	@Override
+	public String getInsertString() {
+		return SQLStatements.getString("sql.dict.insert_SC1");
+	}
+	
 
 }

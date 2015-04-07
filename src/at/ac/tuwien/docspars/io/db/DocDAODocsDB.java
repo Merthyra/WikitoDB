@@ -30,8 +30,8 @@ public class DocDAODocsDB implements DocDAO {
 
 	}
 	
-	public DocDAODocsDB(DataSource datasource) {
-		this.jdbcTemplate = new JdbcTemplate(datasource);
+	public DocDAODocsDB(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 

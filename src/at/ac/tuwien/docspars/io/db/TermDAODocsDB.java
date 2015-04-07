@@ -25,8 +25,8 @@ public class TermDAODocsDB implements TermDAO{
 		super();
 	}
 	
-	public TermDAODocsDB(DataSource datasource) {
-		this.jdbcTemplate = new JdbcTemplate(datasource);
+	public TermDAODocsDB(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override

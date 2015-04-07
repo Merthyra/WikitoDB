@@ -27,8 +27,8 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 
 	@Override
 	public void process(WikiPage page) {
-		if (!processProperties.skipPageDueToOffset() && processProperties.allowNextPage()) {
-			
+		if (processProperties.allowNextPage()) {
+			logger.debug("parsing " + page.getTitle());
 			// using title and text values for IR retrieval
 			String text = page.getText() + " " + page.getTitle();
 			List<String> cleanTerms = null;
@@ -49,7 +49,6 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 				tstmp = new Timestamp(System.currentTimeMillis());
 			}
 		    docHandler.addPage(Long.parseLong(page.getID()), page.getTitle(), tstmp, cleanTerms);
-		    
 		    
 		}	
 		else {

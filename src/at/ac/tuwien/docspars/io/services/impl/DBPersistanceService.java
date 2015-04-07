@@ -50,8 +50,8 @@ public class DBPersistanceService implements PersistanceService {
 	}
 	@Override
 	public Map<String, Dict> getDict() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return dictDAO.getAll();
 	}
 	@Override
 	public Set<Long> getDocIDs() {

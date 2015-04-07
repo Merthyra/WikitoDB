@@ -17,28 +17,25 @@
 	<bean id="fileProvider" class="at.ac.tuwien.docspars.io.FileProvider">
 	    <constructor-arg name="file_path" value="${doc.file_location}"/>
 	    <constructor-arg name="file_type" value="${doc.file_type}"/>
-	    <constructor-arg name="max_Files" value="${doc.max_Files}"/>
+	    <constructor-arg name="max_Files" value="${doc.max_files}"/>
 	</bean>
 	
 	<bean id="processProperties" class="at.ac.tuwien.docspars.util.ProcessPropertiesHandler">
 	    <constructor-arg name="batch_size" value="${doc.batch_size}"/>
 	    <constructor-arg name="start_offset" value="${doc.start_doc_offset}"/>
-	    <constructor-arg name="max_Pages" value="${doc.max}"/>
+	    <constructor-arg name="max_pages" value="${doc.max}"/>
 	    <constructor-arg name="date_format" value="${doc.date_format}"/>
-	    <constructor-arg name="scenario" value="${doc.scenario}"/>
 	    <constructor-arg name="language" value="${doc.lang}"/>
 	    <constructor-arg name="sc" value="${doc.scenario}"/>
 	</bean>
 	
 	<bean id="documentHandler" class="at.ac.tuwien.docspars.util.${doc.scenario}DocumentHandler">
-		<constructor-arg name="dictDAO" ref="dictDAO"/>
-		<constructor-arg name="docDAO" ref="docDAO"/>
-		<constructor-arg name="termDAO" ref="termDAO"/>
+		<constructor-arg name="persistanceService" ref="persistanceServiceImpl"/>
 	</bean>
 
     <!-- these are the service objects that we want to make transactional -->
     
-    <bean id="persistanceService" class="at.ac.tuwien.docspars.services.impl.DBPersistanceService">
+    <bean id="persistanceServiceImpl" class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceService">
     	<constructor-arg name="dictDAO" ref="dictDAO"/>
     	<constructor-arg name="docDAO" ref="docDAO"/>
     	<constructor-arg name="termDAO" ref="termDAO"/>
@@ -68,8 +65,8 @@
     </tx:advice>
 
     <!-- ensure that the above transactional advice runs for any execution of an operation defined by the PersistanceService interface -->
-    <aop:config>
-        <aop:pointcut id="persistanceService" expression="execution(* ac.at.tuwien.docspars.io.services.PersistanceService.*(..))"/>
+    <aop:config proxy-target-class="true">
+        <aop:pointcut id="persistanceService" expression="execution(* at.ac.tuwien.docspars.io.services.PersistanceService.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="persistanceService"/>
     </aop:config>
 
@@ -80,10 +77,9 @@
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${jdbc.driverClassName}"/>
         <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.pw}"/>
     </bean>
 
-    <context:property-placeholder location="jdbc.properties"/>
-    <context:property-placeholder location="project-settings.properties"/>
+    <context:property-placeholder location="./META-INF/jdbc.properties, ./META-INF/project-settings.properties"/>
 </beans>

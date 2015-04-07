@@ -18,16 +18,16 @@ public class ProcessPropertiesHandler {
 	
 	private int batch_size;
 	private long start_offset;
-	private long max_Pages;
+	private long max_pages;
 	private int processed_Page;
 	private String date_format;
 	private final String lan;
 	
 	
-	public ProcessPropertiesHandler(int batch_size, long start_offset, long max_Pages, String date_format, String language, String sc) {
+	public ProcessPropertiesHandler(int batch_size, long start_offset, long max_pages, String date_format, String language, String sc) {
 		this.batch_size = batch_size;
 		this.start_offset = start_offset;
-		this.max_Pages = max_Pages;
+		this.max_pages = max_pages;
 		this.processed_Page = 0;
 		this.date_format = date_format;
 		this.lan = language;
@@ -52,11 +52,11 @@ public class ProcessPropertiesHandler {
 	 * @return true if one more page allowed for processing
 	 */
 	public boolean allowPage() {
-		return processed_Page < this.max_Pages;
+		return processed_Page < this.max_pages;
 	}
 	
 	public boolean allowNextPage() {
-		return ++processed_Page < this.max_Pages;
+		return ++processed_Page < this.max_pages;
 	}
 
 	/**
@@ -91,14 +91,14 @@ public class ProcessPropertiesHandler {
 	 * @return the max_Pages
 	 */
 	public long getMax_Pages() {
-		return max_Pages;
+		return max_pages;
 	}
 
 	/**
 	 * @param max_Pages the max_Pages to set
 	 */
 	public void setMax_Pages(long max_Pages) {
-		this.max_Pages = max_Pages;
+		this.max_pages = max_Pages;
 	}
 
 	/**

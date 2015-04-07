@@ -4,7 +4,7 @@ package at.ac.tuwien.docspars.io.db;
 	import java.util.ResourceBundle;
 
 	public class SQLStatements {
-		private static final String BUNDLE_NAME = "META-INF/sql_statements"; 
+		private static final String BUNDLE_NAME = "sql_statements"; 
 
 		private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 

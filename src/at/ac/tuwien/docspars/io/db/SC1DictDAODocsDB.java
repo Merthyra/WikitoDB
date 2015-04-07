@@ -29,8 +29,8 @@ public class SC1DictDAODocsDB implements DictDAO{
 		
 	}
 	
-	public SC1DictDAODocsDB(DataSource datasource) {
-		this.jdbcTemplate = new JdbcTemplate(datasource);
+	public SC1DictDAODocsDB(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	@Override

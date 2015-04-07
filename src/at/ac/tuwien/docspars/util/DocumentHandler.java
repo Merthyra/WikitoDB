@@ -2,7 +2,6 @@ package at.ac.tuwien.docspars.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
-import at.ac.tuwien.docspars.entity.Scenario;
-import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.entity.Term;
-import at.ac.tuwien.docspars.entity.TimestampedDict;
-import at.ac.tuwien.docspars.io.daos.DictDAO;
-import at.ac.tuwien.docspars.io.daos.DocDAO;
-import at.ac.tuwien.docspars.io.daos.TermDAO;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public abstract class DocumentHandler {
@@ -42,6 +35,7 @@ public abstract class DocumentHandler {
 	
 	public DocumentHandler(PersistanceService persistService) {
 		this.persistService = persistService;
+		this.persistedDict = persistService.getDict();
 	}	
 	
 	public abstract void addPage (long docid, String title, Timestamp timestamp, final List<String> text);
@@ -86,5 +80,9 @@ public abstract class DocumentHandler {
 	
 	public Set<Long> getPersistedDocs() {
 		return this.persistedDocs;
+	}
+	
+	public void setPersistService(PersistanceService service) {
+		this.persistService = service;
 	}
 }

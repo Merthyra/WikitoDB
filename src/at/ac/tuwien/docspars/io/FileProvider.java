@@ -24,7 +24,7 @@ public class FileProvider {
 	
 	private static final Logger logger = LogManager.getLogger(FileProvider.class.getName());
 		
-	@ConstructorProperties({"file_path", "file_type", "max_Files"})
+//	@ConstructorProperties({"file_path", "file_type", "max_Files"})
 	public FileProvider(String file_path, String file_type, int max_Files) {
 		super();
 		this.file_path = file_path;

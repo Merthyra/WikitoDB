@@ -21,7 +21,7 @@ public class SC1DocumentHandler extends DocumentHandler {
 
 	@Override
 	public void addPage(long docid, String title, Timestamp timestamp, List<String> text)  {
-		if (this.getPersistedDocs().contains(docid)) {
+		if (!this.getPersistedDocs().contains(docid)) {
 			for (int i = 0; i < text.size(); i++) {
 				// check if dict already contains term
 				Dict tmpdic = null;
@@ -40,5 +40,7 @@ public class SC1DocumentHandler extends DocumentHandler {
 		}
 
 	}
+	
+	
 
 }

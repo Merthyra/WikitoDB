@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import at.ac.tuwien.docspars.io.FileProvider;
 import edu.jhu.nlp.wikipedia.WikiXMLParser;
@@ -20,7 +21,7 @@ public class DocumentPars {
 
 	public static void main(String args[]) throws SQLException {
 
-		ApplicationContext context =  new ClassPathXmlApplicationContext("META-INF/application-context.xml", DocumentPars.class);
+		ApplicationContext context =  new FileSystemXmlApplicationContext("./META-INF/application-context.xml");
 		FileProvider files = (FileProvider) context.getBean("fileProvider");
 		ProcessPropertiesHandler props = (ProcessPropertiesHandler) context.getBean("processProperties");
 		
@@ -29,8 +30,7 @@ public class DocumentPars {
 			logger.fatal("no file provided -> exiting");
 			return;
 		}
-		logger.debug("parsing " + file.getAbsolutePath());
-		
+		logger.debug("parsing " + file.getAbsolutePath());		
 		DocumentHandler docHandler = (DocumentHandler) context.getBean("documentHandler"); 
 				
 		try {
@@ -43,6 +43,7 @@ public class DocumentPars {
 			logger.fatal("file path is not valid - terminating program" + e1.getMessage());
 			return;
 		} catch (EndOfProcessParameterReachedException eor) {
+			docHandler.flushInsert();
 			logger.debug("End of Processing");
 		}	
 		catch (Exception e) {

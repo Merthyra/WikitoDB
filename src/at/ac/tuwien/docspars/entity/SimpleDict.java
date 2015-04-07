@@ -1,7 +1,5 @@
 package at.ac.tuwien.docspars.entity;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import at.ac.tuwien.docspars.io.db.SQLStatements;

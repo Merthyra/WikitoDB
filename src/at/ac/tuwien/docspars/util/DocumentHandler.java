@@ -21,11 +21,13 @@ public abstract class DocumentHandler {
 	// persisted dict table read from database in order to improve processing time
 	private Map<String, Dict> persistedDict;
 	// Set of IDs stored in database 
-	private Set<Long> persistedDocs = new HashSet<Long>();
+	private Set<Long> persistedDocs;
 	// temporary collections storing pages for the next batch update of the database
 	private ArrayList<Dict> tempDict = new ArrayList<Dict>();
 	private ArrayList<Document> tempDocs = new ArrayList<Document>();
 	private ArrayList<Term> tempTerms = new ArrayList<Term>();
+	// count of total values in dictionary serves as id for the dict entries
+	private int lastDictID = 0;
 	
 	private PersistanceService persistService;
 	
@@ -36,13 +38,15 @@ public abstract class DocumentHandler {
 	public DocumentHandler(PersistanceService persistService) {
 		this.persistService = persistService;
 		this.persistedDict = persistService.getDict();
+		this.lastDictID = this.persistedDict.size() + 1;
+		this.persistedDocs = persistService.getDocIDs();
 	}	
 	
 	public abstract void addPage (long docid, String title, Timestamp timestamp, final List<String> text);
 	
 	
 	public boolean flushInsert() {
-		if (this.tempDocs!=null && this.tempDocs.size()>0) {
+		if (this.tempDocs != null && this.tempDocs.size() > 0) {
 				return persistService.addBatch(this.tempDocs, this.tempDict, this.tempTerms);		
 		}
 		return false;		
@@ -85,4 +89,9 @@ public abstract class DocumentHandler {
 	public void setPersistService(PersistanceService service) {
 		this.persistService = service;
 	}
+	
+	public int getNextID() {
+		return ++this.lastDictID;
+	}
+	
 }

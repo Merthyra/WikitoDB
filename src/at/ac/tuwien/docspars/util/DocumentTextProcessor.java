@@ -15,11 +15,14 @@ public class DocumentTextProcessor {
 	
 	private List<String> text;
 	private Analyzer analyzer;
+	// max length of term / terms exceeding will be ignored
+	private final int maxTermLength;
 	
 	
-	public DocumentTextProcessor() {
+	public DocumentTextProcessor(int maxLength) {
 		this.text = null;
 		this.analyzer = new EnglishAnalyzer();
+		this.maxTermLength = maxLength;
 	}
 	
 	/**
@@ -35,7 +38,11 @@ public class DocumentTextProcessor {
 			tokens = this.analyzer.tokenStream("document", new StringReader(text));
 			tokens.reset();
 			while (tokens.incrementToken()) {
-				this.text.add(tokens.getAttribute(CharTermAttribute.class).toString());
+				//additionally remove all Tokens that would exceed configured database
+				String dictEntry = tokens.getAttribute(CharTermAttribute.class).toString();
+				if (dictEntry!=null && dictEntry.length() <= maxTermLength) {
+					this.text.add(dictEntry);
+				}
 			}
 			
 		} catch (IOException e) {

@@ -20,20 +20,20 @@ import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
 
 public class DocDAODocsDB implements DocDAO {
-	
+
 	private static final Logger logger = LogManager.getLogger(DocDAODocsDB.class.getName());
-	
+
 	private JdbcTemplate jdbcTemplate;
-	
+
 	@SuppressWarnings("unused")
 	private DocDAODocsDB() {
 
 	}
-	
+
 	public DocDAODocsDB(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-	
+
 
 	@Override
 	public boolean update(List<Document> doc) {
@@ -49,7 +49,7 @@ public class DocDAODocsDB implements DocDAO {
 				while (res.next()) {
 					docids.add(res.getLong("docid"));
 				}
-			return docids;		
+				return docids;		
 			}	
 		};
 		return (Set<Long>) this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"),resEx);	
@@ -62,22 +62,19 @@ public class DocDAODocsDB implements DocDAO {
 
 	@Override
 	public boolean add(List<Document> docs) {
-		 int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.insert"),
-	            new BatchPreparedStatementSetter() {
-	                public void setValues(PreparedStatement ps, int i) throws SQLException {
-	                		//(docid, added, removed, name, len) 
-	                        ps.setLong(1, docs.get(i).getId());
-	                        ps.setTimestamp(2, docs.get(i).getAdded_timestamp());
-	                        ps.setTimestamp(3, docs.get(i).getRemoved_timestamp());
-	                        ps.setString(4, docs.get(i).getTitle());
-	                        ps.setInt(5, docs.get(i).getLength());
-	                    }
-
-	                    public int getBatchSize() {
-	                        return docs.size();
-	                    }
-	                });
-	        return docs.size()==updateCounts.length;
+		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.insert"), new BatchPreparedStatementSetter() {
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				//(docid, added, removed, name, len) 
+				ps.setLong		(1, docs.get(i).getId());
+				ps.setTimestamp (2, docs.get(i).getAdded_timestamp());
+				ps.setTimestamp (3, docs.get(i).getRemoved_timestamp());
+				ps.setString	(4, docs.get(i).getTitle());
+				ps.setInt		(5, docs.get(i).getLength());
+			}
+			public int getBatchSize() {
+				return docs.size();
+			}
+		});
+		return docs.size() == updateCounts.length;
 	}
-
 }

@@ -13,44 +13,54 @@ public class ProcessPropertiesHandler {
 	private int batch_size;
 	private long start_offset;
 	private long max_pages;
-	private int processed_Page;
+	private int processed_Page_Count;
 	private String date_format;
 	private final String lan;
+	private final int maxTermLength;
 	
 	
-	public ProcessPropertiesHandler(int batch_size, long start_offset, long max_pages, String date_format, String language, String sc) {
+	public ProcessPropertiesHandler(int batch_size, long start_offset, long max_pages, String date_format, String language, String sc, int maxLength) {
 		this.batch_size = batch_size;
 		this.start_offset = start_offset;
 		this.max_pages = max_pages;
-		this.processed_Page = 0;
+		this.processed_Page_Count = 0;
 		this.date_format = date_format;
 		this.lan = language;
 		if (sc.equals("sc1")) 
 			{ ProcessPropertiesHandler.scenario = Scenario.sc1; } 
 		else 
 			{ ProcessPropertiesHandler.scenario = Scenario.sc2;}
+		this.maxTermLength = maxLength;
 	}
 	
 	@SuppressWarnings("unused")
 	private ProcessPropertiesHandler(){
 		this.lan = "en";
-		
+		this.maxTermLength=-1;
 	};
 
 	public boolean skipPageDueToOffset() {
-		return this.start_offset-- > 0;
+		return this.start_offset-- >= 0;
 	}
 
+	public boolean allowPage() {
+		return processed_Page_Count <= this.max_pages;
+	}
+	
 	/**
 	 * increments processed page count and compares it to max pages to processes
 	 * @return true if one more page allowed for processing
-	 */
-	public boolean allowPage() {
-		return processed_Page < this.max_pages;
+	 */	
+	public boolean allowNextPage() {
+		return this.countDocument() <= this.max_pages;
 	}
 	
-	public boolean allowNextPage() {
-		return ++processed_Page < this.max_pages;
+	/**
+	 *  increments the process execution counter
+	 * @return returns updated execution counter
+	 */
+	public int countDocument() {
+		return ++this.processed_Page_Count;
 	}
 
 	/**
@@ -98,15 +108,15 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @return the processed_Page
 	 */
-	public int getProcessed_Page() {
-		return processed_Page;
+	public int getProcessed_Page_Count() {
+		return processed_Page_Count;
 	}
 
 	/**
 	 * @param processed_Page the processed_Page to set
 	 */
-	public void setProcessed_Page(int processed_Page) {
-		this.processed_Page = processed_Page;
+	public void setProcessed_Page_Count(int processed_Page) {
+		this.processed_Page_Count = processed_Page;
 	}
 
 	/**
@@ -135,6 +145,10 @@ public class ProcessPropertiesHandler {
 	 */
 	public String getLan() {
 		return lan;
+	}
+	
+	public int getMaxTermLength() {
+		return this.maxTermLength;
 	}
 
 	

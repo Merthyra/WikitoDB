@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import at.ac.tuwien.docspars.io.FileProvider;
@@ -25,32 +24,29 @@ public class DocumentPars {
 		ApplicationContext context =  new FileSystemXmlApplicationContext("./META-INF/application-context.xml");
 		FileProvider files = (FileProvider) context.getBean("fileProvider");
 		ProcessPropertiesHandler props = (ProcessPropertiesHandler) context.getBean("processProperties");
-		
-		File file = files.getNextFile();
-		logger.debug("parsing " + file.getAbsolutePath());		
-		DocumentHandler docHandler = (DocumentHandler) context.getBean("documentHandler"); 
-				
+		DocumentHandler docHandler = (DocumentHandler) context.getBean("documentHandler"); 		
 		try {
-		while (files.getNextFile()!=null) {
+		File file;
+		while ((file = files.getNextFile()) != null) {
+			logger.debug("parsing " + file.getAbsolutePath());		
 			DocumentPars.wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
 			wxsp.setPageCallback(new WikiPageCallBackHandler(props, docHandler));
 			wxsp.parse();
 		}
 		} catch (MalformedURLException e1) {
 			logger.fatal("file path is not valid - terminating program" + e1.getMessage());
-			return;
 		} catch (NullPointerException npe) {
 			logger.fatal("Error acessing File, please check FilePath in Config " + npe.getMessage() + " " + npe.getClass());
+			npe.printStackTrace();
 		} catch (EndOfProcessParameterReachedException eor) {
 			docHandler.flushInsert();
 			logger.debug("End of Processing");
 		} catch (Exception e) {
-			logger.fatal("Unspecified Exception (most likely from Wikipars Library) caught " + e.getMessage());
+			logger.fatal("Unspecified Exception (most likely from WikiXMLParser Library) caught " + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			((ConfigurableApplicationContext)context).close();
-		}
-		
+		}	
 	}
 	
 }

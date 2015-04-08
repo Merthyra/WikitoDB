@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -35,7 +36,6 @@ public class SC1DictDAODocsDB implements DictDAO{
 
 	@Override
 	public Map<String, Dict> getAll() {
-
 		ResultSetExtractor<Map<String, Dict>> resEx = new ResultSetExtractor<Map<String, Dict>>() {	
 			@Override
 			public Map<String, Dict> extractData(ResultSet res) throws SQLException, DataAccessException {
@@ -45,7 +45,6 @@ public class SC1DictDAODocsDB implements DictDAO{
 				}
 				return dict;		
 			}
-
 		};
 		return (Map<String,Dict>) this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"),resEx);
 	}
@@ -57,39 +56,18 @@ public class SC1DictDAODocsDB implements DictDAO{
 
 	@Override
 	public boolean add(List<Dict> dicts){		
-		long time = System.currentTimeMillis();
-		try {	
-			PreparedStatement prepStmt = jdbcTemplate.getDataSource().getConnection().prepareStatement(SQLStatements.getString("sql.dict.insert_SC1"), PreparedStatement.RETURN_GENERATED_KEYS);		
-			prepStmt.getConnection().setAutoCommit(false);
-			for (Dict dic : dicts) {
-				prepStmt.setString(1, dic.getTerm());
-				prepStmt.addBatch();
-			}
+		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict.insert_SC1"),
+            new BatchPreparedStatementSetter() {
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, dicts.get(i).getId());
+                        ps.setString(2, dicts.get(i).getTerm());
+                    }
 
-			int[] updates = prepStmt.executeBatch();
-			ResultSet rs = prepStmt.getGeneratedKeys();
-			
-			// check if all inserts where successful
-			if (updates.length != dicts.size()) {
-				// all rows have to be inserted, consistency cannot be assured otherwise			
-				throw new SQLException("Error writing dict batch with expected size <" + dicts.size() + "> but has size of <" + updates.length + ">");					
-			}
-			//commit insert statements
-			prepStmt.getConnection().commit();
-			prepStmt.getConnection().setAutoCommit(true);
-			// loop through generated keyset (might not work with all jdbc drivers - there is no confirmed standard) for updating dict entries with corresponding database keys
-			
-			int dictEntry = 0;
-			while (rs!= null && rs.next()) {
-				logger.debug("key is: " + rs.getLong(1));
-				// setting dict primary key for consistency
-				dicts.get(dictEntry++).setId(rs.getLong(1));
-			}
-		}
-		catch (SQLException e) {
-			throw new RuntimeException("Error writing all dict entries -> rolling back transaction : " + e.getCause());
-		}
-		return true;
+                    public int getBatchSize() {
+                        return dicts.size();
+                    }
+                });
+        return updateCounts.length == dicts.size();
 	}
 
 

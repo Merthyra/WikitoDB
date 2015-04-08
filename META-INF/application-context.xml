@@ -27,6 +27,7 @@
 	    <constructor-arg name="date_format" value="${doc.date_format}"/>
 	    <constructor-arg name="language" value="${doc.lang}"/>
 	    <constructor-arg name="sc" value="${doc.scenario}"/>
+	    <constructor-arg name="maxLength" value="${doc.maxTermLength}"/>
 	</bean>
 	
 	<bean id="documentHandler" class="at.ac.tuwien.docspars.util.${doc.scenario}DocumentHandler">
@@ -51,8 +52,10 @@
 
 	<bean id="termDAO" class="at.ac.tuwien.docspars.io.db.TermDAODocsDB">
 		<constructor-arg name="dataSource" ref="dataSource" />
-	</bean>    
-	    
+	</bean>  
+	
+	<bean id="performanceMonitorAdvisor" class="at.ac.tuwien.docspars.io.services.PerformanceMonitorAdvisor"/>
+	
     <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below) -->
     <tx:advice id="txAdvice" transaction-manager="txManager">
         <!-- the transactional semantics... -->
@@ -65,10 +68,16 @@
     </tx:advice>
 
     <!-- ensure that the above transactional advice runs for any execution of an operation defined by the PersistanceService interface -->
-    <aop:config proxy-target-class="true">
+    <aop:config>
         <aop:pointcut id="persistanceService" expression="execution(* at.ac.tuwien.docspars.io.services.PersistanceService.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="persistanceService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="persistanceService"/>        
     </aop:config>
+    
+    <aop:config>
+        <aop:pointcut id="springMonitoringPointcut" expression="execution(* at.ac.tuwien.docspars.io.db.*.*(..))"/>
+        <aop:advisor advice-ref="performanceMonitorAdvisor" pointcut-ref="springMonitoringPointcut"/>
+    </aop:config>
+	
 
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
     	<property name="dataSource" ref="dataSource"/>

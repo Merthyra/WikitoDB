@@ -37,8 +37,7 @@ public class DBPersistanceService implements PersistanceService {
 	}
 
 	@Override
-	public boolean updateBatch(List<Document> docs, List<Dict> dicts,
-			List<Term> terms) {
+	public boolean updateBatch(List<Document> docs, List<Dict> dicts, List<Term> terms) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -49,14 +48,13 @@ public class DBPersistanceService implements PersistanceService {
 		return false;
 	}
 	@Override
-	public Map<String, Dict> getDict() {
-		
+	public Map<String, Dict> getDict() {	
 		return dictDAO.getAll();
 	}
 	@Override
 	public Set<Long> getDocIDs() {
 		// TODO Auto-generated method stub
-		return null;
+		return docDAO.getDocIDs();
 	}
 	
 }

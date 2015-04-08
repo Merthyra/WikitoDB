@@ -21,12 +21,13 @@ public class SC1DocumentHandler extends DocumentHandler {
 
 	@Override
 	public void addPage(long docid, String title, Timestamp timestamp, List<String> text)  {
+		// add only new documents, with ids not already stored in the collection
 		if (!this.getPersistedDocs().contains(docid)) {
 			for (int i = 0; i < text.size(); i++) {
 				// check if dict already contains term
 				Dict tmpdic = null;
 				if (!this.getPersistedDict().containsKey(text.get(i))) {	
-					tmpdic = new SimpleDict(-1, text.get(i));
+					tmpdic = new SimpleDict(this.getNextID(), text.get(i));
 					this.getNewDictEntries().add(tmpdic);
 					this.getPersistedDict().put(text.get(i), tmpdic);
 				}
@@ -38,9 +39,5 @@ public class SC1DocumentHandler extends DocumentHandler {
 			this.getNewDocumentEntries().add(new Document(docid, title, timestamp, text.size()));
 			logger.debug("page "+ docid + " title: " + title + " timestamp:  " + timestamp+ "added");
 		}
-
 	}
-	
-	
-
 }

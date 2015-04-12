@@ -37,5 +37,9 @@ public class SimpleDict extends Dict{
 		return SQLStatements.getString("sql.dict.insert_SC1");
 	}
 	
+	public String toString() {
+		return this.getId() + " / " + this.getTerm();
+	}
+	
 
 }

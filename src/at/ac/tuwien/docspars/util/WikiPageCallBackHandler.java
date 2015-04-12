@@ -17,6 +17,7 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 	private final ProcessPropertiesHandler processProperties;
 	private final DocumentHandler docHandler;
 
+
 	public WikiPageCallBackHandler(ProcessPropertiesHandler processProperties, DocumentHandler docHandler) {
 		this.processProperties = processProperties;
 		this.docHandler = docHandler;
@@ -30,19 +31,18 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 			String text = page.getText() + " " + page.getTitle();
 			List<String> cleanTerms = null;
 			Timestamp tstmp = null;
+			String title = page.getTitle();
 			try {
 				// now using the Lucene EnglishAnalyzer to tokenize the String
-				cleanTerms = new DocumentTextProcessor(this.processProperties.getMaxTermLength()).clearUpText(text);
+				cleanTerms = DocumentTextProcessor.clearUpText(text);
+				title = DocumentTextProcessor.deAccent(title);
+				title = DocumentTextProcessor.trimTextTitle(title);
 				// converting String to Timestamp Datatype 	
-				SimpleDateFormat dateFormat = new SimpleDateFormat(processProperties.getDate_format());
-				tstmp = new java.sql.Timestamp(dateFormat.parse(page.getTimestamp()).getTime());
+				tstmp = DocumentTextProcessor.convertStringToSQLTimestamp(page.getTimestamp(), processProperties.getDate_format());
 			}	catch (ParsingDocumentException e1) {
 				logger.error("Error tokenizing Text Stream " + e1.getLocalizedMessage());
-			}	catch (ParseException e) {
-				logger.error("Cannot convert to Timeestamp " + page.getTimestamp() + " @ msg: " + e.getMessage());
-				tstmp = new Timestamp(System.currentTimeMillis());
-			}
-			docHandler.addPage(Long.parseLong(page.getID()), page.getTitle(), tstmp, cleanTerms); 
+			}	
+			docHandler.addPage(Long.parseLong(page.getID()), title, tstmp, cleanTerms); 
 			// if document handler store is as large as batch_size, the documents are being stored in the db
 			if ((processProperties.getProcessed_Page_Count() % processProperties.getBatch_size()) == 0) {
 				logger.debug("inserting "+this.processProperties.getBatch_size() + " docs up to " + this.processProperties.getProcessed_Page_Count());

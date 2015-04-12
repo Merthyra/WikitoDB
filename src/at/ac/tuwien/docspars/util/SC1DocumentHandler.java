@@ -19,6 +19,7 @@ public class SC1DocumentHandler extends DocumentHandler {
 		super(persistanceService);
 	}
 
+
 	@Override
 	public void addPage(long docid, String title, Timestamp timestamp, List<String> text)  {
 		// add only new documents, with ids not already stored in the collection

@@ -55,19 +55,21 @@ public class SC1DictDAODocsDB implements DictDAO{
 	}
 
 	@Override
-	public boolean add(List<Dict> dicts){		
+	public boolean add(final List<Dict> dicts){
 		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict.insert_SC1"),
-            new BatchPreparedStatementSetter() {
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setLong(1, dicts.get(i).getId());
-                        ps.setString(2, dicts.get(i).getTerm());
-                    }
 
-                    public int getBatchSize() {
-                        return dicts.size();
-                    }
-                });
-        return updateCounts.length == dicts.size();
+		new BatchPreparedStatementSetter() {
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				logger.trace("writing dict term " + dicts.get(i).toString() +  " " + i);
+				ps.setLong(1, dicts.get(i).getId());
+				ps.setString(2, dicts.get(i).getTerm());
+			}
+
+			public int getBatchSize() {
+				return dicts.size();
+			}
+		});
+		return updateCounts.length == dicts.size();
 	}
 
 

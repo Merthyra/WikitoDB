@@ -44,7 +44,7 @@
 			<appender-ref ref="error-log" level="error" />
 			<appender-ref ref="console-log" level="trace" />
 		</Logger>
-		<Root level="warn" additivity="false">
+		<Root level="trace" additivity="false">
 			<appender-ref ref="console-log" />
 			<appender-ref ref="error-log" level="error" />
 		</Root>

@@ -2,6 +2,7 @@ package at.ac.tuwien.docspars.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,10 @@ public abstract class DocumentHandler {
 	
 	@Deprecated
 	public DocumentHandler() {
+		this.persistService=null;
+		this.persistedDict = new HashMap<String, Dict>();
+		this.lastDictID = this.persistedDict.size() + 1;
+		this.persistedDocs = new HashSet<Long>();
 	}	
 	
 	public DocumentHandler(PersistanceService persistService) {

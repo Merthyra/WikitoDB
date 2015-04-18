@@ -9,16 +9,16 @@ import at.ac.tuwien.docspars.io.db.SQLStatements;
 public class TimestampedDict extends Dict {
 
 	private Timestamp addedTimestamp;
-	private Timestamp removedTimestamp;	
+//	private Timestamp removedTimestamp;	
 	private int docFQ;	
-	private int docTF;
+	private TimestampedDict predescessor;
 	
-	public TimestampedDict(long id, String term, Timestamp added, Timestamp removed, int doc_fq, int term_fq) {
+	public TimestampedDict(long id, String term, Timestamp added, int doc_fq) {
 		super(id, term);
 		this.addedTimestamp=added;
-		this.removedTimestamp=removed;
+//		this.removedTimestamp=removed;
 		this.docFQ=doc_fq;
-		this.docTF=term_fq;
+		this.predescessor = null;
 	}
 	
 	@Override
@@ -27,32 +27,14 @@ public class TimestampedDict extends Dict {
 	}
 
 	@Override
-	public Timestamp getRemovedTimeStamp() {
-		return this.removedTimestamp;		
-	}
-
-	@Override
 	public int getDocFQ() {
 		return this.docFQ;		
 	}
-
-	@Override
-	public int getDocTF() {
-		return this.docTF;		
-	}
-
 	/**
 	 * @param addedTimestamp the addedTimestamp to set
 	 */
 	public void setAddedTimestamp(Timestamp addedTimestamp) {
 		this.addedTimestamp = addedTimestamp;
-	}
-
-	/**
-	 * @param removedTimestamp the removedTimestamp to set
-	 */
-	public void setRemovedTimestamp(Timestamp removedTimestamp) {
-		this.removedTimestamp = removedTimestamp;
 	}
 
 	/**
@@ -62,26 +44,33 @@ public class TimestampedDict extends Dict {
 		this.docFQ = docFQ;
 	}
 
-	/**
-	 * @param docTF the docTF to set
-	 */
-	public void setDocTF(int docTF) {
-		this.docTF = docTF;
-	}
-
 	@Override
-	public void setDict(ResultSet rs) throws SQLException {
-		super.setDict(rs);
-		this.addedTimestamp = rs.getTimestamp(3);
-		this.removedTimestamp = rs.getTimestamp(4);
-		this.docFQ = rs.getInt(5);
-		this.docTF = rs.getInt(6);
+	public void setDict(Dict dict) {
+		super.setDict(dict);
+		this.addedTimestamp = dict.getAddedTimeStamp();
+		this.docFQ = dict.getDocFQ();
 	}
 
 	@Override
 	public String getInsertString() {
 		// TODO Auto-generated method stub
 		return SQLStatements.getString("sql.dict.insert_SC2");
+	}
+	
+	/**
+	 * A Dict Element for Scenario 2 may have a predescessor in the dict table with the same term name but added at a different time
+	 * This method always returns the dict entry which is has the closest time of generation (document timestamp) of all dict terms
+	 * 	 * @return Dict Element form Document with the succeeding most current timestamp
+	 */
+	public TimestampedDict getPredecessor() {
+		// TODO Auto-generated method stub
+		return this.predescessor;
+	}
+	
+	
+	public void setPredecessor(TimestampedDict dict) {
+		// TODO Auto-generated method stub
+		this.predescessor = dict;	
 	}
 	
 }

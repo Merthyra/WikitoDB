@@ -20,11 +20,9 @@ public abstract class Dict {
 	 * @param id
 	 * @param term
 	 */
-	public Dict(long id, String term) {
-		
+	public Dict(long id, String term) {	
 		this.id = id;
 		this.term = term;
-
 	}
 
 	/**
@@ -36,7 +34,6 @@ public abstract class Dict {
 		
 		this.id = id;
 		this.term = term;
-
 	}
 	
 	
@@ -63,31 +60,21 @@ public abstract class Dict {
 		return dict.getAddedTimeStamp();
 	}
 	
-	public Timestamp getRemovedTimeStamp(Dict dict) {
-		return dict.getRemovedTimeStamp();
-	}
-	
 	public void getDocFQ(Dict dict) {
 		dict.getDocFQ();
 	}
 	
-	public void getDocTF(Dict dict) {
-		dict.getDocTF();
-	}
-	
 	public abstract Timestamp getAddedTimeStamp();
 	
-	public abstract Timestamp getRemovedTimeStamp();
 	
 	public abstract int getDocFQ(); 
 	
-	public abstract int getDocTF();
-	
-	public void setDict(ResultSet rs) throws SQLException {
-		this.id = (rs.getLong(1));
-		this.term = (rs.getString(2));
+	public void setDict(Dict dict) {
+		this.id = dict.getId();
+		this.term = dict.getTerm();
 	}
 	
 	public abstract String getInsertString();
+	
 	
 }

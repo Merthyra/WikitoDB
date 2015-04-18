@@ -32,19 +32,19 @@ Scenariopath Nr 2 (sc2)
 
 Also consists of three tables dict, terms and docs
 
-1) in addition to the dict table in scenario 1, information about timely validity and the tf-idf values are added to the dict table
+1) in addition to the dict table in scenario 1, information about timely validity and the df values are added to the dict table
 
 			  dict
-|-----------------------------------------------------------------------------------------------|
-|		tid		|		term	|		added	|		rem		|		df		|		tf		|
-|_______________|_______________|_______________|_______________|_______________|_______________|
+|--------------------------------------------------------------------------------
+|		tid		|		term	|		added	|		rem		|		df		|
+|_______________|_______________|_______________|_______________|_______________|
 
-2) the table terms remains unchanged to scenario 1
+2) the table terms get the tf value assigned additionally / the pos column may be unused or dropped
 
 			  terms
-|-----------------------------------------------|
-|		tid		|		did		|		pos		|
-|_______________|_______________|_______________|
+|-----------------------------------------------|---------------|
+|		tid		|		did		|		pos		|		tf		|
+|_______________|_______________|_______________|_______________|
 
 3) the table terms remains unchanged to scenario 1
 

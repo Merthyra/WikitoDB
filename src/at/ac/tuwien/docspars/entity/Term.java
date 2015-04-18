@@ -5,11 +5,20 @@ public class Term {
 	private Dict dic;
 	private long docid;
 	private int position;
+	private int tf;
 	
-	public Term(Dict dic, long docid, int position) {
+	public Term(Dict dic, long docid, int pos) {
 		this.dic = dic;
 		this.docid = docid;
-		this.position = position;
+		this.position = pos;
+		this.tf = -1;
+	}
+	
+	public Term(Dict dic, long docid,  int pos, int tf) {
+		this.dic = dic;
+		this.docid = docid;
+		this.position = pos;
+		this.tf = 0;
 	}
 	
 	public Term() {
@@ -33,6 +42,15 @@ public class Term {
 	}
 	public void setPosition(int position) {
 		this.position = position;
+	}
+	
+	public int getTF() {
+		return this.tf;
+	}
+	
+	
+	public void setTF(int tf)  {
+		this.tf = tf;
 	}
 		
 }

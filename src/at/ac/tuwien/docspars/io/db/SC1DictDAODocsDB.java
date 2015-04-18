@@ -19,10 +19,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class SC1DictDAODocsDB implements DictDAO{
 
-	private static final Logger logger = LogManager.getLogger(SC1DictDAODocsDB.class.getName());
+	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
 	private JdbcTemplate jdbcTemplate;
 
 	@SuppressWarnings("unused")

@@ -13,10 +13,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class TermDAODocsDB implements TermDAO{
 
-	private static final Logger logger = LogManager.getLogger(TermDAODocsDB.class.getName());
+	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
 	private JdbcTemplate jdbcTemplate;
 	
 	@SuppressWarnings("unused")

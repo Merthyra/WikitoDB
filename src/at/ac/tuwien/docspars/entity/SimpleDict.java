@@ -16,20 +16,11 @@ public class SimpleDict extends Dict{
 		return null;
 	}
 
-	@Override
-	public Timestamp getRemovedTimeStamp() {
-		return null;
-	}
 
 	@Override
 	public int getDocFQ() {
 		return -1;
 		
-	}
-
-	@Override
-	public int getDocTF() {
-		return -1;	
 	}
 
 	@Override
@@ -40,6 +31,6 @@ public class SimpleDict extends Dict{
 	public String toString() {
 		return this.getId() + " / " + this.getTerm();
 	}
-	
+
 
 }

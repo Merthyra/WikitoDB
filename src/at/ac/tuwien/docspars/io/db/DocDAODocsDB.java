@@ -18,10 +18,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class DocDAODocsDB implements DocDAO {
 
-	private static final Logger logger = LogManager.getLogger(DocDAODocsDB.class.getName());
+	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
 
 	private JdbcTemplate jdbcTemplate;
 

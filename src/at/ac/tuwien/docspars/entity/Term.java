@@ -18,7 +18,7 @@ public class Term {
 		this.dic = dic;
 		this.docid = docid;
 		this.position = pos;
-		this.tf = 0;
+		this.tf = tf;
 	}
 	
 	public Term() {

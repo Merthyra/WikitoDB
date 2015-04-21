@@ -43,7 +43,7 @@ public class SC2DictDAODocsDB implements DictDAO {
 			}
 
 		};
-		return (Map<String,Dict>) this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read_SC2"),resEx);
+		return (Map<String,Dict>) this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"),resEx);
 	}
 
 	@Override

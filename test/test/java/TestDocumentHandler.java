@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.entity.TimestampedDict;
 import at.ac.tuwien.docspars.util.DocumentHandler;
 import at.ac.tuwien.docspars.util.SC2DocumentHandler;
@@ -28,10 +29,6 @@ public class TestDocumentHandler {
 	@Test
 	public void testSC2AddDocumentBehavior() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
-		String tStampA = df.format(new Timestamp(4000));
-		String tStampB = df.format(new Timestamp(3000));
-		String tStampC = df.format(new Timestamp(4000));
-		String tStampD = df.format(new Timestamp(4000));		
 		
 		String term1 = "AB";
 		String term2 = "AC";
@@ -60,6 +57,12 @@ public class TestDocumentHandler {
 		terms.add(term3); //4
 		terms.add(term1); //0
 		terms.add(term4); //2		
+		terms.add(term8); //3
+		terms.add(term8); //3
+		terms.add(term8); //3
+		terms.add(term8); //3
+		terms.add(term8); //3
+		
 		docHandler.addPage(20, "DOCUMENT B", new Timestamp(2000), terms);
 		newDictEntries = docHandler.getNewDictEntries();
 		
@@ -86,20 +89,32 @@ public class TestDocumentHandler {
 		newDictEntries = docHandler.getNewDictEntries();
 
 		for (Dict dic : newDictEntries) {
-			int level = 0;
+			int LEVEL = 0;
 			TimestampedDict dict = (TimestampedDict) dic;
-			while (dict!=null) {
-				System.out.println(getStringWithLengthAndFilledWithCharacter(level,'-')+ "> " + dict.getTerm() + " " + dict.getAddedTimeStamp().getTime());
+			while (dict !=null) {
+				System.out.println(getStringWithLengthAndFilledWithCharacter(LEVEL,'-')+ "> " + dict.getTerm() + " " + dict.getAddedTimeStamp().getTime() + " df: " + dict.getDocFQ());
 				dict = dict.getPredecessor();
-				level++;
+				LEVEL++;
 			}
 		}
-		
+		// are documents stored and ordered in the rith manner
 		assertEquals(((TimestampedDict) newDictEntries.get(3)).getAddedTimeStamp(), new Timestamp(5000));
-		assertEquals(((TimestampedDict) newDictEntries.get(3)).getPredecessor().getAddedTimeStamp(), new Timestamp(5000));
-		
-
-		
+		assertEquals(((TimestampedDict) newDictEntries.get(3)).getPredecessor().getAddedTimeStamp(), new Timestamp(3000));
+		assertEquals(((TimestampedDict) newDictEntries.get(3)).getPredecessor().getPredecessor().getAddedTimeStamp(), new Timestamp(2000));
+		assertEquals(((TimestampedDict) newDictEntries.get(0)).getPredecessor().getAddedTimeStamp(), new Timestamp(2000));
+		// check if document frequency values were assigned properly
+		assertSame(((TimestampedDict) newDictEntries.get(0)).getPredecessor().getDocFQ(), 1);
+		assertSame(((TimestampedDict) newDictEntries.get(0)).getDocFQ(), 2);
+		assertSame(((TimestampedDict) newDictEntries.get(3)).getDocFQ(), 3);
+		assertSame(((TimestampedDict) newDictEntries.get(3)).getPredecessor().getDocFQ(), 2);
+		assertSame(((TimestampedDict) newDictEntries.get(3)).getPredecessor().getPredecessor().getDocFQ(), 1);
+		//check term frequencz constraints
+		assertSame(docHandler.getNewTermEntries().get(3).getTF(), 6);
+		assertSame(docHandler.getNewTermEntries().get(10).getTF(), 2);
+		assertSame(docHandler.getNewTermEntries().get(12).getTF(), 1);	
+//		for (Term term: docHandler.getNewTermEntries()) {
+//			System.out.println("Doc: " + term.getDocid() + " Term: " + term.getDict().getTerm() + " id: " + term.getTF());
+//		}
 	}
 	
 	
@@ -111,6 +126,8 @@ public class TestDocumentHandler {
 		  }
 		  return "";
 		}
+	
+	
 	
 
 }

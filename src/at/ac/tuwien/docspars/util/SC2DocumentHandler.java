@@ -1,15 +1,12 @@
 package at.ac.tuwien.docspars.util;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.entity.TimestampedDict;
@@ -18,7 +15,10 @@ import at.ac.tuwien.docspars.io.services.PersistanceService;
 public class SC2DocumentHandler extends DocumentHandler{
 
 	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
+	
+	private HashMap<String, Term> beenThere;
 
+	@SuppressWarnings("deprecation")
 	public SC2DocumentHandler() {
 		super();
 	}
@@ -34,7 +34,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 		logger.debug("adding page " + docid + " / " + title + " timestamp");
 		if (!this.getPersistedDocs().contains(docid)) {	
 			// data structure stores all dict entries within a document to access tf and df values
-			HashMap<String, Term> beenThere = new HashMap<String, Term>();
+			beenThere = new HashMap<String, Term>();
 			for (int i = 0; i < text.size(); i++) {
 				// check if dict already contains term			
 				TimestampedDict tmpdic = null;
@@ -45,6 +45,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 					this.getNewDictEntries().add(tmpdic);
 					this.getPersistedDict().put(text.get(i), tmpdic);
 					// create new term and add it to the temporary list to be stored
+					//public Term(Dict dic, long docid,  int pos, int tf) 
 					Term t = new Term(tmpdic, docid, i+1, 1);
 					beenThere.put(tmpdic.getTerm(),t);
 					this.getNewTermEntries().add(t);
@@ -55,15 +56,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 					// receive pointer to most up to date dictterm
 					tmpdic = (TimestampedDict) this.getPersistedDict().get(text.get(i));
 					// now create new dict element to be lined up in dict entries queue as copy of the persisted element but with updated timestamp
-					TimestampedDict newDictTerm = new TimestampedDict(tmpdic.getId(), text.get(i), timestamp, tmpdic.getDocFQ() + 1);
-					// relink dict entries and update df values for all others
-					TimestampedDict newOldestDictTerm = linupDict(tmpdic, newDictTerm);
-					if (newOldestDictTerm != null) {
-						logger.debug("setting new first element for " + newOldestDictTerm.getTerm() + " timestamp: " + newOldestDictTerm.getAddedTimeStamp().getTime());
-						Dict temp = this.getPersistedDict().put(text.get(i), newOldestDictTerm);
-						System.out.println(temp.getTerm() + "    " + temp.getAddedTimeStamp().getTime());
-						//this.getPersistedDict().replace(text.get(i), newOldestDictTerm);
-					}
+					TimestampedDict newDictTerm = new TimestampedDict(tmpdic.getId(), text.get(i), timestamp, tmpdic.getDocFQ());
 
 					// the term for the current document has already been found in the same document
 					if (beenThere.containsKey(tmpdic.getTerm())){
@@ -81,6 +74,8 @@ public class SC2DocumentHandler extends DocumentHandler{
 						// add it to termslist to be written to the db
 						this.getNewTermEntries().add(t);
 						// now relink dict entries with already stored dicts (dict table contains dict elements, but the most current one must be in front, 
+						// relink dict entries and update df values for all others
+						linupDict(tmpdic, newDictTerm);
 					}	
 				}
 
@@ -96,24 +91,28 @@ public class SC2DocumentHandler extends DocumentHandler{
 	 * the new dict according to the timestamp provided
 	 * @param pointer to the most current dict term instance or null if first dict term doesnt change
 	 */
-	private TimestampedDict linupDict(TimestampedDict oldD, TimestampedDict newD) {
+	private void linupDict(TimestampedDict oldD, TimestampedDict newD) {
 		// find all dict entries with the same term and id	
 		if (oldD.getAddedTimeStamp().compareTo(newD.getAddedTimeStamp()) <=  0) {
-			newD.setPredecessor(oldD);
-			newD.setDocFQ(newD.getDocFQ()+1);
-			return newD;
-		}			
-		else if (oldD.getPredecessor() == null || oldD.getPredecessor().getAddedTimeStamp().compareTo(newD.getAddedTimeStamp()) <= 0) {
-			newD.setPredecessor(oldD.getPredecessor());
+			oldD.setPredecessor(oldD.clone());					
+			if (oldD.getAddedTimeStamp().compareTo(newD.getAddedTimeStamp()) <  0) {
+				oldD.setDocFQ(oldD.getDocFQ()+1);
+			}
+			oldD.setAddedTimestamp(newD.getAddedTimeStamp());
+		} 
+		else if (oldD.getPredecessor() == null || oldD.getPredecessor().getAddedTimeStamp().compareTo(newD.getAddedTimeStamp()) < 0) {
+//			newD.setDocFQ(oldD.getDocFQ()-1);
+			oldD.setDocFQ(newD.getDocFQ()+1);
+			newD.setPredecessor(oldD.getPredecessor());		
 			oldD.setPredecessor(newD);
 		}
-		else {
-			
-			Dict temp = oldD;
-			oldD.setDocFQ(oldD.getDocFQ()+1);
+		else if ( oldD.getPredecessor().getAddedTimeStamp().compareTo(newD.getAddedTimeStamp()) == 0) {
 			linupDict(oldD.getPredecessor(), newD);
 		}
-		return null;
+		else {	
+			oldD.setDocFQ(oldD.getDocFQ()+1);
+			newD.setDocFQ(newD.getDocFQ()-1);
+			linupDict(oldD.getPredecessor(), newD);
+		}
 	}
-	
 }

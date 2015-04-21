@@ -50,7 +50,7 @@
 		<constructor-arg name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="termDAO" class="at.ac.tuwien.docspars.io.db.TermDAODocsDB">
+	<bean id="termDAO" class="at.ac.tuwien.docspars.io.db.${doc.scenario}TermDAODocsDB">
 		<constructor-arg name="dataSource" ref="dataSource" />
 	</bean>  
 	

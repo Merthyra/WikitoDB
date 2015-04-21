@@ -45,7 +45,7 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 			docHandler.addPage(Long.parseLong(page.getID()), title, tstmp, cleanTerms); 
 			// if document handler store is as large as batch_size, the documents are being stored in the db
 			if ((processProperties.getProcessed_Page_Count() % processProperties.getBatch_size()) == 0) {
-				logger.debug("inserting "+this.processProperties.getBatch_size() + " docs up to " + this.processProperties.getProcessed_Page_Count());
+				logger.debug("inserting " + this.processProperties.getBatch_size() + " docs up to " + this.processProperties.getProcessed_Page_Count());
 				this.docHandler.flushInsert();
 				this.docHandler.reset();
 			}

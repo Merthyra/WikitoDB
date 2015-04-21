@@ -73,4 +73,12 @@ public class TimestampedDict extends Dict {
 		this.predescessor = dict;	
 	}
 	
+	@Override
+	public TimestampedDict clone() {	
+		TimestampedDict cloneDict = new TimestampedDict(this.getId(), this.getTerm(),  this.addedTimestamp, this.docFQ);
+		cloneDict.setPredecessor(this.getPredecessor());
+		return cloneDict;
+		
+	}
+	
 }

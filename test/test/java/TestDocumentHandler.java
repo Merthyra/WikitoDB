@@ -46,7 +46,7 @@ public class TestDocumentHandler {
 		terms.add(term1); //0
 		terms.add(term2); //1
 		terms.add(term4); //2	
-		docHandler.addPage(10, "DOCUMENT A", new Timestamp(4000), terms);	
+		docHandler.addPage(10, 5,"DOCUMENT A", new Timestamp(4000), terms);	
 		List<Dict> newDictEntries = docHandler.getNewDictEntries();
 		
 		assertEquals(newDictEntries.get(1).getTerm(), term2);
@@ -63,7 +63,7 @@ public class TestDocumentHandler {
 		terms.add(term8); //3
 		terms.add(term8); //3
 		
-		docHandler.addPage(20, "DOCUMENT B", new Timestamp(2000), terms);
+		docHandler.addPage(20, 10, "DOCUMENT B", new Timestamp(2000), terms);
 		newDictEntries = docHandler.getNewDictEntries();
 		
 		assertEquals(newDictEntries.get(0).getTerm(), term1);
@@ -78,14 +78,14 @@ public class TestDocumentHandler {
 		terms.add(term5); //6
 		terms.add(term7); //7
 		terms.add(term2); //1		
-		docHandler.addPage(30, "DOCUMENT C", new Timestamp(3000), terms);
+		docHandler.addPage(30,10, "DOCUMENT C", new Timestamp(3000), terms);
 		System.out.println(docHandler.getPersistedDict());	
 		terms.clear();
 		terms.add(term7); //7
 		terms.add(term4); //2
 		terms.add(term8); //3
 		terms.add(term9); //8		
-		docHandler.addPage(40, "DOCUMENT D", new Timestamp(5000), terms);
+		docHandler.addPage(40,50, "DOCUMENT D", new Timestamp(5000), terms);
 		newDictEntries = docHandler.getNewDictEntries();
 
 		for (Dict dic : newDictEntries) {

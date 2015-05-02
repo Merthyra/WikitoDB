@@ -19,26 +19,25 @@ public class SC1DocumentHandler extends DocumentHandler {
 		super(persistanceService);
 	}
 
-
 	@Override
-	public void addPage(long docid, String title, Timestamp timestamp, List<String> text)  {
+	public void addPage(int pageid, int revid, String title, Timestamp timestamp, List<String> text)  {
 		// add only new documents, with ids not already stored in the collection
-		if (!this.getPersistedDocs().contains(docid)) {
+		if (!this.getPersistedDocs().containsKey(pageid) || this.getPersistedDocs().containsValue(pageid, new Document(pageid, revid, null, null, 10))) {
 			for (int i = 0; i < text.size(); i++) {
 				// check if dict already contains term
 				Dict tmpdic = null;
 				if (!this.getPersistedDict().containsKey(text.get(i))) {	
-					tmpdic = new SimpleDict(this.getNextID(), text.get(i));
+					tmpdic = new SimpleDict(this.getNextDictID(), text.get(i));
 					this.getNewDictEntries().add(tmpdic);
 					this.getPersistedDict().put(text.get(i), tmpdic);
 				}
 				else {				
 					tmpdic = this.getPersistedDict().get(text.get(i));
 				}
-				this.getNewTermEntries().add(new Term(tmpdic, docid, i+1));
+				this.getNewTermEntries().add(new Term(tmpdic, pageid, revid, i+1));
 			}
-			this.getNewDocumentEntries().add(new Document(docid, title, timestamp, text.size()));
-			logger.debug("page "+ docid + " title: " + title + " timestamp:  " + timestamp+ "added");
+			this.getNewDocumentEntries().add(new Document(pageid, revid, title, timestamp, text.size()));
+			logger.debug("page "+ pageid + " title: " + title + " timestamp:  " + timestamp+ "added");
 		}
 	}
 }

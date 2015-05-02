@@ -3,12 +3,13 @@ package at.ac.tuwien.docspars.io.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections4.map.MultiValueMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -42,18 +43,19 @@ public class DocDAODocsDB implements DocDAO {
 	}
 
 	@Override
-	public Set<Long> getDocIDs() {	
-		ResultSetExtractor<Set<Long>> resEx = new ResultSetExtractor<Set<Long>>() {	
+	public MultiValueMap<Integer, Document> getAllDocs() {	
+		ResultSetExtractor<MultiValueMap<Integer, Document>> resEx = new ResultSetExtractor<MultiValueMap<Integer, Document>>() {	
 			@Override
-			public Set<Long> extractData(ResultSet res) throws SQLException, DataAccessException {
-				HashSet<Long> docids = new HashSet<Long>();
+			public MultiValueMap<Integer, Document> extractData(ResultSet res) throws SQLException, DataAccessException {
+				MultiValueMap<Integer, Document> docids = new MultiValueMap<Integer,Document>();
 				while (res.next()) {
-					docids.add(res.getLong("docid"));
+					Document doc = new Document(res.getInt("pageid"), res.getInt("revid"), res.getString("name"), res.getTimestamp("added"), res.getInt("len"));					
+					docids.put(doc.getPageId(), doc);					
 				}
 				return docids;		
 			}	
 		};
-		return (Set<Long>) this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"),resEx);	
+		return this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"),resEx);	
 	}
 
 	@Override
@@ -66,11 +68,12 @@ public class DocDAODocsDB implements DocDAO {
 		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.insert"), new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				//(docid, added, removed, name, len) 
-				ps.setLong		(1, docs.get(i).getId());
-				ps.setTimestamp (2, docs.get(i).getAdded_timestamp());
-				ps.setTimestamp (3, docs.get(i).getRemoved_timestamp());
-				ps.setString	(4, docs.get(i).getTitle());
-				ps.setInt		(5, docs.get(i).getLength());
+				ps.setInt		(1, docs.get(i).getPageId());
+				ps.setInt		(2, docs.get(i).getRevId());
+				ps.setTimestamp (3, docs.get(i).getAdded_timestamp());
+				ps.setTimestamp (4, docs.get(i).getRemoved_timestamp());
+				ps.setString	(5, docs.get(i).getTitle());
+				ps.setInt		(6, docs.get(i).getLength());
 			}
 			public int getBatchSize() {
 				return docs.size();

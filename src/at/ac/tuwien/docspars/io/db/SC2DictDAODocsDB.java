@@ -37,7 +37,7 @@ public class SC2DictDAODocsDB implements DictDAO {
 			public Map<String, Dict> extractData(ResultSet res) throws SQLException, DataAccessException {
 				HashMap<String, Dict> dict = new HashMap<String,Dict>();
 				while (res.next()) {
-					dict.put(res.getString("term"), new TimestampedDict(res.getLong("tid"), res.getString("term"), res.getTimestamp("added"), res.getInt("df")));
+					dict.put(res.getString("term"), new TimestampedDict(res.getInt("tid"), res.getString("term"), res.getTimestamp("added"), res.getInt("df")));
 				}
 			return dict;		
 			}

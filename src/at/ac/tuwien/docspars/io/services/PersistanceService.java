@@ -2,7 +2,8 @@ package at.ac.tuwien.docspars.io.services;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import org.apache.commons.collections4.map.MultiValueMap;
 
 import at.ac.tuwien.docspars.entity.*;
 
@@ -16,6 +17,6 @@ public interface PersistanceService {
 	
 	public Map<String, Dict> getDict();
 	
-	public Set<Long> getDocIDs();
+	public MultiValueMap<Integer, Document> getDocIDs();
 		
 }

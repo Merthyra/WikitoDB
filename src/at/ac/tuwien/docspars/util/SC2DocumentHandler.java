@@ -29,24 +29,25 @@ public class SC2DocumentHandler extends DocumentHandler{
 
 
 	@Override
-	public void addPage(long docid, String title, Timestamp timestamp, List<String> text)  {
+	public void addPage(int pageID, int revID, String title, Timestamp timestamp, List<String> text)  {
 		// add only new documents, with ids not already stored in the collection
-		logger.debug("adding page " + docid + " / " + title + " timestamp");
-		if (!this.getPersistedDocs().contains(docid)) {	
+		logger.debug("adding page " + pageID + " / " + title + " timestamp");
+		if (!this.getPersistedDocs().containsKey(pageID) || this.getPersistedDocs().containsValue(pageID, new Document(pageID, revID, null, null , 0))) {	
 			// data structure stores all dict entries within a document to access tf and df values
 			beenThere = new HashMap<String, Term>();
+			long newDocID = this.getNextDocID();
 			for (int i = 0; i < text.size(); i++) {
 				// check if dict already contains term			
 				TimestampedDict tmpdic = null;
 				if (!this.getPersistedDict().containsKey(text.get(i))) {	
 					// first time a new dict element is beeing created, the df value is set to one (1 document, the current document contains it)
 					// the tf value is also set to 1, as it corresponds to the first occurrence within the document
-					tmpdic = new TimestampedDict(this.getNextID(), text.get(i), timestamp, 1);
+					tmpdic = new TimestampedDict(this.getNextDictID(), text.get(i), timestamp, 1);
 					this.getNewDictEntries().add(tmpdic);
 					this.getPersistedDict().put(text.get(i), tmpdic);
 					// create new term and add it to the temporary list to be stored
 					//public Term(Dict dic, long docid,  int pos, int tf) 
-					Term t = new Term(tmpdic, docid, i+1, 1);
+					Term t = new Term(tmpdic, pageID, revID, i+1, 1);
 					beenThere.put(tmpdic.getTerm(),t);
 					this.getNewTermEntries().add(t);
 
@@ -69,7 +70,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 						// increase the overall document frequency of the dict term and add term to found documents
 						// tmpdic.setDocFQ(tmpdic.getDocFQ()+1);
 						// create new term 
-						Term t = new Term(tmpdic, docid, i+1, 1);
+						Term t = new Term(tmpdic,  pageID, revID, i+1, 1);
 						beenThere.put(tmpdic.getTerm(), t);
 						// add it to termslist to be written to the db
 						this.getNewTermEntries().add(t);
@@ -80,8 +81,8 @@ public class SC2DocumentHandler extends DocumentHandler{
 				}
 
 			}
-			this.getNewDocumentEntries().add(new Document(docid, title, timestamp, text.size()));
-			logger.debug("page "+ docid + " title: " + title + " timestamp:  " + timestamp+ "added");
+			this.getNewDocumentEntries().add(new Document(pageID, revID, title, timestamp, text.size()));
+			logger.debug("page "+ pageID + " title: " + title + " timestamp:  " + timestamp+ "added");
 		}
 	}
 	

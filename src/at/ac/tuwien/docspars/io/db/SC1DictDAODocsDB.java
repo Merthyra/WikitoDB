@@ -42,7 +42,7 @@ public class SC1DictDAODocsDB implements DictDAO{
 			public Map<String, Dict> extractData(ResultSet res) throws SQLException, DataAccessException {
 				HashMap<String, Dict> dict = new HashMap<String,Dict>();
 				while (res.next()) {
-					dict.put(res.getString("term"), new SimpleDict(res.getLong("tid"), res.getString("term")));
+					dict.put(res.getString("term"), new SimpleDict(res.getInt("tid"), res.getString("term")));
 				}
 				return dict;		
 			}

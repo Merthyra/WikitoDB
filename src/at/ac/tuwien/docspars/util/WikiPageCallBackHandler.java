@@ -42,7 +42,7 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 			}	catch (ParsingDocumentException e1) {
 				logger.error("Error tokenizing Text Stream " + e1.getLocalizedMessage());
 			}	
-			docHandler.addPage(Long.parseLong(page.getID()), title, tstmp, cleanTerms); 
+			docHandler.addPage(Integer.parseInt(page.getID()), Integer.parseInt(page.getRevid()), title, tstmp, cleanTerms); 
 			// if document handler store is as large as batch_size, the documents are being stored in the db
 			if ((processProperties.getProcessed_Page_Count() % processProperties.getBatch_size()) == 0) {
 				logger.debug("inserting " + this.processProperties.getBatch_size() + " docs up to " + this.processProperties.getProcessed_Page_Count());

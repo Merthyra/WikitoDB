@@ -1,6 +1,10 @@
 package at.ac.tuwien.docspars.io.daos;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+
+import javax.print.Doc;
+
+import org.apache.commons.collections4.map.MultiValueMap;
 
 import at.ac.tuwien.docspars.entity.Document;
 
@@ -12,6 +16,6 @@ public interface DocDAO {
 	
 	public boolean remove(List<Document> docs);
 	
-	public Set<Long> getDocIDs();
+	public MultiValueMap<Integer, Document> getAllDocs();
 	
 }

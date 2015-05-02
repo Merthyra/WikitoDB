@@ -6,7 +6,7 @@ import at.ac.tuwien.docspars.io.db.SQLStatements;
 
 public class SimpleDict extends Dict{
 
-	public SimpleDict(long id, String term) {
+	public SimpleDict(int id, String term) {
 		super(id, term);
 		// TODO Auto-generated constructor stub
 	}

@@ -2,7 +2,8 @@ package at.ac.tuwien.docspars.io.services.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import org.apache.commons.collections4.map.MultiValueMap;
 
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
@@ -10,6 +11,7 @@ import at.ac.tuwien.docspars.io.daos.DocDAO;
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class DBPersistanceService implements PersistanceService {
@@ -29,6 +31,7 @@ public class DBPersistanceService implements PersistanceService {
 	}
 	
 	@Override
+	@PerformanceMonitored
 	public boolean addBatch(List<Document> docs, List<Dict> dicts, List<Term> terms) {	
 		dictDAO.add(dicts);
 		docDAO.add(docs);
@@ -37,6 +40,7 @@ public class DBPersistanceService implements PersistanceService {
 	}
 
 	@Override
+	@PerformanceMonitored
 	public boolean updateBatch(List<Document> docs, List<Dict> dicts, List<Term> terms) {
 		// TODO Auto-generated method stub
 		return false;
@@ -47,14 +51,17 @@ public class DBPersistanceService implements PersistanceService {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
 	@Override
+	@PerformanceMonitored
 	public Map<String, Dict> getDict() {	
 		return dictDAO.getAll();
 	}
+	
 	@Override
-	public Set<Long> getDocIDs() {
-		// TODO Auto-generated method stub
-		return docDAO.getDocIDs();
+	@PerformanceMonitored
+	public MultiValueMap<Integer, Document> getDocIDs() {
+		return docDAO.getAllDocs();
 	}
 	
 }

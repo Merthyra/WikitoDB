@@ -2,21 +2,41 @@ package at.ac.tuwien.docspars.entity;
 
 import java.sql.Timestamp;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Document {
 	
+	private int pageId;
+	private int revId;
+	private String title;
 	private Timestamp added_timestamp;
 	private Timestamp removed_timestamp;
-	private long id;
-	private String title;
 	private int length;
 	
-	public Document(long id, String title, Timestamp added, int length) {
+	public Document(int pageID, int revID, String title, Timestamp added, int length) {
 		this.added_timestamp = added;
-		this.id = id;
+		this.removed_timestamp = null;
 		this.title = title;
 		this.length = length;
+		this.pageId = pageID;
+		this.revId = revID;	
 	}
 	
+	/**
+	 * @return the pageId
+	 */
+	public int getPageId() {
+		return pageId;
+	}
+
+	/**
+	 * @param pageId the pageId to set
+	 */
+	public void setPageId(int pageId) {
+		this.pageId = pageId;
+	}
+
 	@SuppressWarnings("unused")
 	private Document() {
 		
@@ -34,12 +54,7 @@ public class Document {
 	public void setRemoved_timestamp(Timestamp removed_timestamp) {
 		this.removed_timestamp = removed_timestamp;
 	}
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -53,6 +68,38 @@ public class Document {
 	
 	public void setLength(int length) {
 		this.length = length;
+	}
+
+	/**
+	 * @return the revId
+	 */
+	public int getRevId() {
+		return revId;
+	}
+
+	/**
+	 * @param revId the revId to set
+	 */
+	public void setRevId(int revId) {
+		this.revId = revId;
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(5, 19).append(this.pageId).append(this.revId).toHashCode();	
+	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) { return false; }
+		   if (obj == this) { return true; }
+		   if (obj.getClass() != getClass()) {
+		     return false;
+		   }
+		   Document rhs = (Document) obj;
+		   return new EqualsBuilder().append(this.pageId, rhs.pageId).append(this.revId, rhs.revId).isEquals();	
 	}
 	
 }

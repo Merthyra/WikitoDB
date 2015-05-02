@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 public abstract class Dict {
 
-	private long id;	
+	private int id;	
 	private String term;	
 	
 	@SuppressWarnings("unused")
@@ -18,7 +18,7 @@ public abstract class Dict {
 	 * @param id
 	 * @param term
 	 */
-	public Dict(long id, String term) {	
+	public Dict(int id, String term) {	
 		this.id = id;
 		this.term = term;
 	}
@@ -28,19 +28,19 @@ public abstract class Dict {
 	 * @param id
 	 * @param term
 	 */
-	public Dict(long id, String term, String added, String removed, int doc_fq, int term_fq) {
+	public Dict(int id, String term, String added, String removed, int doc_fq, int term_fq) {
 		
 		this.id = id;
 		this.term = term;
 	}
 	
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
 	
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -56,10 +56,6 @@ public abstract class Dict {
 	
 	public Timestamp getAddedTimeStamp(Dict dict) {
 		return dict.getAddedTimeStamp();
-	}
-	
-	public void getDocFQ(Dict dict) {
-		dict.getDocFQ();
 	}
 	
 	public abstract Timestamp getAddedTimeStamp();

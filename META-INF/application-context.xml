@@ -14,6 +14,11 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+	<bean id="cliArgProcessor" class="at.ac.tuwien.docspars.util.CLIArgProcessor">
+		<constructor-arg name="file" ref="fileProvider"/>
+		<constructor-arg name="props" ref="processProperties"/>
+	</bean>
+			
 	<bean id="fileProvider" class="at.ac.tuwien.docspars.io.FileProvider">
 	    <constructor-arg name="file_path" value="${doc.file_location}"/>
 	    <constructor-arg name="file_type" value="${doc.file_type}"/>

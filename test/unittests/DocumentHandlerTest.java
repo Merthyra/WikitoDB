@@ -2,12 +2,10 @@ package unittests;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,8 +13,6 @@ import java.util.List;
 import org.junit.Test;
 
 import at.ac.tuwien.docspars.entity.Dict;
-import at.ac.tuwien.docspars.entity.Document;
-import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.entity.TimestampedDict;
 import at.ac.tuwien.docspars.util.DocumentHandler;
 import at.ac.tuwien.docspars.util.SC2DocumentHandler;
@@ -28,7 +24,8 @@ public class DocumentHandlerTest {
 	 */
 	@Test
 	public void testSC2AddDocumentBehavior() {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+		
+		//SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
 		
 		String term1 = "AB";
 		String term2 = "AC";

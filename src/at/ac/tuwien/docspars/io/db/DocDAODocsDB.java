@@ -17,11 +17,10 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
-import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class DocDAODocsDB implements DocDAO {
-
-	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
+	
+	private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
 
 	private JdbcTemplate jdbcTemplate;
 
@@ -40,7 +39,7 @@ public class DocDAODocsDB implements DocDAO {
 	}
 
 	@Override
-	public MultiValueMap<Integer, Document> getAllDocs() {	
+	public MultiValueMap<Integer, Document> getAllDocs() {
 		ResultSetExtractor<MultiValueMap<Integer, Document>> resEx = new ResultSetExtractor<MultiValueMap<Integer, Document>>() {	
 			@Override
 			public MultiValueMap<Integer, Document> extractData(ResultSet res) throws SQLException, DataAccessException {
@@ -52,7 +51,9 @@ public class DocDAODocsDB implements DocDAO {
 				return docids;		
 			}	
 		};
-		return this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"),resEx);	
+		MultiValueMap<Integer, Document> retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"),resEx);
+		logger.debug(DocDAODocsDB.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
+		return retrievedDocs;
 	}
 
 	@Override
@@ -76,6 +77,7 @@ public class DocDAODocsDB implements DocDAO {
 				return docs.size();
 			}
 		});
+		logger.debug(DocDAODocsDB.class.getName() + " inserted " + docs.size() + " documents in docs table");
 		return docs.size() == updateCounts.length;
 	}
 }

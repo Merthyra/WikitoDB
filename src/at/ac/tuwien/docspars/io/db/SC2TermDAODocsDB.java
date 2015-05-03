@@ -13,40 +13,40 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
-import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class SC2TermDAODocsDB implements TermDAO{
 
-	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
+	private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
 	private JdbcTemplate jdbcTemplate;
-	
+
 	@SuppressWarnings("unused")
 	@Deprecated
 	private SC2TermDAODocsDB() {
 		super();
 	}
-	
+
 	public SC2TermDAODocsDB(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
 	public boolean add(final List<Term> terms) {
-		 int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms.insert_SC2"),
-	            new BatchPreparedStatementSetter() {
-	                public void setValues(PreparedStatement ps, int i) throws SQLException {
-	                        ps.setLong(1, (int) terms.get(i).getDict().getId());
-	                        ps.setLong(2, terms.get(i).getDoc().getPageId());
-	                        ps.setLong(3, terms.get(i).getDoc().getRevId());
-	                        ps.setInt(4, terms.get(i).getPosition());
-	                        ps.setInt(5, terms.get(i).getTF());
-	                    }
+		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms.insert_SC2"),
+				new BatchPreparedStatementSetter() {
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ps.setLong(1, (int) terms.get(i).getDict().getId());
+				ps.setLong(2, terms.get(i).getDoc().getPageId());
+				ps.setLong(3, terms.get(i).getDoc().getRevId());
+				ps.setInt(4, terms.get(i).getPosition());
+				ps.setInt(5, terms.get(i).getTF());
+			}
 
-	                    public int getBatchSize() {
-	                        return terms.size();
-	                    }
-	                });
-	        return updateCounts.length == terms.size();
+			public int getBatchSize() {
+				return terms.size();
+			}
+		});
+		logger.debug(SC2TermDAODocsDB.class.getName() + " inserted " + updateCounts.length + " terms to terms table");
+		return updateCounts.length == terms.size();
 	}
 
 	@Override
@@ -58,5 +58,5 @@ public class SC2TermDAODocsDB implements TermDAO{
 	public boolean remove(List<Term> terms) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 }

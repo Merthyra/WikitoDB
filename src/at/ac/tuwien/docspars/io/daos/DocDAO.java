@@ -1,8 +1,5 @@
 package at.ac.tuwien.docspars.io.daos;
 import java.util.List;
-import java.util.Map;
-
-import javax.print.Doc;
 
 import org.apache.commons.collections4.map.MultiValueMap;
 

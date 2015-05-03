@@ -2,17 +2,10 @@ package at.ac.tuwien.docspars.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.collections4.FactoryUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +16,7 @@ import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public abstract class DocumentHandler {
-
+	
 	private static final Logger logger = LogManager.getLogger(DocumentHandler.class.getName());
 	// persisted dict table read from database in order to improve processing time
 	private Map<String, Dict> persistedDict;
@@ -60,8 +53,12 @@ public abstract class DocumentHandler {
 		if (this.tempDocs != null && this.tempDocs.size() > 0) {
 			if(!persistService.addBatch(this.tempDocs, this.tempDict, this.tempTerms)) {
 				// restore data structure if update was not successful!
-			}		
+				logger.info("Batch Update Successful: " + this.tempDocs.size() + " docs, " + this.tempDict.size() + " dicts, " + this.tempTerms.size() + " terms");		
+				return true;
+			}	
+			
 		}
+		logger.error("Batch Update Failed!!");	
 		return false;		
 	}
 	
@@ -76,6 +73,7 @@ public abstract class DocumentHandler {
 		for (Dict dic: this.tempDict) {
 			this.persistedDict.remove(dic.getId());
 		}
+		logger.debug("reverted " + this.tempDocs.size() + " temporal docs & " + this.tempDict + " temporal dict entries");
 		reset();
 	}
 
@@ -90,7 +88,8 @@ public abstract class DocumentHandler {
 	public void reset() {
 		this.tempDict.clear();
 		this.tempDocs.clear();
-		this.tempTerms.clear();		
+		this.tempTerms.clear();
+		logger.debug("reseted all temporal changes");
 	}
 
 	public List<Dict> getNewDictEntries() {

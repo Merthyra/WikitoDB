@@ -13,11 +13,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
-import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class SC1TermDAODocsDB implements TermDAO{
-
-	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
+	
+	private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
 	private JdbcTemplate jdbcTemplate;
 	
 	@SuppressWarnings("unused")
@@ -45,6 +44,7 @@ public class SC1TermDAODocsDB implements TermDAO{
 	                        return terms.size();
 	                    }
 	                });
+		 	logger.debug(SC1TermDAODocsDB.class.getName() + " inserted " + updateCounts.length + " terms to terms table");
 	        return updateCounts.length == terms.size();
 	}
 

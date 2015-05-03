@@ -4,7 +4,7 @@ public class EndOfProcessParameterReachedException extends RuntimeException {
 
 	
 	/**
-	 * 
+	 * Exception intentionally thrown to interrupt processing of documents
 	 */
 	private static final long serialVersionUID = 1L;
 

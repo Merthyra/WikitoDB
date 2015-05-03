@@ -1,8 +1,6 @@
 package at.ac.tuwien.docspars.util;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +11,7 @@ import edu.jhu.nlp.wikipedia.WikiPage;
 
 public class WikiPageCallBackHandler implements PageCallbackHandler {
 
-	private static final Logger logger = LogManager.getLogger("comprehension");
+	private static final Logger logger = LogManager.getLogger(WikiPageCallBackHandler.class.getName());
 	private final ProcessPropertiesHandler processProperties;
 	private final DocumentHandler docHandler;
 

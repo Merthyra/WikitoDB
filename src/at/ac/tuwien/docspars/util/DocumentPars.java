@@ -24,15 +24,21 @@ public class DocumentPars {
 		ApplicationContext context =  new FileSystemXmlApplicationContext("./META-INF/application-context.xml");
 		FileProvider files = (FileProvider) context.getBean("fileProvider");
 		ProcessPropertiesHandler props = (ProcessPropertiesHandler) context.getBean("processProperties");
-		DocumentHandler docHandler = (DocumentHandler) context.getBean("documentHandler"); 		
+		DocumentHandler docHandler = (DocumentHandler) context.getBean("documentHandler");
+		CLIArgProcessor cliProc = (CLIArgProcessor) context.getBean("cliArgProcessor");
+
 		try {
-		File file;
-		while ((file = files.getNextFile()) != null) {
-			logger.debug("parsing " + file.getAbsolutePath());		
-			DocumentPars.wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
-			wxsp.setPageCallback(new WikiPageCallBackHandler(props, docHandler));
-			wxsp.parse();
-		}
+			// pass command line arguments to command line arguments processor and update process properties automatically
+			cliProc.init(args);	
+			File file;
+			while ((file = files.getNextFile()) != null) {
+				logger.debug("Parsing Document: " + file.getAbsolutePath());		
+				DocumentPars.wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
+				wxsp.setPageCallback(new WikiPageCallBackHandler(props, docHandler));
+				wxsp.parse();
+			}
+		} catch (CommandLineOptionException coe) {
+			logger.debug(coe.getMessage());
 		} catch (MalformedURLException e1) {
 			logger.fatal("file path is not valid - terminating program" + e1.getMessage());
 		} catch (NullPointerException npe) {
@@ -40,7 +46,7 @@ public class DocumentPars {
 			npe.printStackTrace();
 		} catch (EndOfProcessParameterReachedException eor) {
 			docHandler.flushInsert();
-			logger.debug("End of Processing");
+			logger.info("End of Processing");
 		} catch (Exception e) {
 			logger.fatal("Unspecified Exception (most likely from WikiXMLParser Library) caught " + e.getMessage());
 			e.printStackTrace();
@@ -48,6 +54,5 @@ public class DocumentPars {
 			((ConfigurableApplicationContext)context).close();
 		}	
 	}
-	
+
 }
-			

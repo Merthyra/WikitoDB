@@ -14,7 +14,7 @@ import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class SC2DocumentHandler extends DocumentHandler{
 
-	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
+	private static final Logger logger = LogManager.getLogger(SC2DocumentHandler.class.getName());
 	
 	private HashMap<String, Term> beenThere;
 
@@ -46,7 +46,6 @@ public class SC2DocumentHandler extends DocumentHandler{
 					this.getNewDictEntries().add(tmpdic);
 					this.getPersistedDict().put(text.get(i), tmpdic);
 					// create new term and add it to the temporary list to be stored
-					//public Term(Dict dic, long docid,  int pos, int tf) 
 					Term t = new Term(tmpdic, newDoc, i+1, 1);
 					beenThere.put(tmpdic.getTerm(),t);
 					this.getNewTermEntries().add(t);
@@ -68,7 +67,6 @@ public class SC2DocumentHandler extends DocumentHandler{
 					// first occurrence of the term in the document
 					else {
 						// increase the overall document frequency of the dict term and add term to found documents
-						// tmpdic.setDocFQ(tmpdic.getDocFQ()+1);
 						// create new term 
 						Term t = new Term(tmpdic, newDoc, i+1, 1);
 						beenThere.put(tmpdic.getTerm(), t);
@@ -76,6 +74,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 						this.getNewTermEntries().add(t);
 						// now relink dict entries with already stored dicts (dict table contains dict elements, but the most current one must be in front, 
 						// relink dict entries and update df values for all others
+						logger.debug("dict term " + tmpdic.getId() + " is being enqueued");
 						linupDict(tmpdic, newDictTerm);
 					}	
 				}
@@ -83,7 +82,8 @@ public class SC2DocumentHandler extends DocumentHandler{
 			}
 			this.getNewDocumentEntries().add(new Document(pageID, revID, title, timestamp, text.size()));
 			this.getPersistedDocs().put(pageID, newDoc);
-			logger.debug("page "+ pageID + " title: " + title + " timestamp:  " + timestamp+ "added");
+			logger.debug("Document with PAGE-ID: "+ pageID + " REVISION-ID: "+ revID +" TITLE: " + title + " TIMESTAMP:  " + timestamp+ " DOC-LENGTH: "+ text.size()  + " added" );
+
 		}
 	}
 	
@@ -103,7 +103,6 @@ public class SC2DocumentHandler extends DocumentHandler{
 			oldD.setAddedTimestamp(newD.getAddedTimeStamp());
 		} 
 		else if (oldD.getPredecessor() == null || oldD.getPredecessor().getAddedTimeStamp().compareTo(newD.getAddedTimeStamp()) < 0) {
-//			newD.setDocFQ(oldD.getDocFQ()-1);
 			oldD.setDocFQ(newD.getDocFQ()+1);
 			newD.setPredecessor(oldD.getPredecessor());		
 			oldD.setPredecessor(newD);

@@ -1,13 +1,11 @@
 package at.ac.tuwien.docspars.util;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.regex.Pattern;
-import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class DocumentTextProcessor {
 	
 	public static int MAX_TITLE_LENGTH;
 	
-	
+	// TO-DO make this call independent from class instantiation
 	static  {
 		MAX_TITLE_LENGTH = 100;
 		MAX_TERM_LENGTH = 100;
@@ -63,7 +61,7 @@ public class DocumentTextProcessor {
 	}
 	
 	/**
-	 * normalize and deaccent string, removing all non US-ASCII characters (eg. à - > a)
+	 * normalize and deaccent string, removing all non US-ASCII characters (eg. ï¿½ - > a)
 	 * @param string to be processed
 	 * @return cleared string
 	 */

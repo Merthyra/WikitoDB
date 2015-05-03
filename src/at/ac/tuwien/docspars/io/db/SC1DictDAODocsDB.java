@@ -19,11 +19,10 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
-import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class SC1DictDAODocsDB implements DictDAO{
 
-	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
+	private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
 	private JdbcTemplate jdbcTemplate;
 
 	@SuppressWarnings("unused")
@@ -47,7 +46,10 @@ public class SC1DictDAODocsDB implements DictDAO{
 				return dict;		
 			}
 		};
-		return (Map<String,Dict>) this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"),resEx);
+		
+		Map<String, Dict> dicts = this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"),resEx);
+		logger.debug(SC1DictDAODocsDB.class.getName() + " retrieved " + dicts.size() + " dict entries from dict table");
+		return dicts;
 	}
 
 	@Override
@@ -56,8 +58,7 @@ public class SC1DictDAODocsDB implements DictDAO{
 	}
 
 	@Override
-	public boolean add(final List<Dict> dicts){
-		logger.trace(SQLStatements.getString("sql.dict.insert_SC1"));
+	public boolean add(final List<Dict> dicts){	
 		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict.insert_SC1"),
 
 		new BatchPreparedStatementSetter() {
@@ -71,6 +72,7 @@ public class SC1DictDAODocsDB implements DictDAO{
 				return dicts.size();
 			}
 		});
+		logger.debug(SC1DictDAODocsDB.class.getName() + " added " + updateCounts.length + " dict entries to dict table");
 		return updateCounts.length == dicts.size();
 	}
 

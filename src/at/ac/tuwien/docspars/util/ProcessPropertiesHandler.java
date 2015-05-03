@@ -9,20 +9,19 @@ public class ProcessPropertiesHandler {
 	
 	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getName());
 	public static Enum<Scenario> scenario;
-	
 	private int batch_size;
-	private long start_offset;
-	private long max_pages;
+	private int start_offset;
+	private int max_pages;
 	private int processed_Page_Count;
 	private String date_format;
 	private final String lan;
 	private final int maxTermLength;
 	
 	
-	public ProcessPropertiesHandler(int batch_size, long start_offset, long max_pages, String date_format, String language, String sc, int maxLength) {
-		this.batch_size = batch_size;
-		this.start_offset = start_offset;
-		this.max_pages = max_pages;
+	public ProcessPropertiesHandler(int batch_size, int start_offset, int max_pages, String date_format, String language, String sc, int maxLength) {
+		this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;;
+		this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
+		this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
 		this.processed_Page_Count = 0;
 		this.date_format = date_format;
 		this.lan = language;
@@ -31,6 +30,11 @@ public class ProcessPropertiesHandler {
 		else 
 			{ ProcessPropertiesHandler.scenario = Scenario.sc2;}
 		this.maxTermLength = maxLength;
+		logger.info("Process Properties " + 
+		" BATCH SIZE = " + this.batch_size + 
+		", DOCUMENT START OFFSET = " + this.start_offset + 
+		", MAX PROCESSED PAGES = " + this.max_pages + 
+		", LANGUAGE = " + this.lan);
 	}
 	
 	@SuppressWarnings("unused")
@@ -73,7 +77,7 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @param batch_size the batch_size to set
 	 */
-	public void setBatch_size(int batch_size) {
+	protected void setBatch_size(int batch_size) {
 		this.batch_size = batch_size;
 	}
 
@@ -87,7 +91,7 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @param start_offset the start_offset to set
 	 */
-	public void setStart_offset(long start_offset) {
+	protected void setStart_offset(int start_offset) {
 		this.start_offset = start_offset;
 	}
 
@@ -101,7 +105,7 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @param max_Pages the max_Pages to set
 	 */
-	public void setMax_Pages(long max_Pages) {
+	protected void setMax_Pages(int max_Pages) {
 		this.max_pages = max_Pages;
 	}
 
@@ -115,7 +119,7 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @param processed_Page the processed_Page to set
 	 */
-	public void setProcessed_Page_Count(int processed_Page) {
+	protected void setProcessed_Page_Count(int processed_Page) {
 		this.processed_Page_Count = processed_Page;
 	}
 
@@ -129,7 +133,7 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @param date_format the date_format to set
 	 */
-	public void setDate_format(String date_format) {
+	protected void setDate_format(String date_format) {
 		this.date_format = date_format;
 	}
 
@@ -149,6 +153,20 @@ public class ProcessPropertiesHandler {
 	
 	public int getMaxTermLength() {
 		return this.maxTermLength;
+	}
+	
+	/**
+	 * @return the max_pages
+	 */
+	public int getMax_pages() {
+		return max_pages;
+	}
+
+	/**
+	 * @param max_pages the max_pages to set
+	 */
+	protected void setMax_pages(int max_pages) {
+		this.max_pages = max_pages;
 	}
 
 	

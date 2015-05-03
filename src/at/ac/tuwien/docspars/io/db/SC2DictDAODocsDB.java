@@ -19,12 +19,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.TimestampedDict;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
-import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class SC2DictDAODocsDB implements DictDAO {
 
 	private JdbcTemplate jdbcTemplate;
-	private static final Logger logger = LogManager.getLogger(PersistanceService.class.getName());
+	private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
 	
 	public SC2DictDAODocsDB(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -42,8 +41,10 @@ public class SC2DictDAODocsDB implements DictDAO {
 			return dict;		
 			}
 
-		};
-		return (Map<String,Dict>) this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"),resEx);
+		};	
+		Map<String, Dict> dicts = this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"),resEx);
+		logger.debug(SC2DictDAODocsDB.class.getName() + " retrieved " + dicts.size() + " dict entries from dict table");
+		return dicts;
 	}
 
 	@Override
@@ -68,6 +69,7 @@ public class SC2DictDAODocsDB implements DictDAO {
 				return dicts.size();
 			}
 		});
+		logger.debug(SC2DictDAODocsDB.class.getName() + " added " + updateCounts.length + " dict entries to dict table");
 		return updateCounts.length == dicts.size();
 	}
 

@@ -39,7 +39,7 @@ public class SC1DocumentHandler extends DocumentHandler {
 			}
 			this.getNewDocumentEntries().add(newDoc);
 			this.getPersistedDocs().put(pageid, newDoc);
-			logger.debug("page "+ pageid + " title: " + title + " timestamp:  " + timestamp+ "added");
+			logger.debug("Document with PAGE-ID: "+ pageid + " REVISION-ID: "+ revid +" TITLE: " + title + " TIMESTAMP:  " + timestamp+ " DOC-LENGTH: "+ text.size()  + " added" );
 		}
 	}
 }

@@ -7,15 +7,15 @@ import org.apache.commons.collections4.map.MultiValueMap;
 
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
-import at.ac.tuwien.docspars.io.daos.DocDAO;
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
+import at.ac.tuwien.docspars.io.daos.DocDAO;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class DBPersistanceService implements PersistanceService {
-
+	
 	private DocDAO docDAO;
 	private DictDAO dictDAO;
 	private TermDAO termDAO;

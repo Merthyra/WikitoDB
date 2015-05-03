@@ -17,14 +17,12 @@ public class PerformanceMonitorAdvisor implements MethodBeforeAdvice, AfterRetur
 	/** Time in milliseconds */
 	long finishTime = 0;
 	
-
 	@Override
 	public void before(Method method, Object[] args, Object target) throws Throwable {
 		startTime = System.currentTimeMillis();
 		//logger.debug("Executing method " + method.getName() + " on object " + target.getClass().getName());
 	}
-	
-	
+		
 	@Override
 	public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {		
 		finishTime = System.currentTimeMillis();

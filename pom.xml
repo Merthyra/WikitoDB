@@ -6,8 +6,9 @@
 	<version>0.0.2-SNAPSHOT</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<outputDirectory>./bin/classes</outputDirectory>
-		<testOutputDirectory>./bin/classes</testOutputDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+<!-- 		<outputDirectory>./bin/classes</outputDirectory> -->
+<!-- 		<testOutputDirectory>./bin/test</testOutputDirectory> -->
 		<resources>
 			<resource>
 				<directory>./META-INF</directory>

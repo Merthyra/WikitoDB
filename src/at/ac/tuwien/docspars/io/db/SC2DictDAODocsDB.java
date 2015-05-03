@@ -58,7 +58,7 @@ public class SC2DictDAODocsDB implements DictDAO {
 		new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				logger.trace("writing dict term " + dicts.get(i).toString() +  " " + i);
-				ps.setLong(1, dicts.get(i).getId());
+				ps.setInt(1, dicts.get(i).getId());
 				ps.setString(2, dicts.get(i).getTerm());
 				ps.setTimestamp(3, dicts.get(i).getAddedTimeStamp());
 				ps.setInt(4, dicts.get(i).getDocFQ());

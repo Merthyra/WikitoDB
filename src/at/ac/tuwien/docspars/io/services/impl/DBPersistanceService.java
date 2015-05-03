@@ -60,7 +60,7 @@ public class DBPersistanceService implements PersistanceService {
 	
 	@Override
 	@PerformanceMonitored
-	public MultiValueMap<Integer, Document> getDocIDs() {
+	public MultiValueMap<Integer, Document> getDocs() {
 		return docDAO.getAllDocs();
 	}
 	

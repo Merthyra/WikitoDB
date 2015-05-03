@@ -39,7 +39,6 @@ public class DocumentTextProcessor {
 	 */
 	public static List<String> clearUpText(String text) throws ParsingDocumentException {
 		TokenStream tokens = null;
-		// normalize and deaccent string
 		text = deAccent(text);
 		List<String> textList = new ArrayList<String>();
 		//text = text.replaceAll("[[^\\p{L}\\p{Z}]]", " ").trim();
@@ -63,11 +62,21 @@ public class DocumentTextProcessor {
 		return textList;		
 	}
 	
+	/**
+	 * normalize and deaccent string, removing all non US-ASCII characters (eg. à - > a)
+	 * @param string to be processed
+	 * @return cleared string
+	 */
 	public static String deAccent(String str) {
 	    String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD); 
 	    return nfdNormalizedString.replaceAll("\\P{InBasic_Latin}+","");
 	}
 	
+	/**
+	 * method trims length of strings on the righthand side to fit in MAX_TITLE_LENGTH
+	 * @param string to be processed
+	 * @return trimed string with length min(MAX_TITLE_LENGTH, length(str))
+	 */
 	public static String trimTextTitle(String title) {	
 		if (title.length()>=MAX_TITLE_LENGTH) {
 			title = title.substring(0, MAX_TITLE_LENGTH-2);
@@ -75,6 +84,12 @@ public class DocumentTextProcessor {
 		return title;
 	}
 	
+	/**
+	 * Method converts String with given Pattern to SQLTimestamp
+	 * @param timestamp the timestamped string
+	 * @param formatPattern pattern to parse timestamp
+	 * @return SQLTimestamp 
+	 */
 	public static Timestamp convertStringToSQLTimestamp(String timestamp, String formatPattern) {
 		
 		Timestamp timest = null;	

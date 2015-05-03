@@ -1,4 +1,4 @@
-package test.java;
+package unittests;
 
 
 import static org.junit.Assert.assertEquals;
@@ -21,7 +21,7 @@ import at.ac.tuwien.docspars.entity.TimestampedDict;
 import at.ac.tuwien.docspars.util.DocumentHandler;
 import at.ac.tuwien.docspars.util.SC2DocumentHandler;
 
-public class TestDocumentHandler {
+public class DocumentHandlerTest {
 	
 	/**
 	 * tests add documents behaviour of sc2
@@ -112,11 +112,14 @@ public class TestDocumentHandler {
 		assertSame(docHandler.getNewTermEntries().get(3).getTF(), 6);
 		assertSame(docHandler.getNewTermEntries().get(10).getTF(), 2);
 		assertSame(docHandler.getNewTermEntries().get(12).getTF(), 1);	
+		assertSame(docHandler.getNewDocumentEntries().size(), 4);		
 //		for (Term term: docHandler.getNewTermEntries()) {
 //			System.out.println("Doc: " + term.getDocid() + " Term: " + term.getDict().getTerm() + " id: " + term.getTF());
 //		}
+		//adding same page again
+		docHandler.addPage(40,50, "DOCUMENT D", new Timestamp(5000), terms);
+		assertSame(docHandler.getNewDocumentEntries().size(), 4);		
 	}
-	
 	
 	private String getStringWithLengthAndFilledWithCharacter(int length, char charToFill) {
 		  if (length > 0) {

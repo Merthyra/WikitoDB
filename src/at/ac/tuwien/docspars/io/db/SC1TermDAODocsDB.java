@@ -36,8 +36,9 @@ public class SC1TermDAODocsDB implements TermDAO{
 	            new BatchPreparedStatementSetter() {
 	                public void setValues(PreparedStatement ps, int i) throws SQLException {
 	                        ps.setLong(1, (int) terms.get(i).getDict().getId());
-	                        ps.setLong(2, terms.get(i).getPageID());
-	                        ps.setInt(3, terms.get(i).getPosition());
+	                        ps.setLong(2, terms.get(i).getDoc().getPageId());
+	                        ps.setLong(3, terms.get(i).getDoc().getRevId());
+	                        ps.setInt(4, terms.get(i).getPosition());
 	                    }
 
 	                    public int getBatchSize() {

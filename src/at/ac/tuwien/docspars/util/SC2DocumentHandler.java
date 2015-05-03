@@ -32,10 +32,10 @@ public class SC2DocumentHandler extends DocumentHandler{
 	public void addPage(int pageID, int revID, String title, Timestamp timestamp, List<String> text)  {
 		// add only new documents, with ids not already stored in the collection
 		logger.debug("adding page " + pageID + " / " + title + " timestamp");
-		if (!this.getPersistedDocs().containsKey(pageID) || this.getPersistedDocs().containsValue(pageID, new Document(pageID, revID, null, null , 0))) {	
+		if (!this.getPersistedDocs().containsKey(pageID) || !this.getPersistedDocs().containsValue(pageID, new Document(pageID, revID, null, null , 0))) {	
 			// data structure stores all dict entries within a document to access tf and df values
+			Document newDoc = new Document(pageID, revID, title, timestamp, text.size());
 			beenThere = new HashMap<String, Term>();
-			long newDocID = this.getNextDocID();
 			for (int i = 0; i < text.size(); i++) {
 				// check if dict already contains term			
 				TimestampedDict tmpdic = null;
@@ -47,7 +47,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 					this.getPersistedDict().put(text.get(i), tmpdic);
 					// create new term and add it to the temporary list to be stored
 					//public Term(Dict dic, long docid,  int pos, int tf) 
-					Term t = new Term(tmpdic, pageID, revID, i+1, 1);
+					Term t = new Term(tmpdic, newDoc, i+1, 1);
 					beenThere.put(tmpdic.getTerm(),t);
 					this.getNewTermEntries().add(t);
 
@@ -70,7 +70,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 						// increase the overall document frequency of the dict term and add term to found documents
 						// tmpdic.setDocFQ(tmpdic.getDocFQ()+1);
 						// create new term 
-						Term t = new Term(tmpdic,  pageID, revID, i+1, 1);
+						Term t = new Term(tmpdic, newDoc, i+1, 1);
 						beenThere.put(tmpdic.getTerm(), t);
 						// add it to termslist to be written to the db
 						this.getNewTermEntries().add(t);
@@ -82,6 +82,7 @@ public class SC2DocumentHandler extends DocumentHandler{
 
 			}
 			this.getNewDocumentEntries().add(new Document(pageID, revID, title, timestamp, text.size()));
+			this.getPersistedDocs().put(pageID, newDoc);
 			logger.debug("page "+ pageID + " title: " + title + " timestamp:  " + timestamp+ "added");
 		}
 	}

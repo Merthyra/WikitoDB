@@ -3,24 +3,21 @@ package at.ac.tuwien.docspars.entity;
 public class Term {
 	
 	private Dict dic;
-	private int pageId;
-	private int revId;
+	private Document doc;
 	private int position;
 	private int tf;
 	
-	public Term(Dict dic, int pageID, int revID, int pos) {
+	public Term(Dict dic, Document doc, int pos) {
 		this.dic = dic;
-		this.pageId = pageID;
+		this.doc = doc;
 		this.position = pos;
-		this.revId = revID;
 		this.tf = -1;
 	}
 	
-	public Term(Dict dic, int pageID,  int revID, int pos, int tf) {
+	public Term(Dict dic, Document doc, int pos, int tf) {
 		this.dic = dic;
-		this.pageId = pageID;
+		this.doc = doc;
 		this.position = pos;
-		this.revId = revID;
 		this.tf = tf;
 	}
 	
@@ -35,12 +32,7 @@ public class Term {
 	public void setDict(Dict dic) {
 		this.dic = dic;
 	}
-	public int getPageID() {
-		return pageId;
-	}
-	public void setPageID(int docid) {
-		this.pageId = docid;
-	}
+	
 	public int getPosition() {
 		return position;
 	}
@@ -57,17 +49,18 @@ public class Term {
 	}
 	
 	/**
-	 * @return the revId
+	 * @return the doc
 	 */
-	public long getRevId() {
-		return revId;
+	public Document getDoc() {
+		return doc;
 	}
 
 	/**
-	 * @param revId the revId to set
+	 * @param doc the doc to set
 	 */
-	public void setRevId(int revId) {
-		this.revId = revId;
+	public void setDoc(Document doc) {
+		this.doc = doc;
 	}
+	
 		
 }

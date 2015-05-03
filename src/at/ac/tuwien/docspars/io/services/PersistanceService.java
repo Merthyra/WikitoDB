@@ -17,6 +17,6 @@ public interface PersistanceService {
 	
 	public Map<String, Dict> getDict();
 	
-	public MultiValueMap<Integer, Document> getDocIDs();
+	public MultiValueMap<Integer, Document> getDocs();
 		
 }

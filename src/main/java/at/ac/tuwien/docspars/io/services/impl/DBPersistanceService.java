@@ -49,7 +49,6 @@ public class DBPersistanceService implements PersistanceService {
 
 	@Override
 	public boolean remove(List<Document> docs) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

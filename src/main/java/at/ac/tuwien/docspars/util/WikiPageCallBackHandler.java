@@ -42,13 +42,13 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 			docHandler.addPage(Integer.parseInt(page.getID()), Integer.parseInt(page.getRevid()), title, tstmp, cleanTerms);
 			// if document handler store is as large as batch_size, the
 			// documents are being stored in the db
-			if ((processProperties.getProcessed_Page_Count() % processProperties.getBatch_size()) == 0) {
+			if ((docHandler.getNewDocumentEntries().size() % processProperties.getBatch_size()) == 0) {
 				logger.debug("inserting " + this.processProperties.getBatch_size() + " docs up to " + this.processProperties.getProcessed_Page_Count());
 				this.docHandler.flushInsert();
 				this.docHandler.reset();
 			}
 		} else if (!processProperties.allowPage()) {
-			logger.debug("inserting last documetns");
+			logger.debug("inserting last documents");
 			this.docHandler.flushInsert();
 			this.docHandler.reset();
 			throw new EndOfProcessParameterReachedException();

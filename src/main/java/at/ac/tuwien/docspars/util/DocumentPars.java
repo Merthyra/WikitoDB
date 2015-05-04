@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import at.ac.tuwien.docspars.io.FileProvider;
 import edu.jhu.nlp.wikipedia.WikiXMLParser;
@@ -40,19 +39,23 @@ public class DocumentPars {
 				wxsp.parse();
 			}
 		} catch (CommandLineOptionException coe) {
-			logger.debug(coe.getMessage());
-		} catch (MalformedURLException e1) {
+			System.err.println(coe.getMessage());
+		} catch (MalformedURLException e1) {	
 			logger.fatal("file path is not valid - terminating program" + e1.getMessage());
+		} catch (PersistanceException pe) {
+			logger.fatal(pe.getMessage() + " caused by " + pe.getCause());
 		} catch (NullPointerException npe) {
 			logger.fatal("Error acessing File, please check FilePath in Config " + npe.getMessage() + " " + npe.getClass());
 			npe.printStackTrace();
 		} catch (EndOfProcessParameterReachedException eor) {
+			logger.info("Max Number Of Pages processed");
 			docHandler.flushInsert();
-			logger.info("End of Processing");
-		} catch (Exception e) {
-			logger.fatal("Unspecified Exception (most likely from WikiXMLParser Library) caught " + e.getMessage());
+		} catch (Throwable e) {
+			logger.fatal("Unspecified Exception " + e.getMessage() + " cause " + e.getCause());
 			e.printStackTrace();
 		} finally {
+			System.out.println("End of Processing:\n Wrote:\n " + docHandler.getMetrics());
+			System.out.println("skipped: " + (props.getProcessed_Page_Count()-docHandler.getPersistedDocs().size()) + " documents, because they were already in the db");
 			((ConfigurableApplicationContext) context).close();
 		}
 	}

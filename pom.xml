@@ -7,19 +7,19 @@
 	<packaging>jar</packaging>
 	<name>Docs2DB</name>
 	<properties>
-	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<build>
-<!-- 		<sourceDirectory>src/main/java</sourceDirectory> -->
-<!-- 		<testSourceDirectory>src/test/java</testSourceDirectory> -->
-<!-- 		<outputDirectory>./bin/classes</outputDirectory> --> 
-<!--  		<testOutputDirectory>./bin/test</testOutputDirectory> --> 
-<!--  		<resources>													-->
-<!-- 			<resource> -->
-<!-- 				<directory>./META-INF</directory> -->
-<!-- 			</resource> -->
-<!-- 		</resources> -->
+		<!-- <sourceDirectory>src/main/java</sourceDirectory> -->
+		<!-- <testSourceDirectory>src/test/java</testSourceDirectory> -->
+		<!-- <outputDirectory>./bin/classes</outputDirectory> -->
+		<!-- <testOutputDirectory>./bin/test</testOutputDirectory> -->
+		<!-- <resources> -->
+		<!-- <resource> -->
+		<!-- <directory>./META-INF</directory> -->
+		<!-- </resource> -->
+		<!-- </resources> -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -29,38 +29,63 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>at.ac.tuwien.docspars.util.DocumentPars</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-jar-plugin</artifactId> -->
+			<!-- <configuration> -->
+			<!-- <archive> -->
+			<!-- <manifest> -->
+			<!-- <mainClass>at.ac.tuwien.docspars.util.DocumentPars</mainClass> -->
+			<!-- </manifest> -->
+			<!-- </archive> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.18.1</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.handlers</resource>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.schemas</resource>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>at.ac.tuwien.docspars.util.DocumentPars</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>edu.jhu.nlp.wikipedia</groupId>
+			<groupId>edu.jhu.nlp</groupId>
 			<artifactId>wikixmlj</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/wikixmlj-1.0-SNAPSHOT.jar</systemPath>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.cwi.monetdb.jdbc</groupId>
 			<artifactId>monetdb-jdbc</artifactId>
 			<version>2.14</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/monetdb-jdbc-2.14.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -123,6 +148,11 @@
 			<version>1.1.0.RELEASE</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>4.1.6.RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
@@ -139,9 +169,9 @@
 			<version>3.4</version>
 		</dependency>
 		<dependency>
-			  <groupId>commons-cli</groupId>
-			  <artifactId>commons-cli</artifactId>
-			  <version>1.2</version>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 </project>

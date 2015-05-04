@@ -19,10 +19,8 @@ public class CLIArgProcessor {
 
 	private Options options;
 	private CommandLine cl;
-	@SuppressWarnings("unused")
 	private ProcessPropertiesHandler pH;
 	private FileProvider fP;
-
 	private static Logger logger = LogManager.getLogger(CLIArgProcessor.class.getName());
 
 	public CLIArgProcessor(ProcessPropertiesHandler props, FileProvider file) {
@@ -46,12 +44,22 @@ public class CLIArgProcessor {
 		Option debug = new Option("debug", "debug mode");
 		Option quiet = new Option("quiet", "no logging output");
 		@SuppressWarnings("static-access")
-		Option inputFolder = OptionBuilder.withArgName("p").hasArg().withDescription("input folder where (compressed .bz2, .gzip) .xml document files are located").create("inputsourcefolder");
+		Option batch = OptionBuilder.withArgName("batchsize").hasArg().withDescription("number of documents to be written in one stroke").create("b");
+		@SuppressWarnings("static-access")
+		Option maxpages = OptionBuilder.withArgName("maxpages").hasArg().withDescription("max number of pages to be processed").create("m");
+		@SuppressWarnings("static-access")
+		Option offset = OptionBuilder.withArgName("pageoffset").hasArg().withDescription("number of Documents to be scipped before starting, may be useful to continue parsing of partly processed files").create("o");
+		@SuppressWarnings("static-access")
+		Option inputFolder = OptionBuilder.withArgName("inputsourcefolder").hasArg().withDescription("input folder where (compressed .bz2, .gzip) .xml document files are located").create("i");
 		options.addOption(help);
 		options.addOption(version);
 		options.addOption(debug);
 		options.addOption(quiet);
 		options.addOption(inputFolder);
+		options.addOption(offset);
+		options.addOption(maxpages);
+		options.addOption(batch);
+		
 	}
 
 	private void parse(String[] args) {
@@ -60,9 +68,10 @@ public class CLIArgProcessor {
 			// parse the command line arguments
 			this.cl = parser.parse(options, args);
 		} catch (ParseException exp) {
-			// oops, something went wrong
-			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
-			logger.error("Encountred problem with parsing command line options");
+			// oops, something went wrong	
+			System.out.println(exp.getMessage());
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("Docs2DB", options);
 			throw new CommandLineOptionException("Error Parsing Command Line Options: " + exp.getMessage());
 		}
 	}
@@ -91,10 +100,47 @@ public class CLIArgProcessor {
 			loggerConfig.setLevel(Level.ERROR);
 			ctx.updateLoggers();
 		}
-		if (cl.hasOption("p")) {
-			this.fP.setFilePath(options.getOption("p").getValue());
+		if (cl.hasOption("i")) {
+			this.fP.setFilePath(cl.getOptionValue("i"));
+			logger.info("SET INPUT SOURCE FOLDER TO PARAMETER MAX_DOCUMENTS TO " + cl.getOptionValue("i"));
 		}
-
+		if (cl.hasOption("m")) {
+			try {
+				int maxfiles = Integer.parseInt(cl.getOptionValue("m"));
+				if (maxfiles <= 0 || maxfiles > Integer.MAX_VALUE) {throw new CommandLineOptionException("invalid numeric parameter");};
+				this.pH.setMax_Pages(maxfiles);
+				logger.info("SET PROCESS PARAMETER MAX_DOCUMENTS TO " + this.pH.getMax_Pages());
+			} catch (NullPointerException nex) {
+				throw new CommandLineOptionException("invalid value for -(m)axpages value (empty)"); 
+			} catch (NumberFormatException nex) {
+				throw new CommandLineOptionException("invalid numeric parameter for -(m)axpages - must be in between 1 - " + Integer.MAX_VALUE); 
+			} 
+		}
+		if (cl.hasOption("o")) {
+			try {
+				int offset = Integer.parseInt(cl.getOptionValue("o"));
+				if (offset <= 0 || offset > Integer.MAX_VALUE) {throw new CommandLineOptionException("invalid numeric parameter");};
+				this.pH.setStart_offset(offset);
+				logger.info("SET PROCESS PARAMETER FILE_OFFSET TO " +  this.pH.getStart_offset());
+			} catch (NullPointerException nex) {
+				throw new CommandLineOptionException("invalid value for -(o)ffset value (empty)"); 			
+			} catch (NumberFormatException nex) {
+				throw new CommandLineOptionException("invalid numeric parameter for -(o)ffset - must be in between 1 - " + Integer.MAX_VALUE); 
+			} 
+		}
+		if (cl.hasOption("b")) {
+			try {
+				int batch = Integer.parseInt(cl.getOptionValue("b"));
+				if (batch <= 0 || batch > Integer.MAX_VALUE) {throw new CommandLineOptionException("invalid numeric parameter");};
+				this.pH.setBatch_size(batch);
+				logger.info("SET PROCESS PARAMETER BATCH TO " + this.pH.getBatch_size());
+			} catch (NullPointerException nex) {
+				throw new CommandLineOptionException("invalid value for -(b)atch value (empty)"); 			
+			} catch (NumberFormatException nex) {
+				throw new CommandLineOptionException("invalid numeric parameter for -(b)atch - must be in between 1 - " + Integer.MAX_VALUE); 
+			} 
+		}
+				
 	}
 
 }

@@ -16,6 +16,11 @@ public class SC1DocumentHandler extends DocumentHandler {
 
 	private static final Logger logger = LogManager.getLogger(SC1DocumentHandler.class.getName());
 
+	@Deprecated
+	public SC1DocumentHandler() {
+		super();
+	}
+	
 	public SC1DocumentHandler(PersistanceService persistanceService) {
 		super(persistanceService);
 	}

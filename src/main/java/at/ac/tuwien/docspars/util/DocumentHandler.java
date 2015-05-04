@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.transaction.TransactionSystemException;
 
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
@@ -34,6 +35,9 @@ public abstract class DocumentHandler {
 	private int lastDictID = 0;
 
 	private PersistanceService persistService;
+	
+	private ProcessMetrics metrics = new ProcessMetrics();
+
 
 	@Deprecated
 	public DocumentHandler() {
@@ -47,19 +51,40 @@ public abstract class DocumentHandler {
 		this.persistService = persistService;
 		this.persistedDict = persistService.getDict();
 		this.lastDictID = this.persistedDict.size() + 1;
-		this.persistedDocs = new MultiValueMap<Integer, Document>();
+		this.persistedDocs = persistService.getDocs();
 	}
 
 	public abstract void addPage(int pageId, int revID, String title, Timestamp timestamp, final List<String> text);
 
 	public boolean flushInsert() {
-		if (this.tempDocs != null && this.tempDocs.size() > 0) {
-			if (!persistService.addBatch(this.tempDocs, this.tempDict, this.tempTerms)) {
-				// restore data structure if update was not successful!
-				logger.info("Batch Update Successful: " + this.tempDocs.size() + " docs, " + this.tempDict.size() + " dicts, " + this.tempTerms.size() + " terms");
-				return true;
+		if (this.tempDocs != null && this.tempDocs.size() > 0) {		
+			// trying to repeat flushing for a max of 3 times
+			int maxTries = 3;		
+			while(true) {		
+				try {				
+					if (persistService.addBatch(this.tempDocs, this.tempDict, this.tempTerms)) {
+						// restore data structure if update was not successful!
+						logger.info("Batch Update Successful: " + this.tempDocs.size() + " docs, " + this.tempDict.size() + " dicts, " + this.tempTerms.size() + " terms");
+						this.metrics.addNumberOfDictEntries(tempDict.size());
+						this.metrics.addNumberOfDocuments(this.tempDocs.size());
+						this.metrics.addNumberOfTerms(this.tempTerms.size());
+						return true;
+					} else {
+						// in case update was successful and committed but no exception was thrown (shuould never be the case)
+						throw new PersistanceException("Number of written terms and parsed terms do not match");
+					}
+				} 
+				// if update fails the 
+				catch (TransactionSystemException ex) {
+					if (maxTries <= 0) throw new PersistanceException("Failed To Flush Batch of: " + this.tempDocs.size() + " docs, " + this.tempDict.size() + " dicts, " + this.tempTerms.size() + " terms");
+					logger.warn("Writing Batch failed! - retrying: " + (4-maxTries) + " out of " +  maxTries);
+					maxTries--;			
+					flushInsert();
+				}
 			}
-
+		} else if (this.tempDocs.size() == 0) {
+			logger.info("no documents left to persist");
+			return true;
 		}
 		logger.error("Batch Update Failed!!");
 		return false;
@@ -122,9 +147,12 @@ public abstract class DocumentHandler {
 	public int getNextDictID() {
 		return ++this.lastDictID;
 	}
-
-	public int getNextDocID() {
-		return ++this.lastDictID;
+	
+	/**
+	 * @return the metrics
+	 */
+	public ProcessMetrics getMetrics() {
+		return metrics;
 	}
 
 }

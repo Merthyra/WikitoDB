@@ -4,20 +4,22 @@
 	<groupId>Docs2DB</groupId>
 	<artifactId>Docs2DB</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>Docs2DB</name>
 	<properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-<!-- 		<outputDirectory>./bin/classes</outputDirectory> -->
-<!-- 		<testOutputDirectory>./bin/test</testOutputDirectory> -->
-		<resources>
-			<resource>
-				<directory>./META-INF</directory>
-			</resource>
-		</resources>
+<!-- 		<sourceDirectory>src/main/java</sourceDirectory> -->
+<!-- 		<testSourceDirectory>src/test/java</testSourceDirectory> -->
+<!-- 		<outputDirectory>./bin/classes</outputDirectory> --> 
+<!--  		<testOutputDirectory>./bin/test</testOutputDirectory> --> 
+<!--  		<resources>													-->
+<!-- 			<resource> -->
+<!-- 				<directory>./META-INF</directory> -->
+<!-- 			</resource> -->
+<!-- 		</resources> -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -25,6 +27,17 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>at.ac.tuwien.docspars.util.DocumentPars</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -7,3 +7,4 @@
 dbprops.properties
 project-settings.properties
 /.settings/
+/target/

@@ -33,7 +33,7 @@ public class DocumentPars {
 			cliProc.init(args);
 			File file;
 			while ((file = files.getNextFile()) != null) {
-				logger.debug("Parsing Document: " + file.getAbsolutePath());
+				logger.info("Parsing File: " + file.getAbsolutePath());
 				DocumentPars.wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
 				wxsp.setPageCallback(new WikiPageCallBackHandler(props, docHandler));
 				wxsp.parse();
@@ -51,11 +51,11 @@ public class DocumentPars {
 			logger.info("Max Number Of Pages processed");
 			docHandler.flushInsert();
 		} catch (Throwable e) {
-			logger.fatal("Unspecified Exception " + e.getMessage() + " cause " + e.getCause());
-			e.printStackTrace();
+			logger.fatal("Unspecified Exception/Error " + e.getMessage() + " cause " + e.getCause() + " StackTrace: \n" + e.getStackTrace());
+//			e.printStackTrace();
 		} finally {
 			System.out.println("End of Processing:\n Wrote:\n " + docHandler.getMetrics());
-			System.out.println("skipped: " + (props.getProcessed_Page_Count()-docHandler.getPersistedDocs().size()) + " documents, because they were already in the db");
+			System.out.println("skipped: " + (props.getProcessed_Page_Count()-docHandler.getNewDocumentEntries().size()) + " documents, because they were already in the db");
 			((ConfigurableApplicationContext) context).close();
 		}
 	}

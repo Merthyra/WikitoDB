@@ -69,9 +69,8 @@ public class DocDAODocsDB implements DocDAO {
 				ps.setInt(1, docs.get(i).getPageId());
 				ps.setInt(2, docs.get(i).getRevId());
 				ps.setTimestamp(3, docs.get(i).getAdded_timestamp());
-				ps.setTimestamp(4, docs.get(i).getRemoved_timestamp());
-				ps.setString(5, docs.get(i).getTitle());
-				ps.setInt(6, docs.get(i).getLength());
+				ps.setString(4, docs.get(i).getTitle());
+				ps.setInt(5, docs.get(i).getLength());
 			}
 
 			public int getBatchSize() {

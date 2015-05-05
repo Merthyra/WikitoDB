@@ -1,5 +1,6 @@
 package unittests;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.*;
-
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.entity.SimpleDict;
@@ -47,7 +47,8 @@ public class DAOTestsSC1 {
 		props = new Properties();
 		FileInputStream fis = null;
 		try { 
-			fis = new FileInputStream("./test/unittests/test.jdbc.properties");
+			File file = new File("src/test/java/unittests/test.jdbc.properties");
+			fis = new FileInputStream(file);
 			props.load(fis);
 			fis.close();
 		}
@@ -127,7 +128,7 @@ public class DAOTestsSC1 {
 			rs.close();
 			rs = st.executeQuery("SELECT * FROM docs WHERE pageid >=30");
 			assertTrue(rs.next());
-			assertThat(rs.getInt(6), is(45));
+			assertThat(rs.getInt(5), is(45));
 			rs.close();
 			rs = st.executeQuery("SELECT * FROM terms WHERE pageid = 40");
 			assertTrue(rs.next());

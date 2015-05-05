@@ -11,12 +11,12 @@ public class Document {
 	private int revId;
 	private String title;
 	private Timestamp added_timestamp;
-	private Timestamp removed_timestamp;
+//	private Timestamp removed_timestamp;
 	private int length;
 
 	public Document(int pageID, int revID, String title, Timestamp added, int length) {
 		this.added_timestamp = added;
-		this.removed_timestamp = null;
+//		this.removed_timestamp = null;
 		this.title = title;
 		this.length = length;
 		this.pageId = pageID;
@@ -51,13 +51,13 @@ public class Document {
 		this.added_timestamp = added_timestamp;
 	}
 
-	public Timestamp getRemoved_timestamp() {
-		return removed_timestamp;
-	}
-
-	public void setRemoved_timestamp(Timestamp removed_timestamp) {
-		this.removed_timestamp = removed_timestamp;
-	}
+//	public Timestamp getRemoved_timestamp() {
+//		return removed_timestamp;
+//	}
+//
+//	public void setRemoved_timestamp(Timestamp removed_timestamp) {
+//		this.removed_timestamp = removed_timestamp;
+//	}
 
 	public String getTitle() {
 		return title;

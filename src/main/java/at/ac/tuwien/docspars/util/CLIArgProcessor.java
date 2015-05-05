@@ -101,7 +101,7 @@ public class CLIArgProcessor {
 			ctx.updateLoggers();
 		}
 		if (cl.hasOption("i")) {
-			this.fP.setFilePath(cl.getOptionValue("i"));
+			this.fP.updateFilePath(cl.getOptionValue("i"));
 			logger.info("SET INPUT SOURCE FOLDER TO PARAMETER MAX_DOCUMENTS TO " + cl.getOptionValue("i"));
 		}
 		if (cl.hasOption("m")) {

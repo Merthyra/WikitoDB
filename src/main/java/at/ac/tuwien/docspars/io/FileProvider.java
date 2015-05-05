@@ -24,11 +24,6 @@ public class FileProvider {
 		this.file_path = file_path;
 		this.file_type = file_type;
 		this.max_Files = max_Files;
-
-		File[] files = new File(this.file_path).listFiles();
-		this.files = new ArrayList<File>(Arrays.asList(files));
-		this.it = this.files.iterator();
-		logger.debug("Found " + this.files.size() + " Files in directory " + this.file_path);
 	}
 
 	public File getNextFile() {
@@ -37,6 +32,13 @@ public class FileProvider {
 			return (File) this.it.next();
 		}
 		return null;
+	}
+	
+	private void init() {
+		File[] files = new File(this.file_path).listFiles();
+		this.files = new ArrayList<File>(Arrays.asList(files));
+		this.it = this.files.iterator();
+		logger.debug("Found " + this.files.size() + " Files in directory " + this.file_path);
 	}
 
 	/**
@@ -98,8 +100,9 @@ public class FileProvider {
 		return file_path;
 	}
 
-	public void setFilePath(String filePath) {
+	public void updateFilePath(String filePath) {
 		this.file_path = filePath;
+		init();
 	}
 
 }

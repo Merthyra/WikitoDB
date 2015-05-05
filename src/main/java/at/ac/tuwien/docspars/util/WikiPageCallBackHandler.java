@@ -22,10 +22,13 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 
 	@Override
 	public void process(WikiPage page) {
+		if (processProperties.getProcessed_Page_Count() % 1000 == 0) {
+			logger.info("parsed " + processProperties.getProcessed_Page_Count() + " documents from file");
+		}
 		if (!processProperties.skipPageDueToOffset() && processProperties.allowNextPage()) {
 			logger.debug("parsing " + page.getTitle());
 			// using title and text values for IR retrieval
-			String text = page.getText() + " " + page.getTitle();
+			String text = page.getTitle() + " " + page.getText(); 
 			List<String> cleanTerms = null;
 			Timestamp tstmp = null;
 			String title = page.getTitle();

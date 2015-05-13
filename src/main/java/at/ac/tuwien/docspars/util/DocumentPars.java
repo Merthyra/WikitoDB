@@ -16,7 +16,7 @@ import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 
 public class DocumentPars {
 
-	private static final Logger logger = LogManager.getLogger(DocumentPars.class.getName());
+	private static final Logger logger = LogManager.getLogger(DocumentPars.class.getPackage().getName());
 	private static WikiXMLParser wxsp;
 
 	public static void main(String args[]) throws SQLException {
@@ -26,12 +26,12 @@ public class DocumentPars {
 		ProcessPropertiesHandler props = (ProcessPropertiesHandler) context.getBean("processProperties");
 		DocumentHandler docHandler = (DocumentHandler) context.getBean("documentHandler");
 		CLIArgProcessor cliProc = (CLIArgProcessor) context.getBean("cliArgProcessor");
-
+		File file=null;
 		try {
 			// pass command line arguments to command line arguments processor
 			// and update process properties automatically
-			cliProc.init(args);
-			File file;
+			cliProc.init(args);	
+			logger.info("Process successfully initialized");
 			while ((file = files.getNextFile()) != null) {
 				logger.info("Parsing File: " + file.getAbsolutePath());
 				DocumentPars.wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
@@ -55,7 +55,8 @@ public class DocumentPars {
 //			e.printStackTrace();
 		} finally {
 			System.out.println("End of Processing:\n Wrote:\n " + docHandler.getMetrics());
-			System.out.println("skipped: " + (props.getProcessed_Page_Count()-docHandler.getNewDocumentEntries().size()) + " documents, because they were already in the db");
+			System.out.println("skipped: " + (props.getProcessed_Page_Count()-docHandler.getMetrics().getNumberOfDocuments()) + " documents, because they were already in the db");
+			System.out.println("last processed file: " + file!=null ? file.getName() : "no file");
 			((ConfigurableApplicationContext) context).close();
 		}
 	}

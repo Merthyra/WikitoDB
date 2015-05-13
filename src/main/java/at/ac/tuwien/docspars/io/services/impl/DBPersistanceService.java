@@ -2,6 +2,7 @@ package at.ac.tuwien.docspars.io.services.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.map.MultiValueMap;
 
@@ -54,13 +55,13 @@ public class DBPersistanceService implements PersistanceService {
 
 	@Override
 	@PerformanceMonitored
-	public Map<String, Dict> getDict() {
+	public Map<String, Integer> getDict() {
 		return dictDAO.getAll();
 	}
 
 	@Override
 	@PerformanceMonitored
-	public MultiValueMap<Integer, Document> getDocs() {
+	public Set<Integer> getDocs() {
 		return docDAO.getAllDocs();
 	}
 

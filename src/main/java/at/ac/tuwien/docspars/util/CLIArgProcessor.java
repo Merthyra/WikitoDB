@@ -21,7 +21,7 @@ public class CLIArgProcessor {
 	private CommandLine cl;
 	private ProcessPropertiesHandler pH;
 	private FileProvider fP;
-	private static Logger logger = LogManager.getLogger(CLIArgProcessor.class.getName());
+	private static Logger logger = LogManager.getLogger(CLIArgProcessor.class.getPackage().getName());
 
 	public CLIArgProcessor(ProcessPropertiesHandler props, FileProvider file) {
 		this.pH = props;

@@ -3,10 +3,11 @@ package at.ac.tuwien.docspars.util;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.collections4.map.MultiValueMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.TransactionSystemException;
@@ -18,14 +19,14 @@ import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public abstract class DocumentHandler {
 
-	private static final Logger logger = LogManager.getLogger(DocumentHandler.class.getName());
+	protected static final Logger logger = LogManager.getLogger(DocumentHandler.class.getPackage().getName());
 	// persisted dict table read from database in order to improve processing
 	// time
-	private Map<String, Dict> persistedDict;
+	private Map<String, Integer> persistedDict;
 	// Set of IDs stored in database
 	// creating a multivalue map for storing documents with pageid and revid
 	// subsequently
-	private MultiValueMap<Integer, Document> persistedDocs;
+	private Set<Integer> persistedDocs;
 	// temporary collections storing pages for the next batch update of the
 	// database
 	private ArrayList<Dict> tempDict = new ArrayList<Dict>();
@@ -42,9 +43,9 @@ public abstract class DocumentHandler {
 	@Deprecated
 	public DocumentHandler() {
 		this.persistService = null;
-		this.persistedDict = new HashMap<String, Dict>();
+		this.persistedDict = new HashMap<String, Integer>();
 		this.lastDictID = this.persistedDict.size() + 1;
-		this.persistedDocs = new MultiValueMap<Integer, Document>();
+		this.persistedDocs = new HashSet<Integer>();
 	}
 
 	public DocumentHandler(PersistanceService persistService) {
@@ -68,6 +69,7 @@ public abstract class DocumentHandler {
 						this.metrics.addNumberOfDictEntries(tempDict.size());
 						this.metrics.addNumberOfDocuments(this.tempDocs.size());
 						this.metrics.addNumberOfTerms(this.tempTerms.size());
+						this.metrics.updateBatch();
 						return true;
 					} else {
 						// in case update was successful and committed but no exception was thrown (shuould never be the case)
@@ -83,7 +85,7 @@ public abstract class DocumentHandler {
 				}
 			}
 		} else if (this.tempDocs.size() == 0) {
-			logger.info("no documents left to persist");
+			logger.debug("no documents in this batch had to be persisted");
 			return true;
 		}
 		logger.error("Batch Update Failed!!");
@@ -96,7 +98,7 @@ public abstract class DocumentHandler {
 	 */
 	public void revert() {
 		for (Document doc : this.tempDocs) {
-			this.persistedDocs.remove(doc.getPageId(), doc);
+			this.persistedDocs.remove(doc.getPageId());
 		}
 		for (Dict dic : this.tempDict) {
 			this.persistedDict.remove(dic.getId());
@@ -132,11 +134,11 @@ public abstract class DocumentHandler {
 		return this.tempTerms;
 	}
 
-	public Map<String, Dict> getPersistedDict() {
+	public Map<String, Integer> getPersistedDict() {
 		return this.persistedDict;
 	}
 
-	public MultiValueMap<Integer, Document> getPersistedDocs() {
+	public Set<Integer> getPersistedDocs() {
 		return this.persistedDocs;
 	}
 

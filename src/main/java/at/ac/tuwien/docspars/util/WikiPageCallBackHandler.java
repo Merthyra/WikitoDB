@@ -11,7 +11,7 @@ import edu.jhu.nlp.wikipedia.WikiPage;
 
 public class WikiPageCallBackHandler implements PageCallbackHandler {
 
-	private static final Logger logger = LogManager.getLogger(WikiPageCallBackHandler.class.getName());
+	private static final Logger logger = LogManager.getLogger(WikiPageCallBackHandler.class.getPackage().getName());
 	private final ProcessPropertiesHandler processProperties;
 	private final DocumentHandler docHandler;
 
@@ -22,7 +22,7 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 
 	@Override
 	public void process(WikiPage page) {
-		if (processProperties.getProcessed_Page_Count() % 1000 == 0) {
+		if (processProperties.getProcessed_Page_Count() % 10000 == 0) {
 			logger.info("parsed " + processProperties.getProcessed_Page_Count() + " documents from file");
 		}
 		if (!processProperties.skipPageDueToOffset() && processProperties.allowNextPage()) {

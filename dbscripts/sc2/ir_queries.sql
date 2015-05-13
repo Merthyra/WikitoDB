@@ -1,12 +1,12 @@
 
 ## timestamp declaration @ the beginning!
 declare timest TIMESTAMP;
-set timest = '2019-03-17 10:35:12';
+set timest = '2015-01-02 10:35:12';
 ############################################################################################################################
 ###### OKAPI BM 25 Retrieval applied to scenario 2
 WITH
-## filter valid documents and calculate avg(len) and N
-qdocs AS (SELECT * FROM wiki2.DOCS WHERE added <= timest AND (removed IS NULL OR removed > timest)),
+## filter valid documents and calculate avg(len) and N - take always the last revision of the pageid.... that means page cannot be deleted instead new empty document is added if doc should be deleted
+qdocs AS (SELECT * FROM  (SELECT *, row_number() OVER (PARTITION BY pageid order by added desc) as rnk FROM docs1 WHERE added <= timest)as sub where rnk =1),
 
 ## valid terms containing one of the search strings and contain querie df and tf values
 qterms AS (SELECT terms.tid, terms.did, tdic.df, terms.tf, tdic.term FROM (SELECT tid, term, df FROM wiki2.dict WHERE dict.term IN ('computer', 'computers' , 'usa') 

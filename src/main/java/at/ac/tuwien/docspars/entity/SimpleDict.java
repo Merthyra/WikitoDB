@@ -22,11 +22,6 @@ public class SimpleDict extends Dict {
 
 	}
 
-	@Override
-	public String getInsertString() {
-		return SQLStatements.getString("sql.dict.insert_SC1");
-	}
-
 	public String toString() {
 		return this.getId() + " / " + this.getTerm();
 	}

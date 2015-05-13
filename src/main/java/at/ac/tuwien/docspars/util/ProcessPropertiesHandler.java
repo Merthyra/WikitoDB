@@ -7,7 +7,7 @@ import at.ac.tuwien.docspars.entity.Scenario;
 
 public class ProcessPropertiesHandler {
 
-	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getName());
+	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getPackage().getName());
 	public static Enum<Scenario> scenario;
 	private int batch_size;
 	private int start_offset;

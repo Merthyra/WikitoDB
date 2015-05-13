@@ -38,10 +38,13 @@ FROM subscores GROUP BY subscores.docid ORDER BY rnk desc LIMIT 50;
 
 ########################################################################################################################################################
 ######### get document frequency for term 
-
-WITH
+DECLARE timest TIMESTAMP;
+SET timest '2014-01-14 10:46:14'
+########################################################################################################################################################
+######### IR QUERY 
+WITH 
 ## filter valid documents and calculate avg(len) and N
-qdocs AS (SELECT * FROM wiki1.docs WHERE added <= '2019-01-14 10:46:14' AND (removed IS NULL OR removed > '2019-01-14 10:46:14')),
+qdocs AS (SELECT * FROM wiki1.docs WHERE added <= timest AND (removed IS NULL OR removed > timest)),
 
 ## valid terms containing one of the search strings
 qterms AS (SELECT terms.tid, terms.did, tdic.term FROM 

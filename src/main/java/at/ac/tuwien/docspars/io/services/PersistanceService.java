@@ -2,6 +2,7 @@ package at.ac.tuwien.docspars.io.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.map.MultiValueMap;
 
@@ -15,8 +16,8 @@ public interface PersistanceService {
 
 	public boolean remove(List<Document> docs);
 
-	public Map<String, Dict> getDict();
+	public Map<String, Integer> getDict();
 
-	public MultiValueMap<Integer, Document> getDocs();
+	public Set<Integer> getDocs();
 
 }

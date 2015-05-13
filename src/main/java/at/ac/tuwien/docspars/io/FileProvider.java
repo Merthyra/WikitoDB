@@ -24,6 +24,7 @@ public class FileProvider {
 		this.file_path = file_path;
 		this.file_type = file_type;
 		this.max_Files = max_Files;
+		init();
 	}
 
 	public File getNextFile() {

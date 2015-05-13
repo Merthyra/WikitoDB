@@ -45,19 +45,6 @@ public class TimestampedDict extends Dict {
 		this.docFQ = docFQ;
 	}
 
-	@Override
-	public void setDict(Dict dict) {
-		super.setDict(dict);
-		this.addedTimestamp = dict.getAddedTimeStamp();
-		this.docFQ = dict.getDocFQ();
-	}
-
-	@Override
-	public String getInsertString() {
-		// TODO Auto-generated method stub
-		return SQLStatements.getString("sql.dict.insert_SC2");
-	}
-
 	/**
 	 * A Dict Element for Scenario 2 may have a predescessor in the dict table
 	 * with the same term name but added at a different time This method always

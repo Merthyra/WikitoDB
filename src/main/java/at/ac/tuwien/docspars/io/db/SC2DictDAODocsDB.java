@@ -30,19 +30,19 @@ public class SC2DictDAODocsDB implements DictDAO {
 	}
 
 	@Override
-	public Map<String, Dict> getAll() {
-		ResultSetExtractor<Map<String, Dict>> resEx = new ResultSetExtractor<Map<String, Dict>>() {
+	public Map<String, Integer> getAll() {
+		ResultSetExtractor<Map<String, Integer>> resEx = new ResultSetExtractor<Map<String, Integer>>() {
 			@Override
-			public Map<String, Dict> extractData(ResultSet res) throws SQLException, DataAccessException {
-				HashMap<String, Dict> dict = new HashMap<String, Dict>();
+			public Map<String, Integer> extractData(ResultSet res) throws SQLException, DataAccessException {
+				HashMap<String, Integer> dict = new HashMap<String, Integer>();
 				while (res.next()) {
-					dict.put(res.getString("term"), new TimestampedDict(res.getInt("tid"), res.getString("term"), res.getTimestamp("added"), res.getInt("df")));
+					dict.put(res.getString("term"), new Integer(res.getInt("tid")));
 				}
 				return dict;
 			}
 
 		};
-		Map<String, Dict> dicts = this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"), resEx);
+		Map<String, Integer> dicts = this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"), resEx);
 		logger.debug(SC2DictDAODocsDB.class.getName() + " retrieved " + dicts.size() + " dict entries from dict table");
 		return dicts;
 	}

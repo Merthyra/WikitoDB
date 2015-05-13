@@ -3,7 +3,9 @@ package at.ac.tuwien.docspars.io.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -39,19 +41,19 @@ public class DocDAODocsDB implements DocDAO {
 	}
 
 	@Override
-	public MultiValueMap<Integer, Document> getAllDocs() {
-		ResultSetExtractor<MultiValueMap<Integer, Document>> resEx = new ResultSetExtractor<MultiValueMap<Integer, Document>>() {
+	public Set<Integer> getAllDocs() {
+		ResultSetExtractor<Set<Integer>> resEx = new ResultSetExtractor<Set<Integer>>() {
 			@Override
-			public MultiValueMap<Integer, Document> extractData(ResultSet res) throws SQLException, DataAccessException {
-				MultiValueMap<Integer, Document> docids = new MultiValueMap<Integer, Document>();
+			public Set<Integer> extractData(ResultSet res) throws SQLException, DataAccessException {
+				Set<Integer> docids = new HashSet<Integer>();
 				while (res.next()) {
-					Document doc = new Document(res.getInt("pageid"), res.getInt("revid"), res.getString("name"), res.getTimestamp("added"), res.getInt("len"));
-					docids.put(doc.getPageId(), doc);
+					//Document doc = new Document(res.getInt("pageid"), res.getInt("revid"), res.getString("name"), res.getTimestamp("added"), res.getInt("len"));
+					docids.add(res.getInt("pageid"));
 				}
 				return docids;
 			}
 		};
-		MultiValueMap<Integer, Document> retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"), resEx);
+		Set<Integer> retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"), resEx);
 		logger.debug(DocDAODocsDB.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
 		return retrievedDocs;
 	}

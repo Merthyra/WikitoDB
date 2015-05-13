@@ -28,6 +28,6 @@ public class PerformanceMonitorAdvisor implements MethodBeforeAdvice, AfterRetur
 	public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
 		finishTime = System.currentTimeMillis();
 		double totalDuration = finishTime - startTime;
-		logger.info("Finished executing method " + method.getName() + " on object " + target.getClass().getName() + " in " + totalDuration / 1000 + " seconds.");
+		logger.info("Executed " + method.getName() + " on object " + target.getClass().getName() + " in " + totalDuration / 1000 + " sec.");
 	}
 }

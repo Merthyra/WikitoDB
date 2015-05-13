@@ -1,10 +1,12 @@
 ### constraints have to be added afterwards in order to allow for fast inserts 
 
-CREATE TABLE dict (tid BIGINT, term VARCHAR(100) NOT NULL, added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), df INTEGER NOT NULL);
+CREATE TABLE dict (tid INT, term VARCHAR(100));
 
-CREATE TABLE docs (docid BIGINT, added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), removed TIMESTAMP, name VARCHAR(100) NOT NULL, "len" INTEGER NOT NULL);
+CREATE TABLE dict_hist (tid INT, added TIMESTAMP, df INT); 
 
-CREATE TABLE terms (did BIGINT, tid BIGINT, pos INT NOT NULL, tf INT NOT NULL);
+CREATE TABLE docs (pageid INT, revid INT, added TIMESTAMP,  name VARCHAR(100), "len" INTEGER);
+
+CREATE TABLE terms (pageid INT, revid INT, tid INT, pos INT, tf INT);
 
 
 ### to be added after inserts are complete

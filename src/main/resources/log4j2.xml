@@ -44,12 +44,12 @@
 			<appender-ref ref="error-log" level="error" />
 			<appender-ref ref="console-log" level="info" />
 		</Logger>
-		<Logger name="at.ac.tuwien.docspars.util.DocumentPars" level="info" additivity="false">
+		<Logger name="at.ac.tuwien.docspars.util" level="ALL" additivity="false">
 			<appender-ref ref="trace-log" level="info" />
 			<appender-ref ref="error-log" level="error" />
 			<appender-ref ref="console-log" level="info" />
 		</Logger>
-		<Root level="info" additivity="false">
+		<Root level="warn" additivity="false">
 			<appender-ref ref="console-log" />
 			<appender-ref ref="error-log" level="error" />
 		</Root>

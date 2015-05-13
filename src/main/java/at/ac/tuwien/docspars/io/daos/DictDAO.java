@@ -13,7 +13,7 @@ public interface DictDAO {
 
 	public boolean remove(List<Dict> dicts);
 
-	public Map<String, Dict> getAll();
+	public Map<String, Integer> getAll();
 
 	public long getNextTermID();
 

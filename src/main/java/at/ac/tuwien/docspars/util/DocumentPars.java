@@ -35,7 +35,7 @@ public class DocumentPars {
 			while ((file = files.getNextFile()) != null) {
 				logger.info("Parsing File: " + file.getAbsolutePath());
 				DocumentPars.wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
-				wxsp.setPageCallback(new WikiPageCallBackHandler(props, docHandler));
+				wxsp.setPageCallback(new WikiPageCallBackHandler(docHandler));
 				wxsp.parse();
 			}
 		} catch (CommandLineOptionException coe) {
@@ -49,7 +49,7 @@ public class DocumentPars {
 			npe.printStackTrace();
 		} catch (EndOfProcessParameterReachedException eor) {
 			logger.info("Max Number Of Pages processed");
-			docHandler.flushInsert();
+//			docHandler.flushAll();
 		} catch (Throwable e) {
 			logger.fatal("Unspecified Exception/Error " + e.getMessage() + " cause " + e.getCause() + " StackTrace: \n" + e.getStackTrace());
 //			e.printStackTrace();

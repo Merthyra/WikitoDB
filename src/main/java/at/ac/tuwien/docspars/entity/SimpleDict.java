@@ -11,17 +11,6 @@ public class SimpleDict extends Dict {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public Timestamp getAddedTimeStamp() {
-		return null;
-	}
-
-	@Override
-	public int getDocFQ() {
-		return -1;
-
-	}
-
 	public String toString() {
 		return this.getId() + " / " + this.getTerm();
 	}

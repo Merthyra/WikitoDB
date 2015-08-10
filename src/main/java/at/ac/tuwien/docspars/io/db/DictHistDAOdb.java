@@ -17,20 +17,23 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import at.ac.tuwien.docspars.entity.Dict;
-import at.ac.tuwien.docspars.entity.TimestampedDict;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
 
-public class SC2DictDAODocsDB implements DictDAO {
+public class DictHistDAOdb implements DictDAO {
 
 	private JdbcTemplate jdbcTemplate;
 	private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
 
-	public SC2DictDAODocsDB(DataSource dataSource) {
+	public DictHistDAOdb(JdbcTemplate template) {
+		this.jdbcTemplate = template;
+	}
+	
+	public DictHistDAOdb(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
-	public Map<String, Integer> getAll() {
+	public Map<String, Integer> read() {
 		ResultSetExtractor<Map<String, Integer>> resEx = new ResultSetExtractor<Map<String, Integer>>() {
 			@Override
 			public Map<String, Integer> extractData(ResultSet res) throws SQLException, DataAccessException {
@@ -43,12 +46,12 @@ public class SC2DictDAODocsDB implements DictDAO {
 
 		};
 		Map<String, Integer> dicts = this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"), resEx);
-		logger.debug(SC2DictDAODocsDB.class.getName() + " retrieved " + dicts.size() + " dict entries from dict table");
+		logger.debug(DictHistDAOdb.class.getName() + " retrieved " + dicts.size() + " dict entries from dict table");
 		return dicts;
 	}
 
 	@Override
-	public boolean update(Dict dict) {
+	public boolean update(List<Dict> dict) {
 		throw new UnsupportedOperationException("not implmented yet");
 	}
 
@@ -61,15 +64,15 @@ public class SC2DictDAODocsDB implements DictDAO {
 				logger.trace("writing dict term " + dicts.get(i).toString() + " " + i);
 				ps.setInt(1, dicts.get(i).getId());
 				ps.setString(2, dicts.get(i).getTerm());
-				ps.setTimestamp(3, dicts.get(i).getAddedTimeStamp());
-				ps.setInt(4, dicts.get(i).getDocFQ());
+//				ps.setTimestamp(3, dicts.get(i).getAddedTimestamp());
+//				ps.setInt(4, dicts.get(i).getDocFQ());
 			}
 
 			public int getBatchSize() {
 				return dicts.size();
 			}
 		});
-		logger.debug(SC2DictDAODocsDB.class.getName() + " added " + updateCounts.length + " dict entries to dict table");
+		logger.debug(DictHistDAOdb.class.getName() + " added " + updateCounts.length + " dict entries to dict table");
 		return updateCounts.length == dicts.size();
 	}
 
@@ -78,9 +81,17 @@ public class SC2DictDAODocsDB implements DictDAO {
 		throw new UnsupportedOperationException("not implmented yet");
 	}
 
+
 	@Override
-	public long getNextTermID() {
-		throw new UnsupportedOperationException("not implmented yet");
+	public boolean create() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean drop() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -27,12 +27,13 @@ import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.entity.Term;
-import at.ac.tuwien.docspars.io.db.DocDAODocsDB;
-import at.ac.tuwien.docspars.io.db.SC1DictDAODocsDB;
-import at.ac.tuwien.docspars.io.db.SC1TermDAODocsDB;
+import at.ac.tuwien.docspars.io.db.DocDAOdb;
+import at.ac.tuwien.docspars.io.db.DictDAOdb;
+import at.ac.tuwien.docspars.io.db.Term1DAODdb;
 import at.ac.tuwien.docspars.io.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.io.services.impl.DBPersistanceService;
+import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV1;
 
 public class DAOTestsSC1 {
 
@@ -60,7 +61,7 @@ public class DAOTestsSC1 {
         ds.setUrl(props.getProperty("jdbc.url"));
         ds.setUsername(props.getProperty("jdbc.user"));
         ds.setPassword(props.getProperty("jdbc.pw"));    
-        persSer = new DBPersistanceService(new DocDAODocsDB(ds), new SC1DictDAODocsDB(ds),new SC1TermDAODocsDB(ds));	        
+        persSer = new DBPersistanceServiceV1(ds);	        
 	}
 	
 	@Before
@@ -90,34 +91,34 @@ public class DAOTestsSC1 {
 	
 	@Test
 	public void testAddDocument() {
-		List<Document> docList = new ArrayList<Document>();
-		docList.add(new Document(10, 20, "one", new Timestamp(1000), 30));
-		docList.add(new Document(20, 30, "two", new Timestamp(2000), 35));
-		docList.add(new Document(30, 50, "three", new Timestamp(3000), 45));
-		docList.add(new Document(40, 50, "four", new Timestamp(3000), 45));
-		docList.add(new Document(30, 50, "five", new Timestamp(5000), 85));
-		List<Dict> dictList = new ArrayList<Dict>();
-		dictList.add(new SimpleDict(10, "AA"));
-		dictList.add(new SimpleDict(20, "AB"));
-		dictList.add(new SimpleDict(30, "AC"));
-		dictList.add(new SimpleDict(40, "AD"));
-		dictList.add(new SimpleDict(50, "AE"));
-		dictList.add(new SimpleDict(60, "AF"));
-		dictList.add(new SimpleDict(70, "AG"));
-		dictList.add(new SimpleDict(80, "AH"));
-		dictList.add(new SimpleDict(90, "AI"));
-		List<Term> termList = new ArrayList<Term>();
-		//(Dict dic, int pageID, int revID, int pos)
-		termList.add(new Term(dictList.get(0), docList.get(0), 5));
-		termList.add(new Term(dictList.get(1), docList.get(1), 15));
-		termList.add(new Term(dictList.get(2), docList.get(2), 32));
-		termList.add(new Term(dictList.get(3), docList.get(3), 5876));
-		termList.add(new Term(dictList.get(5), docList.get(3), 56));
-		termList.add(new Term(dictList.get(4), docList.get(4), 7448));
-		termList.add(new Term(dictList.get(6), docList.get(4), 478));
-		termList.add(new Term(dictList.get(7), docList.get(4), 788));
-		termList.add(new Term(dictList.get(8), docList.get(4), 789));
-		persSer.addBatch(docList, dictList, termList);
+//		List<Document> docList = new ArrayList<Document>();
+//		docList.add(new Document(10, 20, "one", new Timestamp(1000), 30));
+//		docList.add(new Document(20, 30, "two", new Timestamp(2000), 35));
+//		docList.add(new Document(30, 50, "three", new Timestamp(3000), 45));
+//		docList.add(new Document(40, 50, "four", new Timestamp(3000), 45));
+//		docList.add(new Document(30, 50, "five", new Timestamp(5000), 85));
+//		List<Dict> dictList = new ArrayList<Dict>();
+//		dictList.add(new SimpleDict(10, "AA"));
+//		dictList.add(new SimpleDict(20, "AB"));
+//		dictList.add(new SimpleDict(30, "AC"));
+//		dictList.add(new SimpleDict(40, "AD"));
+//		dictList.add(new SimpleDict(50, "AE"));
+//		dictList.add(new SimpleDict(60, "AF"));
+//		dictList.add(new SimpleDict(70, "AG"));
+//		dictList.add(new SimpleDict(80, "AH"));
+//		dictList.add(new SimpleDict(90, "AI"));
+//		List<Term> termList = new ArrayList<Term>();
+//		//(Dict dic, int pageID, int revID, int pos)
+//		termList.add(new Term(dictList.get(0), docList.get(0), 5));
+//		termList.add(new Term(dictList.get(1), docList.get(1), 15));
+//		termList.add(new Term(dictList.get(2), docList.get(2), 32));
+//		termList.add(new Term(dictList.get(3), docList.get(3), 5876));
+//		termList.add(new Term(dictList.get(5), docList.get(3), 56));
+//		termList.add(new Term(dictList.get(4), docList.get(4), 7448));
+//		termList.add(new Term(dictList.get(6), docList.get(4), 478));
+//		termList.add(new Term(dictList.get(7), docList.get(4), 788));
+//		termList.add(new Term(dictList.get(8), docList.get(4), 789));
+//		persSer.addBatch(docList, dictList, termList);
 		
 		try {
 			Connection con = ds.getConnection();

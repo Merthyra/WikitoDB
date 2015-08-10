@@ -7,7 +7,10 @@ import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+
+import at.ac.tuwien.docspars.entity.Term;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -63,6 +66,42 @@ public class DocumentTextProcessor {
 
 		return textList;
 	}
+	
+	/**
+	 * Method converts text String to String List creating a list of Terms with no duplicates
+	 * @param text
+	 *            String that needs to be processed
+	 * @return normalized and stemmed String array having stopwords removed
+	 * @throws ParsingDocumentException
+	 */
+	public static List<String> tokenizeTextString(String text) throws ParsingDocumentException {
+		TokenStream tokens = null;
+		
+		HashSet<Term> terms = new HashSet<Term>();
+		List<String> textList = new ArrayList<String>();
+		// text = text.replaceAll("[[^\\p{L}\\p{Z}]]", " ").trim();
+		try {
+			tokens = ANALYZER.tokenStream("document", new StringReader(text));
+			tokens.reset();
+			while (tokens.incrementToken()) {
+				// additionally remove all Tokens that would exceed configured
+				// database
+
+				String dictEntry = tokens.getAttribute(CharTermAttribute.class).toString();
+				if (dictEntry != null && dictEntry.length() < MAX_TERM_LENGTH) {
+					textList.add(dictEntry);
+				}
+			}
+			tokens.close();
+
+		} catch (IOException e) {
+			throw new ParsingDocumentException();
+		}
+
+		return textList;
+	}
+	
+	
 
 	/**
 	 * normalize and deaccent string, removing all non US-ASCII characters (eg.

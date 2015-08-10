@@ -1,63 +1,72 @@
-package at.ac.tuwien.docspars.entity;
+	package at.ac.tuwien.docspars.entity;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Document {
 
-	private int pageId;
-	private int revId;
+	private int did;
+	private int revId;	
 	private String title;
-	private Timestamp added_timestamp;
-//	private Timestamp removed_timestamp;
+	private Timestamp addedTimestamp;
+	private Timestamp removedTimestamp;
 	private int length;
-
-	public Document(int pageID, int revID, String title, Timestamp added, int length) {
-		this.added_timestamp = added;
-//		this.removed_timestamp = null;
-		this.title = title;
-		this.length = length;
-		this.pageId = pageID;
-		this.revId = revID;
-	}
-
-	/**
-	 * @return the pageId
-	 */
-	public int getPageId() {
-		return pageId;
-	}
-
-	/**
-	 * @param pageId
-	 *            the pageId to set
-	 */
-	public void setPageId(int pageId) {
-		this.pageId = pageId;
-	}
-
+	// maps termid values to list of position of terms in document
+	private Map<Integer, Term> terms = new HashMap<Integer, Term>();
+	// update flag
+	private boolean update;
+	
 	@SuppressWarnings("unused")
 	private Document() {
 
 	}
-
-	public Timestamp getAdded_timestamp() {
-		return added_timestamp;
+	
+	public Document(int pageID, int revID, String title, Timestamp added, Timestamp removed, int length, boolean update) {
+		this.addedTimestamp = added;
+		this.removedTimestamp = removed;
+		this.title = title;
+		this.length = length;
+		this.did = pageID;
+		this.revId = revID;
+		this.update = update;
+	}
+	
+	public Document(int pageID, int revID, String title, Timestamp added, Timestamp removed, int length) {
+		this.addedTimestamp = added;
+		this.removedTimestamp = removed;
+		this.title = title;
+		this.length = length;
+		this.did = pageID;
+		this.revId = revID;
+		this.update = false;
+	}
+	
+	public Document(int pageID, int revID, String title, Timestamp added, int length) {
+		this.addedTimestamp = added;
+		this.removedTimestamp = null;
+		this.title = title;
+		this.length = length;
+		this.did = pageID;
+		this.revId = revID;
+		this.update = false;
 	}
 
-	public void setAdded_timestamp(Timestamp added_timestamp) {
-		this.added_timestamp = added_timestamp;
+	public int getDid() {
+		return did;
 	}
 
-//	public Timestamp getRemoved_timestamp() {
-//		return removed_timestamp;
-//	}
-//
-//	public void setRemoved_timestamp(Timestamp removed_timestamp) {
-//		this.removed_timestamp = removed_timestamp;
-//	}
+	public void setDid(int pageId) {
+		this.did = pageId;
+	}
 
 	public String getTitle() {
 		return title;
@@ -74,6 +83,7 @@ public class Document {
 	public void setLength(int length) {
 		this.length = length;
 	}
+	
 
 	/**
 	 * @return the revId
@@ -90,9 +100,68 @@ public class Document {
 		this.revId = revId;
 	}
 
+	public Term addTerm(Dict dict, int pos) {	
+		Term t = this.terms.get(dict.getId());
+		if (t==null) {
+			t= new Term(this, dict, pos);
+		}
+		t.addPosition(pos);
+		return t;
+	}
+
+	/**
+	 * @return the terms
+	 */
+	public List<Term> getTerms() {
+		return new ArrayList<Term>(this.terms.values());
+	}
+
+	/**
+	 * @return the update
+	 */
+	public boolean isUpdate() {
+		return update;
+	}
+
+	/**
+	 * @param update the update to set
+	 */
+	public void setUpdate(boolean update) {
+		this.update = update;
+	}
+	
+
+	/**
+	 * @return the addedTimestamp
+	 */
+	public Timestamp getAddedTimestamp() {
+		return addedTimestamp;
+	}
+
+	/**
+	 * @param addedTimestamp the addedTimestamp to set
+	 */
+	public void setAddedTimestamp(Timestamp addedTimestamp) {
+		this.addedTimestamp = addedTimestamp;
+	}
+
+	/**
+	 * @return the removedTimestamp
+	 */
+	public Timestamp getRemovedTimestamp() {
+		return removedTimestamp;
+	}
+
+	/**
+	 * @param removedTimestamp the removedTimestamp to set
+	 */
+	public void setRemovedTimestamp(Timestamp removedTimestamp) {
+		this.removedTimestamp = removedTimestamp;
+	}
+
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(5, 19).append(this.pageId).append(this.revId).toHashCode();
+		return new HashCodeBuilder(5, 19).append(this.did).append(this.revId).toHashCode();
 	}
 
 	@Override
@@ -107,7 +176,7 @@ public class Document {
 			return false;
 		}
 		Document rhs = (Document) obj;
-		return new EqualsBuilder().append(this.pageId, rhs.pageId).append(this.revId, rhs.revId).isEquals();
+		return new EqualsBuilder().append(this.did, rhs.did).append(this.revId, rhs.revId).isEquals();
 	}
 
 }

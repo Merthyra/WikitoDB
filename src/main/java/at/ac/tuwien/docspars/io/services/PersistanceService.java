@@ -4,20 +4,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections4.map.MultiValueMap;
-
-import at.ac.tuwien.docspars.entity.*;
+import at.ac.tuwien.docspars.entity.Batch;
 
 public interface PersistanceService {
 
-	public boolean addBatch(List<Document> docs, List<Dict> dicts, List<Term> terms);
+	public boolean addBatch(Batch batch);
 
-	public boolean updateBatch(List<Document> docs, List<Dict> dicts, List<Term> terms);
+	public boolean updateBatch(Batch batch);
 
-	public boolean remove(List<Document> docs);
+	public boolean remove(List<Integer> documents);
 
-	public Map<String, Integer> getDict();
+	public Set<Integer> readDocs();
 
-	public Set<Integer> getDocs();
+	public Map<String, Integer> readDict();
 
 }

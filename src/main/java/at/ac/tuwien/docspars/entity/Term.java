@@ -1,68 +1,90 @@
 package at.ac.tuwien.docspars.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Term {
 
-	private Dict dic;
-	private Document doc;
-	private int position;
-	private int tf;
+	private final Dict dict;
+	private final Document doc;
+	private List<Integer> pos = new ArrayList<Integer>();
 
-	public Term(Dict dic, Document doc, int pos) {
-		this.dic = dic;
+	public Term(Document doc, Dict dict, int pos) {
 		this.doc = doc;
-		this.position = pos;
-		this.tf = -1;
+		this.dict = dict;
+		// add initial first position of occurrences
+		this.pos.add(pos);
 	}
-
-	public Term(Dict dic, Document doc, int pos, int tf) {
-		this.dic = dic;
+	
+	public Term(Document doc, Dict dict) {
 		this.doc = doc;
-		this.position = pos;
-		this.tf = tf;
+		this.dict = dict;
+		// add initial first position of occurrences
 	}
 
-	@SuppressWarnings("unused")
-	private Term() {
-		super();
+	public Integer getLastPosition() {
+		return pos.get(this.pos.size()-1);
+	}
+	
+	public Integer getFirstPosition() {
+		return pos.get(0);
 	}
 
-	public Dict getDict() {
-		return dic;
-	}
-
-	public void setDict(Dict dic) {
-		this.dic = dic;
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
+	public void addPosition(int position) {
+		this.pos.add(position);
 	}
 
 	public int getTF() {
-		return this.tf;
+		return this.pos.size();
 	}
-
-	public void setTF(int tf) {
-		this.tf = tf;
+	
+	public int getTid() {
+		return this.dict.getId();
+	}
+	
+	public boolean isFirst(int pos) {
+		return this.pos.get(0) == pos;
+	}
+	
+	public Dict getDict() {
+		return this.dict;
+	}
+	
+	/**
+	 * @return the did
+	 */
+	public int getDid() {
+		return this.doc.getDid();
 	}
 
 	/**
-	 * @return the doc
+	 * @return the revid
 	 */
-	public Document getDoc() {
-		return doc;
+	public int getRevid() {
+		return this.doc.getRevId();
 	}
 
-	/**
-	 * @param doc
-	 *            the doc to set
-	 */
-	public void setDoc(Document doc) {
-		this.doc = doc;
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(9, 35).append(this.getTid()).toHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		Term rhs = (Term) obj;
+		return new EqualsBuilder().append(this.getTid(), rhs.getTid()).isEquals();
 	}
 
 }

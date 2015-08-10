@@ -8,6 +8,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+import at.ac.tuwien.docspars.entity.DBVariant;
 import at.ac.tuwien.docspars.io.FileProvider;
 
 /**
@@ -43,6 +44,7 @@ public class CLIArgProcessor {
 		Option version = new Option("version", "print build version");
 		Option debug = new Option("debug", "debug mode");
 		Option quiet = new Option("quiet", "no logging output");
+		Option systimestamp = new Option("st","forces the system timestamp to be used for the inserts");
 		@SuppressWarnings("static-access")
 		Option batch = OptionBuilder.withArgName("batchsize").hasArg().withDescription("number of documents to be written in one stroke").create("b");
 		@SuppressWarnings("static-access")
@@ -51,6 +53,11 @@ public class CLIArgProcessor {
 		Option offset = OptionBuilder.withArgName("pageoffset").hasArg().withDescription("number of Documents to be scipped before starting, may be useful to continue parsing of partly processed files").create("o");
 		@SuppressWarnings("static-access")
 		Option inputFolder = OptionBuilder.withArgName("inputsourcefolder").hasArg().withDescription("input folder where (compressed .bz2, .gzip) .xml document files are located").create("i");
+		@SuppressWarnings("static-access")
+		Option variant = OptionBuilder.withArgName("v").hasArg().withDescription("which variant to use [V1 (default), V2, V3, V4, V5] ").create("v");
+		@SuppressWarnings("static-access")
+		Option setUpdates = OptionBuilder.withArgName("u").hasArg().withDescription("which variant to use [V1 (default), V2, V3, V4, V5] ").create("u");
+		
 		options.addOption(help);
 		options.addOption(version);
 		options.addOption(debug);
@@ -59,7 +66,9 @@ public class CLIArgProcessor {
 		options.addOption(offset);
 		options.addOption(maxpages);
 		options.addOption(batch);
-		
+		options.addOption(systimestamp);
+		options.addOption(variant);
+		options.addOption(setUpdates);	
 	}
 
 	private void parse(String[] args) {
@@ -104,6 +113,10 @@ public class CLIArgProcessor {
 			this.fP.updateFilePath(cl.getOptionValue("i"));
 			logger.info("SET INPUT SOURCE FOLDER TO PARAMETER MAX_DOCUMENTS TO " + cl.getOptionValue("i"));
 		}
+		if (cl.hasOption("st")) {
+			this.pH.setUseSystemTimestamp(true);
+			logger.info("PARSER USES SYSTEM TIMESTAMPS INSTEAD OF DOCUMENT TIMESTAMPS");
+		}
 		if (cl.hasOption("m")) {
 			try {
 				int maxfiles = Integer.parseInt(cl.getOptionValue("m"));
@@ -140,7 +153,16 @@ public class CLIArgProcessor {
 				throw new CommandLineOptionException("invalid numeric parameter for -(b)atch - must be in between 1 - " + Integer.MAX_VALUE); 
 			} 
 		}
-				
+		if (cl.hasOption("v")) {
+			DBVariant db = DBVariant.valueOf(cl.getOptionValue("v"));
+			if (db == null) {
+				throw new CommandLineOptionException("unknown variant of processing: " + cl.getOptionValue("v"));
+			}
+			pH.setVariant(db);			
+		}
+		if (cl.hasOption("u")) {
+			pH.setUpdates(true);			
+		}					
 	}
 
 }

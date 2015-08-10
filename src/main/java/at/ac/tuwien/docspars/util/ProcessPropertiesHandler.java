@@ -1,38 +1,43 @@
 package at.ac.tuwien.docspars.util;
 
+import javax.sql.DataSource;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import at.ac.tuwien.docspars.entity.Scenario;
+import at.ac.tuwien.docspars.entity.DBVariant;
 
 public class ProcessPropertiesHandler {
 
 	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getPackage().getName());
-	public static Enum<Scenario> scenario;
+	private DataSource dataSource;
+	private DBVariant variant;
 	private int batch_size;
 	private int start_offset;
 	private int max_pages;
 	private int processed_Page_Count;
+	private boolean use_systemTimestamp;
 	private String date_format;
 	private final String lan;
 	private final int maxTermLength;
+	private int dictsCached;
+	private boolean updates;
 
-	public ProcessPropertiesHandler(int batch_size, int start_offset, int max_pages, String date_format, String language, String sc, int maxLength) {
+	public ProcessPropertiesHandler(int batch_size, int start_offset, int max_pages, String date_format, String language, String sc, int maxLength, int dictsCached) {
 		this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;
-		;
 		this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
 		this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
 		this.processed_Page_Count = 0;
 		this.date_format = date_format;
 		this.lan = language;
-		if (sc.equals("sc1")) {
-			ProcessPropertiesHandler.scenario = Scenario.sc1;
-		} else {
-			ProcessPropertiesHandler.scenario = Scenario.sc2;
+		this.variant = DBVariant.valueOf(sc);
+		if (variant == null) {
+			throw new RuntimeException("db variant unnkown: " + sc);
 		}
 		this.maxTermLength = maxLength;
-		logger.info("Process Properties " + " BATCH SIZE = " + this.batch_size + ", DOCUMENT START OFFSET = " + this.start_offset + ", MAX PROCESSED PAGES = " + this.max_pages + ", LANGUAGE = "
-				+ this.lan);
+		this.updates=false;
+		this.dictsCached = dictsCached;
+		logger.info("Process Properties " + " BATCH SIZE = " + this.batch_size + ", DOCUMENT START OFFSET = " + this.start_offset + ", MAX PROCESSED PAGES = " + this.max_pages + ", LANGUAGE = " + this.lan);
 	}
 
 	@SuppressWarnings("unused")
@@ -145,8 +150,8 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @return the scenario
 	 */
-	public Enum<Scenario> getScenario() {
-		return scenario;
+	public Enum<DBVariant> getScenario() {
+		return variant;
 	}
 
 	/**
@@ -174,5 +179,70 @@ public class ProcessPropertiesHandler {
 	protected void setMax_pages(int max_pages) {
 		this.max_pages = max_pages;
 	}
+	
+	protected void setUseSystemTimestamp(boolean bol) {
+		this.use_systemTimestamp = bol;
+	}
+	protected boolean isSystemTimeStampUsed() {
+		return this.use_systemTimestamp;
+	}
+	
+	/**
+	 * @return the variant
+	 */
+	public DBVariant getVariant() {
+		return variant;
+	}
+
+	/**
+	 * @param variant the variant to set
+	 */
+	public void setVariant(DBVariant variant) {
+		this.variant = variant;
+	}
+
+	/**
+	 * @return the dataSource
+	 */
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
+	/**
+	 * @param dataSource the dataSource to set
+	 */
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	/**
+	 * @return the dictsCached
+	 */
+	public int getDictsCached() {
+		return dictsCached;
+	}
+
+	/**
+	 * @param dictsCached the dictsCached to set
+	 */
+	public void setDictsCached(int dictsCached) {
+		this.dictsCached = dictsCached;
+	}
+
+	/**
+	 * @return the updates
+	 */
+	public boolean isUpdates() {
+		return updates;
+	}
+
+	/**
+	 * @param updates the updates to set
+	 */
+	public void setUpdates(boolean updates) {
+		this.updates = updates;
+	}
+	
+	
 
 }

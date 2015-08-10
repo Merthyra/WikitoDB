@@ -4,29 +4,37 @@ import java.sql.Timestamp;
 
 import at.ac.tuwien.docspars.io.db.SQLStatements;
 
-public class TimestampedDict extends Dict {
+public class TimestampedDict {
 
 	private Timestamp addedTimestamp;
-	// private Timestamp removedTimestamp;
+	private Timestamp removedTimestamp;
 	private int docFQ;
-	private TimestampedDict predescessor;
 
-	public TimestampedDict(int id, String term, Timestamp added, int doc_fq) {
-		super(id, term);
+	public TimestampedDict(Timestamp added, Timestamp removed, int doc_fq) {
 		this.addedTimestamp = added;
-		// this.removedTimestamp=removed;
+		 this.removedTimestamp=removed;
 		this.docFQ = doc_fq;
-		this.predescessor = null;
+	}	
+	
+	/**
+	 * @return the removedTimestamp
+	 */
+	public Timestamp getRemovedTimestamp() {
+		return removedTimestamp;
 	}
 
-	@Override
-	public Timestamp getAddedTimeStamp() {
-		return this.addedTimestamp;
+	/**
+	 * @param removedTimestamp the removedTimestamp to set
+	 */
+	public void setRemovedTimestamp(Timestamp removedTimestamp) {
+		this.removedTimestamp = removedTimestamp;
 	}
 
-	@Override
-	public int getDocFQ() {
-		return this.docFQ;
+	/**
+	 * @return the addedTimestamp
+	 */
+	public Timestamp getAddedTimestamp() {
+		return addedTimestamp;
 	}
 
 	/**
@@ -36,6 +44,14 @@ public class TimestampedDict extends Dict {
 	public void setAddedTimestamp(Timestamp addedTimestamp) {
 		this.addedTimestamp = addedTimestamp;
 	}
+	
+	/**
+	 * 
+	 * @return  the docFQ
+	 */
+	public int getDocFQ() {
+		return this.docFQ;
+	}
 
 	/**
 	 * @param docFQ
@@ -44,30 +60,6 @@ public class TimestampedDict extends Dict {
 	public void setDocFQ(int docFQ) {
 		this.docFQ = docFQ;
 	}
-
-	/**
-	 * A Dict Element for Scenario 2 may have a predescessor in the dict table
-	 * with the same term name but added at a different time This method always
-	 * returns the dict entry which is has the closest time of generation
-	 * (document timestamp) of all dict terms * @return Dict Element form
-	 * Document with the succeeding most current timestamp
-	 */
-	public TimestampedDict getPredecessor() {
-		// TODO Auto-generated method stub
-		return this.predescessor;
-	}
-
-	public void setPredecessor(TimestampedDict dict) {
-		// TODO Auto-generated method stub
-		this.predescessor = dict;
-	}
-
-	@Override
-	public TimestampedDict clone() {
-		TimestampedDict cloneDict = new TimestampedDict(this.getId(), this.getTerm(), this.addedTimestamp, this.docFQ);
-		cloneDict.setPredecessor(this.getPredecessor());
-		return cloneDict;
-
-	}
+	
 
 }

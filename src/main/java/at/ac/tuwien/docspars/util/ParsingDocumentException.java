@@ -10,4 +10,7 @@ public class ParsingDocumentException extends Exception {
 	public ParsingDocumentException() {
 		super();
 	}
+	public ParsingDocumentException(String msg) {
+		super(msg);
+	}
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="INFO">
 	<Properties>
 		<Property name="log-path">logs</Property>
 	</Properties>
@@ -42,7 +42,7 @@
 		<Logger name="at.ac.tuwien.docspars.io.db" level="ALL" additivity="false">
 			<appender-ref ref="trace-log" level="info" />
 			<appender-ref ref="error-log" level="error" />
-			<appender-ref ref="console-log" level="info" />
+			<appender-ref ref="console-log" level="debug" />
 		</Logger>
 		<Logger name="at.ac.tuwien.docspars.util" level="ALL" additivity="false">
 			<appender-ref ref="trace-log" level="info" />

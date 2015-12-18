@@ -1,17 +1,17 @@
 package at.ac.tuwien.docspars.util;
 
-public class EndOfProcessParameterReachedException extends RuntimeException {
+public class EndOfProcessReachedException extends RuntimeException {
 
 	/**
 	 * Exception intentionally thrown to interrupt processing of documents
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public EndOfProcessParameterReachedException(String msg) {
+	public EndOfProcessReachedException(String msg) {
 		super(msg);
 	}
 
-	public EndOfProcessParameterReachedException() {
+	public EndOfProcessReachedException() {
 		super();
 	}
 }

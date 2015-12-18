@@ -1,12 +1,14 @@
 package at.ac.tuwien.docspars.io.daos;
 
+import java.util.List;
+
 public interface CrudOperations<A, B> {
 
-	public boolean add(A a);
+	public boolean add(List<A> a);
 	
-	public boolean remove(A a);
+	public boolean remove(List<A> a);
 	
-	public boolean update(A a);
+	public boolean update(List<A> a);
 	
 	public B read();
 	

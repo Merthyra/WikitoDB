@@ -1,17 +1,14 @@
 package at.ac.tuwien.docspars.util;
 
-import javax.sql.DataSource;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import at.ac.tuwien.docspars.entity.DBVariant;
+import at.ac.tuwien.docspars.entity.PersistVariant;
 
 public class ProcessPropertiesHandler {
 
 	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getPackage().getName());
-	private DataSource dataSource;
-	private DBVariant variant;
+	private PersistVariant variant;
 	private int batch_size;
 	private int start_offset;
 	private int max_pages;
@@ -30,14 +27,14 @@ public class ProcessPropertiesHandler {
 		this.processed_Page_Count = 0;
 		this.date_format = date_format;
 		this.lan = language;
-		this.variant = DBVariant.valueOf(sc);
+		this.variant = PersistVariant.valueOf(sc);
 		if (variant == null) {
 			throw new RuntimeException("db variant unnkown: " + sc);
 		}
 		this.maxTermLength = maxLength;
 		this.updates=false;
 		this.dictsCached = dictsCached;
-		logger.info("Process Properties " + " BATCH SIZE = " + this.batch_size + ", DOCUMENT START OFFSET = " + this.start_offset + ", MAX PROCESSED PAGES = " + this.max_pages + ", LANGUAGE = " + this.lan);
+		//logger.info("Process Properties " + " BATCH SIZE = " + this.batch_size + ", DOCUMENT START OFFSET = " + this.start_offset + ", MAX PROCESSED PAGES = " + this.max_pages + ", LANGUAGE = " + this.lan);
 	}
 
 	@SuppressWarnings("unused")
@@ -47,7 +44,7 @@ public class ProcessPropertiesHandler {
 	};
 
 	public boolean skipPageDueToOffset() {
-		return this.start_offset-- >= 0;
+		return --this.start_offset >= 0;
 	}
 
 	public boolean allowPage() {
@@ -150,7 +147,7 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @return the scenario
 	 */
-	public Enum<DBVariant> getScenario() {
+	public Enum<PersistVariant> getScenario() {
 		return variant;
 	}
 
@@ -190,29 +187,15 @@ public class ProcessPropertiesHandler {
 	/**
 	 * @return the variant
 	 */
-	public DBVariant getVariant() {
+	public PersistVariant getVariant() {
 		return variant;
 	}
 
 	/**
 	 * @param variant the variant to set
 	 */
-	public void setVariant(DBVariant variant) {
+	public void setVariant(PersistVariant variant) {
 		this.variant = variant;
-	}
-
-	/**
-	 * @return the dataSource
-	 */
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
 	}
 
 	/**
@@ -243,6 +226,4 @@ public class ProcessPropertiesHandler {
 		this.updates = updates;
 	}
 	
-	
-
 }

@@ -1,10 +1,7 @@
 package at.ac.tuwien.docspars.entity;
 
-import java.sql.Timestamp;
 
-import at.ac.tuwien.docspars.io.db.SQLStatements;
-
-public class SimpleDict extends Dict {
+public class SimpleDict extends Dict implements Dictionable {
 
 	public SimpleDict(int id, String term) {
 		super(id, term);
@@ -12,7 +9,7 @@ public class SimpleDict extends Dict {
 	}
 
 	public String toString() {
-		return this.getId() + " / " + this.getTerm();
+		return this.getTid() + " / " + this.getTerm();
 	}
 
 }

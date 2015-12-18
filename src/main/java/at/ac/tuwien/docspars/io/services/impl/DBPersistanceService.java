@@ -1,45 +1,35 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.set.TIntSet;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.collections4.map.MultiValueMap;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
-import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
+import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 
 public abstract class DBPersistanceService implements PersistanceService {
 
 	private DocDAO docDAO;
 	private DictDAO dictDAO;
 	private TermDAO termDAO;
-	private DataSource ds;
 
-	@SuppressWarnings("unused")
-	private DBPersistanceService() {
+
+	public DBPersistanceService() {
 
 	}
-	
-	public DBPersistanceService(DataSource ds) {
-		this.ds = ds;
-	}
 
-	public DBPersistanceService(DataSource ds, DocDAO docDAO, DictDAO dictDAO, TermDAO termDAO) {
-		this.docDAO = docDAO;
-		this.termDAO = termDAO;
-		this.dictDAO = dictDAO;
-	}
+//	public DBPersistanceService(DataSource ds, DocDAO docDAO, DictDAO dictDAO, TermDAO termDAO) {
+//		this.docDAO = docDAO;
+//		this.termDAO = termDAO;
+//		this.dictDAO = dictDAO;
+//	}
 
 	@Override
 	@PerformanceMonitored
@@ -50,18 +40,19 @@ public abstract class DBPersistanceService implements PersistanceService {
 	public abstract boolean updateBatch(Batch batch);
 	
 	@Override
-	public abstract boolean remove(List<Integer> docs);
+	@PerformanceMonitored
+	public abstract boolean remove(List<Document> docs);
 	
 	
 	@Override
 	@PerformanceMonitored
-	public Map<String, Integer> readDict() {
+	public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict() {
 		return dictDAO.read();
 	}
 
 	@Override
 	@PerformanceMonitored
-	public Set<Integer> readDocs() {
+	public TIntSet readDocs() {
 		return docDAO.read();
 	}
 

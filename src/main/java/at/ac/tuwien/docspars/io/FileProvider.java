@@ -1,6 +1,7 @@
 package at.ac.tuwien.docspars.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -12,25 +13,30 @@ public class FileProvider {
 
 	private String file_path;
 	private final String file_type;
-	private int max_Files;
 	private ArrayList<File> files = null;
+	private String processed = "";
 	private Iterator<File> it;
 
 	private static final Logger logger = LogManager.getLogger(FileProvider.class.getName());
 
 	// @ConstructorProperties({"file_path", "file_type", "max_Files"})
-	public FileProvider(String file_path, String file_type, int max_Files) {
+	public FileProvider(String file_path, String file_type) throws IOException {
 		super();
 		this.file_path = file_path;
 		this.file_type = file_type;
-		this.max_Files = max_Files;
+		try {
 		init();
+		} 
+		catch (NullPointerException ex) {
+			throw new IOException("No valid file path provided");
+		}
 	}
 
 	public File getNextFile() {
-		if (it.hasNext() && this.max_Files > 0) {
-			this.max_Files--;
-			return (File) this.it.next();
+		if (it.hasNext()) {
+			File next = it.next();
+			this.processed += next.getName() + System.getProperty("line.separator");
+			return next;
 		}
 		return null;
 	}
@@ -39,6 +45,7 @@ public class FileProvider {
 		File[] files = new File(this.file_path).listFiles();
 		this.files = new ArrayList<File>(Arrays.asList(files));
 		this.it = this.files.iterator();
+		processed = "";
 		logger.debug("Found " + this.files.size() + " Files in directory " + this.file_path);
 	}
 
@@ -47,21 +54,6 @@ public class FileProvider {
 	 */
 	public String getFile_type() {
 		return file_type;
-	}
-
-	/**
-	 * @return the max_Files
-	 */
-	public int getMax_Files() {
-		return max_Files;
-	}
-
-	/**
-	 * @param max_Files
-	 *            the max_Files to set
-	 */
-	public void setMax_Files(int max_Files) {
-		this.max_Files = max_Files;
 	}
 
 	/**
@@ -104,6 +96,10 @@ public class FileProvider {
 	public void updateFilePath(String filePath) {
 		this.file_path = filePath;
 		init();
+	}
+	
+	public String getProcessed() {
+		return this.processed;
 	}
 
 }

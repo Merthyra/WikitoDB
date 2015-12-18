@@ -8,7 +8,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import at.ac.tuwien.docspars.entity.DBVariant;
+import at.ac.tuwien.docspars.entity.PersistVariant;
 import at.ac.tuwien.docspars.io.FileProvider;
 
 /**
@@ -154,12 +154,22 @@ public class CLIArgProcessor {
 			} 
 		}
 		if (cl.hasOption("v")) {
-			DBVariant db = DBVariant.valueOf(cl.getOptionValue("v"));
+			//DBVariant db = DBVariant.valueOf(cl.getOptionValue("v"));
+			int version = 0;
+			try{
+			 version = Integer.parseInt(cl.getOptionValue("v"));	 
+			}
+			catch (NumberFormatException ex) {
+				throw new CommandLineOptionException("invalid value for version value. should be integer value"); 		
+			}
+			PersistVariant db = PersistVariant.valueOf("V"+version);
 			if (db == null) {
 				throw new CommandLineOptionException("unknown variant of processing: " + cl.getOptionValue("v"));
 			}
-			pH.setVariant(db);			
+			pH.setVariant(db);
+			logger.info("SET PROCESS PARAMETER DB VARIANT TO " + this.pH.getVariant());
 		}
+		// to be removed, not required any more
 		if (cl.hasOption("u")) {
 			pH.setUpdates(true);			
 		}					

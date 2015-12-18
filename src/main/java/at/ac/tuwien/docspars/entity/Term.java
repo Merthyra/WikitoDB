@@ -6,31 +6,32 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class Term {
+public class Term extends Dict {
 
-	private final Dict dict;
 	private final Document doc;
 	private List<Integer> pos = new ArrayList<Integer>();
+	private int nextpos = -1;
 
-	public Term(Document doc, Dict dict, int pos) {
+	
+	public Term(Document doc, Dictionable dict, int pos) {
+		super(dict.getTid(), dict.getTerm());
 		this.doc = doc;
-		this.dict = dict;
 		// add initial first position of occurrences
 		this.pos.add(pos);
 	}
 	
 	public Term(Document doc, Dict dict) {
+		super(dict.getTid(), dict.getTerm());
 		this.doc = doc;
-		this.dict = dict;
 		// add initial first position of occurrences
+	}
+
+	public Integer getFirstPosition() {
+		return pos.get(0);
 	}
 
 	public Integer getLastPosition() {
 		return pos.get(this.pos.size()-1);
-	}
-	
-	public Integer getFirstPosition() {
-		return pos.get(0);
 	}
 
 	public void addPosition(int position) {
@@ -41,16 +42,12 @@ public class Term {
 		return this.pos.size();
 	}
 	
-	public int getTid() {
-		return this.dict.getId();
+	public int getNextPos() {
+		return this.nextpos+1 < this.pos.size() ? this.pos.get(++this.nextpos) : -1;
 	}
 	
-	public boolean isFirst(int pos) {
-		return this.pos.get(0) == pos;
-	}
-	
-	public Dict getDict() {
-		return this.dict;
+	public void resetPos() {
+		this.nextpos = -1;
 	}
 	
 	/**
@@ -59,17 +56,14 @@ public class Term {
 	public int getDid() {
 		return this.doc.getDid();
 	}
-
-	/**
-	 * @return the revid
-	 */
+	
 	public int getRevid() {
 		return this.doc.getRevId();
 	}
-
+	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(9, 35).append(this.getTid()).toHashCode();
+		return new HashCodeBuilder(9, 35).append(this.getTid()).hashCode();
 	}
 
 	@Override
@@ -83,8 +77,15 @@ public class Term {
 		if (obj.getClass() != getClass()) {
 			return false;
 		}
-		Term rhs = (Term) obj;
+		Dict rhs = (Dict) obj;
 		return new EqualsBuilder().append(this.getTid(), rhs.getTid()).isEquals();
 	}
-
+	
+	@Override
+	public String toString() {
+	return "tid:" + this.getTid() + " term:" + this.getTerm() + " did:" + this.getDid() + " revid:" + this.getRevid() + " tf:" + this.getTF();
+	}
+	
 }
+
+

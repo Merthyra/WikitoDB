@@ -1,21 +1,24 @@
 package at.ac.tuwien.docspars.io.services;
 
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.set.TIntSet;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import at.ac.tuwien.docspars.entity.Batch;
+import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 
 public interface PersistanceService {
 
 	public boolean addBatch(Batch batch);
 
 	public boolean updateBatch(Batch batch);
+	
+	boolean remove(List<Document> docs);
 
-	public boolean remove(List<Integer> documents);
+	public TIntSet readDocs();
 
-	public Set<Integer> readDocs();
-
-	public Map<String, Integer> readDict();
+	public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict();
 
 }

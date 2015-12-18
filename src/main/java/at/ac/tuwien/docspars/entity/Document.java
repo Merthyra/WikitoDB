@@ -1,13 +1,10 @@
-	package at.ac.tuwien.docspars.entity;
+package at.ac.tuwien.docspars.entity;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -29,33 +26,14 @@ public class Document {
 	private Document() {
 
 	}
+
 	
-	public Document(int pageID, int revID, String title, Timestamp added, Timestamp removed, int length, boolean update) {
-		this.addedTimestamp = added;
-		this.removedTimestamp = removed;
-		this.title = title;
-		this.length = length;
-		this.did = pageID;
-		this.revId = revID;
-		this.update = update;
-	}
-	
-	public Document(int pageID, int revID, String title, Timestamp added, Timestamp removed, int length) {
-		this.addedTimestamp = added;
-		this.removedTimestamp = removed;
-		this.title = title;
-		this.length = length;
-		this.did = pageID;
-		this.revId = revID;
-		this.update = false;
-	}
-	
-	public Document(int pageID, int revID, String title, Timestamp added, int length) {
+	public Document(int dID, int revID, String title, Timestamp added, int length) {
 		this.addedTimestamp = added;
 		this.removedTimestamp = null;
 		this.title = title;
 		this.length = length;
-		this.did = pageID;
+		this.did = dID;
 		this.revId = revID;
 		this.update = false;
 	}
@@ -83,27 +61,12 @@ public class Document {
 	public void setLength(int length) {
 		this.length = length;
 	}
-	
-
-	/**
-	 * @return the revId
-	 */
-	public int getRevId() {
-		return revId;
-	}
-
-	/**
-	 * @param revId
-	 *            the revId to set
-	 */
-	public void setRevId(int revId) {
-		this.revId = revId;
-	}
 
 	public Term addTerm(Dict dict, int pos) {	
-		Term t = this.terms.get(dict.getId());
+		Term t = this.terms.get(dict.getTid());
 		if (t==null) {
-			t= new Term(this, dict, pos);
+			t= new Term(this, dict);
+			this.terms.put(dict.getTid(), t);
 		}
 		t.addPosition(pos);
 		return t;
@@ -162,6 +125,22 @@ public class Document {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(5, 19).append(this.did).append(this.revId).toHashCode();
+	}
+	
+	
+
+	/**
+	 * @return the revId
+	 */
+	public int getRevId() {
+		return revId;
+	}
+
+	/**
+	 * @param revId the revId to set
+	 */
+	public void setRevId(int revId) {
+		this.revId = revId;
 	}
 
 	@Override

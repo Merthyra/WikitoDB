@@ -2,34 +2,54 @@ package at.ac.tuwien.docspars.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
-import at.ac.tuwien.docspars.entity.Term;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+
 public class DocumentTextProcessor {
 
+	
 	public static Analyzer ANALYZER;
 	// max length of term / terms exceeding will be ignored
 	public static int MAX_TERM_LENGTH;
 
 	public static int MAX_TITLE_LENGTH;
-
+	private static final Logger logger = LogManager.getLogger(DocumentTextProcessor.class.getPackage().getName());
 	// TO-DO make this call independent from class instantiation
 	static {
-		MAX_TITLE_LENGTH = 100;
-		MAX_TERM_LENGTH = 100;
-		ANALYZER = new EnglishAnalyzer();
+		MAX_TITLE_LENGTH = 95;
+		MAX_TERM_LENGTH = 95;
+		try {
+		ANALYZER = CustomAnalyzer.builder(Paths.get("src/main/resources"))
+				 .withTokenizer("wikipedia")   
+//				 .addTokenFilter("standard")
+				 .addTokenFilter("asciifolding")  
+				 .addTokenFilter("lowercase")
+				 .addTokenFilter("elision")
+				 .addTokenFilter("stop", "ignoreCase", "true", "words", "stop-words_en.txt")	 
+				 .addTokenFilter("porterstem")
+				 .addTokenFilter("trim")
+				 .addTokenFilter("length", "min", "2", "max", String.valueOf(MAX_TERM_LENGTH))
+				 .build();	
+		}
+		catch (IOException ie) {
+			logger.error("Error initializing custom analyzer, using StandardAnalyzer instead!");
+			ANALYZER = new EnglishAnalyzer();
+		}
 	}
 
 	/**
@@ -41,71 +61,37 @@ public class DocumentTextProcessor {
 	 * @return normalized and stemmed String array having stopwords removed
 	 * @throws ParsingDocumentException
 	 */
-	public static List<String> clearUpText(String text) throws ParsingDocumentException {
+	@PerformanceMonitored
+	public static List<String> tokenizeTextStream(String text) throws ParsingDocumentException {
 		TokenStream tokens = null;
-		text = deAccent(text);
 		List<String> textList = new ArrayList<String>();
-		// text = text.replaceAll("[[^\\p{L}\\p{Z}]]", " ").trim();
 		try {
 			tokens = ANALYZER.tokenStream("document", new StringReader(text));
 			tokens.reset();
 			while (tokens.incrementToken()) {
 				// additionally remove all Tokens that would exceed configured
 				// database
-
 				String dictEntry = tokens.getAttribute(CharTermAttribute.class).toString();
-				if (dictEntry != null && dictEntry.length() < MAX_TERM_LENGTH) {
-					textList.add(dictEntry);
+				// remove all non ascii character terms for convenience reasons
+				if (dictEntry != null && dictEntry.matches("\\A\\p{ASCII}*\\z")) {
+					// remove ' signs,
+//					dictEntry.replaceAll(new String(new char[] {(char) 96}), "");
+//					dictEntry.replaceAll(new String(new char[] {(char) 39}), "");
+					// finally remove ' signs
+					textList.add(dictEntry.replaceAll("'", ""));
 				}
 			}
 			tokens.close();
 
 		} catch (IOException e) {
-			throw new ParsingDocumentException();
+			throw new ParsingDocumentException("Error caused in Text Tokenization and Filtering/Stemming");
 		}
-
 		return textList;
 	}
 	
-	/**
-	 * Method converts text String to String List creating a list of Terms with no duplicates
-	 * @param text
-	 *            String that needs to be processed
-	 * @return normalized and stemmed String array having stopwords removed
-	 * @throws ParsingDocumentException
-	 */
-	public static List<String> tokenizeTextString(String text) throws ParsingDocumentException {
-		TokenStream tokens = null;
-		
-		HashSet<Term> terms = new HashSet<Term>();
-		List<String> textList = new ArrayList<String>();
-		// text = text.replaceAll("[[^\\p{L}\\p{Z}]]", " ").trim();
-		try {
-			tokens = ANALYZER.tokenStream("document", new StringReader(text));
-			tokens.reset();
-			while (tokens.incrementToken()) {
-				// additionally remove all Tokens that would exceed configured
-				// database
-
-				String dictEntry = tokens.getAttribute(CharTermAttribute.class).toString();
-				if (dictEntry != null && dictEntry.length() < MAX_TERM_LENGTH) {
-					textList.add(dictEntry);
-				}
-			}
-			tokens.close();
-
-		} catch (IOException e) {
-			throw new ParsingDocumentException();
-		}
-
-		return textList;
-	}
-	
-	
-
 	/**
 	 * normalize and deaccent string, removing all non US-ASCII characters (eg.
-	 * � - > a)
+	 * 'a - > a)
 	 * 
 	 * @param string
 	 *            to be processed
@@ -151,5 +137,4 @@ public class DocumentTextProcessor {
 		}
 		return timest;
 	}
-
 }

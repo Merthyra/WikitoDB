@@ -1,20 +1,21 @@
-  <page>
-    <title>Act of Settlement 1701</title>
-    <ns>0</ns>
-    <id>2070</id>
-    <revision>
-      <id>654571733</id>
-      <parentid>654516662</parentid>
-      <timestamp>2015-04-02T01:10:16Z</timestamp>
-      <contributor>
-        <username>Chrism</username>
-        <id>26670</id>
-      </contributor>
-      <minor />
-      <comment>ref fix</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{for|other acts with similar titles|Act of Settlement (disambiguation)}}
+
+<page>
+	<title>Act of Settlement 1701</title>
+	<ns>0</ns>
+	<id>2070</id>
+	<revision>
+		<id>654571733</id>
+		<parentid>654516662</parentid>
+		<timestamp>2015-04-02T01:10:16Z</timestamp>
+		<contributor>
+			<username>Chrism</username>
+			<id>26670</id>
+		</contributor>
+		<minor />
+		<comment>ref fix</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{for|other acts with similar titles|Act of Settlement (disambiguation)}}
 {{Use British English|date=February 2012}}
 {{Use dmy dates|date=August 2012}}
 {{Infobox UK legislation
@@ -200,84 +201,86 @@ The British group [[Republic (political organisation)|Republic]] asserted that s
 [[Category:Anti-Catholicism]]
 [[Category:Anti-Catholicism in the United Kingdom]]
 [[Category:Sophia of Hanover]]</text>
-      <sha1>oihe8pzrfg9hh27lfqb5dqc0vcm1o2z</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Afrocelt Sound System</title>
-    <ns>0</ns>
-    <id>2071</id>
-    <redirect title="Afro Celt Sound System" />
-    <revision>
-      <id>163802434</id>
-      <parentid>15900515</parentid>
-      <timestamp>2007-10-11T13:45:10Z</timestamp>
-      <contributor>
-        <username>Closedmouth</username>
-        <id>372693</id>
-      </contributor>
-      <comment>R from alternative spelling</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">#REDIRECT [[Afro Celt Sound System]]{{R from alternative spelling}}</text>
-      <sha1>691r78oedg4r5tndugmhufgxuoc9cgi</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Andrew Jackson/First Inaugural Address</title>
-    <ns>0</ns>
-    <id>2073</id>
-    <redirect title="Andrew Jackson" />
-    <revision>
-      <id>15900517</id>
-      <parentid>215434</parentid>
-      <timestamp>2002-09-13T06:54:23Z</timestamp>
-      <contributor>
-        <username>Jeronimo</username>
-        <id>108</id>
-      </contributor>
-      <comment>remove original text, will put external link on article page instead</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">#REDIRECT [[Andrew Jackson]]</text>
-      <sha1>1vi6snhauwe1ymdrs3ockc8uedkys8t</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Andrew Jackson/Second Inaugural Address</title>
-    <ns>0</ns>
-    <id>2074</id>
-    <redirect title="Andrew Jackson" />
-    <revision>
-      <id>15900518</id>
-      <parentid>215442</parentid>
-      <timestamp>2002-09-13T06:55:55Z</timestamp>
-      <contributor>
-        <username>Jeronimo</username>
-        <id>108</id>
-      </contributor>
-      <comment>remove original text, will put external link on article page instead</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">#REDIRECT [[Andrew Jackson]]</text>
-      <sha1>1vi6snhauwe1ymdrs3ockc8uedkys8t</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Aircraft hijacking</title>
-    <ns>0</ns>
-    <id>2075</id>
-    <revision>
-      <id>653430086</id>
-      <parentid>653067872</parentid>
-      <timestamp>2015-03-25T08:04:19Z</timestamp>
-      <contributor>
-        <ip>27.125.161.252</ip>
-      </contributor>
-      <comment>/* Shooting down aircraft */</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{About||the fictional character|Skyjack (Transformers)|the racehorse|Sky Jack|the Trumans Water EP|Skyjacker (EP)}}
+		<sha1>oihe8pzrfg9hh27lfqb5dqc0vcm1o2z</sha1>
+	</revision>
+</page>
+<page>
+	<title>Afrocelt Sound System</title>
+	<ns>0</ns>
+	<id>2071</id>
+	<redirect title="Afro Celt Sound System" />
+	<revision>
+		<id>163802434</id>
+		<parentid>15900515</parentid>
+		<timestamp>2007-10-11T13:45:10Z</timestamp>
+		<contributor>
+			<username>Closedmouth</username>
+			<id>372693</id>
+		</contributor>
+		<comment>R from alternative spelling</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">#REDIRECT [[Afro Celt Sound System]]{{R from alternative spelling}}</text>
+		<sha1>691r78oedg4r5tndugmhufgxuoc9cgi</sha1>
+	</revision>
+</page>
+<page>
+	<title>Andrew Jackson/First Inaugural Address</title>
+	<ns>0</ns>
+	<id>2073</id>
+	<redirect title="Andrew Jackson" />
+	<revision>
+		<id>15900517</id>
+		<parentid>215434</parentid>
+		<timestamp>2002-09-13T06:54:23Z</timestamp>
+		<contributor>
+			<username>Jeronimo</username>
+			<id>108</id>
+		</contributor>
+		<comment>remove original text, will put external link on article page
+			instead</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">#REDIRECT [[Andrew Jackson]]</text>
+		<sha1>1vi6snhauwe1ymdrs3ockc8uedkys8t</sha1>
+	</revision>
+</page>
+<page>
+	<title>Andrew Jackson/Second Inaugural Address</title>
+	<ns>0</ns>
+	<id>2074</id>
+	<redirect title="Andrew Jackson" />
+	<revision>
+		<id>15900518</id>
+		<parentid>215442</parentid>
+		<timestamp>2002-09-13T06:55:55Z</timestamp>
+		<contributor>
+			<username>Jeronimo</username>
+			<id>108</id>
+		</contributor>
+		<comment>remove original text, will put external link on article page
+			instead</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">#REDIRECT [[Andrew Jackson]]</text>
+		<sha1>1vi6snhauwe1ymdrs3ockc8uedkys8t</sha1>
+	</revision>
+</page>
+<page>
+	<title>Aircraft hijacking</title>
+	<ns>0</ns>
+	<id>2075</id>
+	<revision>
+		<id>653430086</id>
+		<parentid>653067872</parentid>
+		<timestamp>2015-03-25T08:04:19Z</timestamp>
+		<contributor>
+			<ip>27.125.161.252</ip>
+		</contributor>
+		<comment>/* Shooting down aircraft */</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{About||the fictional character|Skyjack (Transformers)|the racehorse|Sky Jack|the Trumans Water EP|Skyjacker (EP)}}
 
 {{Terrorism}}
 
@@ -422,26 +425,28 @@ The 2014 film ''[[Non-Stop (film)|Non-Stop]]'' starring Liam Neeson and Julianne
 [[Category:Terrorism tactics]]
 [[Category:Aircraft hijacking| ]]
 [[Category:Aviation security]]</text>
-      <sha1>000gfp31e8muvj60ej5li1cg7yeeife</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Acropolis of Athens</title>
-    <ns>0</ns>
-    <id>2076</id>
-    <revision>
-      <id>652331030</id>
-      <parentid>652124008</parentid>
-      <timestamp>2015-03-20T00:21:07Z</timestamp>
-      <contributor>
-        <username>Paul August</username>
-        <id>87355</id>
-      </contributor>
-      <minor />
-      <comment>Reverted edits by [[Special:Contribs/5.68.53.180|5.68.53.180]] ([[User talk:5.68.53.180|talk]]) to last version by KathrynLybarger</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{coord|37.971421|23.726166|type:landmark_region:GR|display=title}}
+		<sha1>000gfp31e8muvj60ej5li1cg7yeeife</sha1>
+	</revision>
+</page>
+<page>
+	<title>Acropolis of Athens</title>
+	<ns>0</ns>
+	<id>2076</id>
+	<revision>
+		<id>652331030</id>
+		<parentid>652124008</parentid>
+		<timestamp>2015-03-20T00:21:07Z</timestamp>
+		<contributor>
+			<username>Paul August</username>
+			<id>87355</id>
+		</contributor>
+		<minor />
+		<comment>Reverted edits by
+			[[Special:Contribs/5.68.53.180|5.68.53.180]] ([[User
+			talk:5.68.53.180|talk]]) to last version by KathrynLybarger</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{coord|37.971421|23.726166|type:landmark_region:GR|display=title}}
 {{Infobox World Heritage Site
 |Name        = Acropolis, Athens
 |Image       = [[File:Attica 06-13 Athens 50 View from Philopappos - Acropolis Hill.jpg|300px|The Acropolis of Athens, seen from Philopappou hill]]
@@ -750,26 +755,29 @@ Within the later tradition of [[Western Civilization]] and [[classicism|classica
 [[Category:Landmarks in Athens]]
 [[Category:World Heritage Sites in Greece]]
 [[Category:Visitor attractions in Athens]]</text>
-      <sha1>mmcwx206nxhitcn03sd1bn3r19yn2wr</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Adam Weishaupt</title>
-    <ns>0</ns>
-    <id>2077</id>
-    <revision>
-      <id>654497270</id>
-      <parentid>654497269</parentid>
-      <timestamp>2015-04-01T14:25:50Z</timestamp>
-      <contributor>
-        <username>ClueBot NG</username>
-        <id>13286072</id>
-      </contributor>
-      <minor />
-      <comment>Reverting possible vandalism by [[Special:Contributions/167.142.253.50|167.142.253.50]] to version by Galassi. False positive? [[User:ClueBot NG/FalsePositives|Report it]]. Thanks, [[User:ClueBot NG|ClueBot NG]]. (2180916) (Bot)</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{Use dmy dates|date=July 2012}}
+		<sha1>mmcwx206nxhitcn03sd1bn3r19yn2wr</sha1>
+	</revision>
+</page>
+<page>
+	<title>Adam Weishaupt</title>
+	<ns>0</ns>
+	<id>2077</id>
+	<revision>
+		<id>654497270</id>
+		<parentid>654497269</parentid>
+		<timestamp>2015-04-01T14:25:50Z</timestamp>
+		<contributor>
+			<username>ClueBot NG</username>
+			<id>13286072</id>
+		</contributor>
+		<minor />
+		<comment>Reverting possible vandalism by
+			[[Special:Contributions/167.142.253.50|167.142.253.50]] to version by
+			Galassi. False positive? [[User:ClueBot NG/FalsePositives|Report
+			it]]. Thanks, [[User:ClueBot NG|ClueBot NG]]. (2180916) (Bot)</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{Use dmy dates|date=July 2012}}
 {{Infobox philosopher
 |region = Western Philosophy
 |era = [[Age of Enlightenment|Enlightenment era]]
@@ -913,25 +921,28 @@ Adam Weishaupt is briefly mentioned in [[Umberto Eco]]'s novel ''[[The Prague Ce
 [[Category:University of Ingolstadt faculty]]
 [[Category:Freemasons]]
 [[Category:German male writers]]</text>
-      <sha1>km6icplajp9wpam6upiw12k7g43jqy6</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Acorn Electron</title>
-    <ns>0</ns>
-    <id>2078</id>
-    <revision>
-      <id>648865624</id>
-      <parentid>648864094</parentid>
-      <timestamp>2015-02-26T00:18:45Z</timestamp>
-      <contributor>
-        <username>Ylee</username>
-        <id>91088</id>
-      </contributor>
-      <comment>Reverted [[WP:AGF|good faith]] edits by [[Special:Contributions/88.169.118.75|88.169.118.75]] ([[User talk:88.169.118.75|talk]]): Present tense is correct when applicable. [[WP:COMPNOW]]. ([[WP:TW|TW]])</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{Use dmy dates|date=December 2013}}
+		<sha1>km6icplajp9wpam6upiw12k7g43jqy6</sha1>
+	</revision>
+</page>
+<page>
+	<title>Acorn Electron</title>
+	<ns>0</ns>
+	<id>2078</id>
+	<revision>
+		<id>648865624</id>
+		<parentid>648864094</parentid>
+		<timestamp>2015-02-26T00:18:45Z</timestamp>
+		<contributor>
+			<username>Ylee</username>
+			<id>91088</id>
+		</contributor>
+		<comment>Reverted [[WP:AGF|good faith]] edits by
+			[[Special:Contributions/88.169.118.75|88.169.118.75]] ([[User
+			talk:88.169.118.75|talk]]): Present tense is correct when applicable.
+			[[WP:COMPNOW]]. ([[WP:TW|TW]])</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{Use dmy dates|date=December 2013}}
 {{Use British English|date=December 2013}}
 {{Infobox computer
 |Name         = Acorn Electron
@@ -1169,44 +1180,44 @@ The case was designed by industrial designer [[Allen Boothroyd]] of Cambridge Pr
 [[Category:Acorn Computers|Electron]]
 [[Category:6502-based home computers]]
 [[Category:Home computers]]</text>
-      <sha1>o5nsgoepnivwur0d5bwai8qsrj107a2</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Autumn equinox</title>
-    <ns>0</ns>
-    <id>2079</id>
-    <redirect title="Equinox" />
-    <revision>
-      <id>144201879</id>
-      <parentid>63959897</parentid>
-      <timestamp>2007-07-12T15:51:57Z</timestamp>
-      <contributor>
-        <ip>204.108.8.5</ip>
-      </contributor>
-      <comment>[[WP:AES|←]]Redirected page to [[Equinox]]</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">#REDIRECT [[Equinox]]
+		<sha1>o5nsgoepnivwur0d5bwai8qsrj107a2</sha1>
+	</revision>
+</page>
+<page>
+	<title>Autumn equinox</title>
+	<ns>0</ns>
+	<id>2079</id>
+	<redirect title="Equinox" />
+	<revision>
+		<id>144201879</id>
+		<parentid>63959897</parentid>
+		<timestamp>2007-07-12T15:51:57Z</timestamp>
+		<contributor>
+			<ip>204.108.8.5</ip>
+		</contributor>
+		<comment>[[WP:AES|←]]Redirected page to [[Equinox]]</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">#REDIRECT [[Equinox]]
 [[Category:September observances]]</text>
-      <sha1>mu3hk8evv93mebsypztmkisnqetnr67</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>A Fire Upon the Deep</title>
-    <ns>0</ns>
-    <id>2080</id>
-    <revision>
-      <id>650375772</id>
-      <parentid>649762030</parentid>
-      <timestamp>2015-03-08T00:54:23Z</timestamp>
-      <contributor>
-        <username>Hyperbobble</username>
-        <id>24311086</id>
-      </contributor>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{Use mdy dates|date=June 2013}}
+		<sha1>mu3hk8evv93mebsypztmkisnqetnr67</sha1>
+	</revision>
+</page>
+<page>
+	<title>A Fire Upon the Deep</title>
+	<ns>0</ns>
+	<id>2080</id>
+	<revision>
+		<id>650375772</id>
+		<parentid>649762030</parentid>
+		<timestamp>2015-03-08T00:54:23Z</timestamp>
+		<contributor>
+			<username>Hyperbobble</username>
+			<id>24311086</id>
+		</contributor>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{Use mdy dates|date=June 2013}}
 {{Infobox book | &lt;!-- See [[Wikipedia:WikiProject Novels]] or [[Wikipedia:WikiProject Books]] --&gt;
 | name          = A Fire Upon the Deep
 | title_orig    =
@@ -1317,26 +1328,29 @@ Vinge's original title for the novel was &quot;Among the Tines&quot;; its actual
 [[Category:Novels by Vernor Vinge]]
 [[Category:1990s science fiction novels]]
 [[Category:Tor Books books]]</text>
-      <sha1>j4lday8pub4iol8x1ciwu2hneu2tv3l</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Aeronautics</title>
-    <ns>0</ns>
-    <id>2082</id>
-    <revision>
-      <id>651559297</id>
-      <parentid>651559295</parentid>
-      <timestamp>2015-03-15T23:55:25Z</timestamp>
-      <contributor>
-        <username>ClueBot NG</username>
-        <id>13286072</id>
-      </contributor>
-      <minor />
-      <comment>Reverting possible vandalism by [[Special:Contributions/108.252.143.32|108.252.143.32]] to version by Arado. False positive? [[User:ClueBot NG/FalsePositives|Report it]]. Thanks, [[User:ClueBot NG|ClueBot NG]]. (2161769) (Bot)</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">[[File:Atlantis on Shuttle Carrier Aircraft.jpg|thumb|[[Space Shuttle Atlantis|Space Shuttle ''Atlantis'']] on a [[Shuttle Carrier Aircraft]].]]
+		<sha1>j4lday8pub4iol8x1ciwu2hneu2tv3l</sha1>
+	</revision>
+</page>
+<page>
+	<title>Aeronautics</title>
+	<ns>0</ns>
+	<id>2082</id>
+	<revision>
+		<id>651559297</id>
+		<parentid>651559295</parentid>
+		<timestamp>2015-03-15T23:55:25Z</timestamp>
+		<contributor>
+			<username>ClueBot NG</username>
+			<id>13286072</id>
+		</contributor>
+		<minor />
+		<comment>Reverting possible vandalism by
+			[[Special:Contributions/108.252.143.32|108.252.143.32]] to version by
+			Arado. False positive? [[User:ClueBot NG/FalsePositives|Report it]].
+			Thanks, [[User:ClueBot NG|ClueBot NG]]. (2161769) (Bot)</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">[[File:Atlantis on Shuttle Carrier Aircraft.jpg|thumb|[[Space Shuttle Atlantis|Space Shuttle ''Atlantis'']] on a [[Shuttle Carrier Aircraft]].]]
 '''Aeronautics''' (from the [[ancient Greek]] words ὰήρ ''āēr'', which means &quot;air&quot;, and ναυτική ''nautikē'' which means &quot;navigation&quot;, i.e. &quot;navigation of the air&quot;) is the science or art involved with the study, [[aircraft design process|design]], and manufacturing of air[[flight]]-capable machines, and the techniques of operating [[aircraft]] and rockets within the atmosphere. The British [[Royal Aeronautical Society]] identifies the aspects of &quot;aeronautical Art, Science and Engineering&quot; and &quot;the profession of Aeronautics (which expression includes Astronautics).&quot; &lt;ref&gt;[http://aerosociety.com/About-Us/learnedsociety A Learned and Professional Society] (Retrieved 8 March 2014)&lt;/ref&gt;
 
 While the term—literally meaning &quot;sailing the air&quot;—originally referred solely to the science of ''operating'' the aircraft, it has since been expanded to include technology, business and other aspects related to aircraft.&lt;ref name=&quot;americana&quot;&gt;{{cite encyclopedia
@@ -1494,25 +1508,27 @@ Rockets are used for [[fireworks]], weaponry, [[ejection seat]]s, [[launch vehic
 
 [[Category:Aeronautics| ]]
 [[Category:Articles containing video clips]]</text>
-      <sha1>sqdfdhnuv27auqg329i0jrenakhrdjb</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Auguste and Louis Lumière</title>
-    <ns>0</ns>
-    <id>2083</id>
-    <revision>
-      <id>646413533</id>
-      <parentid>645339938</parentid>
-      <timestamp>2015-02-09T22:38:02Z</timestamp>
-      <contributor>
-        <username>Bgwhite</username>
-        <id>264323</id>
-      </contributor>
-      <comment>[[WP:CHECKWIKI]] error fix #94. Stray ref tag. Do [[Wikipedia:GENFIXES|general fixes]] and cleanup if needed. - using [[Project:AWB|AWB]] (10822)</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{Infobox person
+		<sha1>sqdfdhnuv27auqg329i0jrenakhrdjb</sha1>
+	</revision>
+</page>
+<page>
+	<title>Auguste and Louis Lumière</title>
+	<ns>0</ns>
+	<id>2083</id>
+	<revision>
+		<id>646413533</id>
+		<parentid>645339938</parentid>
+		<timestamp>2015-02-09T22:38:02Z</timestamp>
+		<contributor>
+			<username>Bgwhite</username>
+			<id>264323</id>
+		</contributor>
+		<comment>[[WP:CHECKWIKI]] error fix #94. Stray ref tag. Do
+			[[Wikipedia:GENFIXES|general fixes]] and cleanup if needed. - using
+			[[Project:AWB|AWB]] (10822)</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{Infobox person
 | name              = Brothers Auguste and Louis Lumière
 | image             = Fratelli Lumiere.jpg
 | caption           = The inventors of the Moving Picture
@@ -1654,25 +1670,26 @@ Although the Lumière brothers were not the first inventors to develop technique
 [[Category:Recipients of the Order of St. Sava]]
 [[Category:1895 films]]
 [[Category:French cinema pioneers]]</text>
-      <sha1>rww3i78pycypc55scw7yp6xw1ouvcr3</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Acts of the Apostles</title>
-    <ns>0</ns>
-    <id>2084</id>
-    <revision>
-      <id>651607012</id>
-      <parentid>651131860</parentid>
-      <timestamp>2015-03-16T08:54:20Z</timestamp>
-      <contributor>
-        <username>Download</username>
-        <id>6912407</id>
-      </contributor>
-      <comment>cleanup and gen fixes, [[WP:AWB/T|typo(s) fixed]]: which which → which using [[Project:AWB|AWB]]</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{About|the book in the Christian New Testament|the literature genre|Acts of the Apostles (genre)|the acronym|ACTS (disambiguation)}}
+		<sha1>rww3i78pycypc55scw7yp6xw1ouvcr3</sha1>
+	</revision>
+</page>
+<page>
+	<title>Acts of the Apostles</title>
+	<ns>0</ns>
+	<id>2084</id>
+	<revision>
+		<id>651607012</id>
+		<parentid>651131860</parentid>
+		<timestamp>2015-03-16T08:54:20Z</timestamp>
+		<contributor>
+			<username>Download</username>
+			<id>6912407</id>
+		</contributor>
+		<comment>cleanup and gen fixes, [[WP:AWB/T|typo(s) fixed]]: which
+			which → which using [[Project:AWB|AWB]]</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{About|the book in the Christian New Testament|the literature genre|Acts of the Apostles (genre)|the acronym|ACTS (disambiguation)}}
 {{Redirect|Acts|uses of Act|Act (disambiguation){{!}}Act}}
 
 {{Books of the New Testament}}
@@ -1892,24 +1909,25 @@ Acts agrees with Paul's letters on the major outline of Paul's career: as Saul h
 [[Category:1st-century Christianity]]
 [[Category:1st-century books]]
 [[Category:Acts of the Apostles| ]]</text>
-      <sha1>r96l0omj28xd3m424y6xo1mxid52wr2</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Assyria</title>
-    <ns>0</ns>
-    <id>2085</id>
-    <revision>
-      <id>654766737</id>
-      <parentid>654552115</parentid>
-      <timestamp>2015-04-03T11:49:35Z</timestamp>
-      <contributor>
-        <ip>92.26.16.191</ip>
-      </contributor>
-      <comment>/* Achaemenid Assyria, Athura, Assuristan, Assyria province, Adiabene, Osroene and Hatra */</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">{{About|ancient Assyria|modern uses|Assyrian (disambiguation){{!}}Assyrian}}
+		<sha1>r96l0omj28xd3m424y6xo1mxid52wr2</sha1>
+	</revision>
+</page>
+<page>
+	<title>Assyria</title>
+	<ns>0</ns>
+	<id>2085</id>
+	<revision>
+		<id>654766737</id>
+		<parentid>654552115</parentid>
+		<timestamp>2015-04-03T11:49:35Z</timestamp>
+		<contributor>
+			<ip>92.26.16.191</ip>
+		</contributor>
+		<comment>/* Achaemenid Assyria, Athura, Assuristan, Assyria province,
+			Adiabene, Osroene and Hatra */</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">{{About|ancient Assyria|modern uses|Assyrian (disambiguation){{!}}Assyrian}}
 
 {{redirects here|Assyrian Empire|the most powerful stage of the ancient Assyrian state|Neo-Assyrian Empire}}
 {{Use dmy dates|date=June 2011}}
@@ -2622,25 +2640,25 @@ The [[modern discovery of Babylonia and Assyria]] begins with excavations in [[N
 [[Category:Ancient history of Turkey]]
 [[Category:Ancient history of Iran]]
 [[Category:Ancient history of Iraq]]</text>
-      <sha1>c1m8e3ms8wneb1ss0y8l7fcy8d6atrx</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>Abijah</title>
-    <ns>0</ns>
-    <id>2086</id>
-    <revision>
-      <id>634878700</id>
-      <parentid>626920800</parentid>
-      <timestamp>2014-11-21T20:47:49Z</timestamp>
-      <contributor>
-        <username>Ezhiki</username>
-        <id>48143</id>
-      </contributor>
-      <comment>expanded on the Russian aspect</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve">'''Abijah''' (אביה '' 'aḆiYaH''), alternatively spelled '''Abiah''' and '''[[Abia (name)|Abia]]''', in [[modern Hebrew]] '''Aviya''',{{citation needed|date=September 2014}} is a [[Biblical Hebrew]]&lt;ref name=&quot;Petrovsky&quot;&gt;Petrovsky, p.&amp;nbsp;35&lt;/ref&gt; [[unisex name]]&lt;ref name=&quot;Superanskaya2&quot;&gt;Superanskaya, p.&amp;nbsp;277&lt;/ref&gt; that means &quot;my Father is [[Yahweh]]&quot;.&lt;ref name=&quot;Petrovsky&quot;&gt;Petrovsky, p.&amp;nbsp;35&lt;/ref&gt;
+		<sha1>c1m8e3ms8wneb1ss0y8l7fcy8d6atrx</sha1>
+	</revision>
+</page>
+<page>
+	<title>Abijah</title>
+	<ns>0</ns>
+	<id>2086</id>
+	<revision>
+		<id>634878700</id>
+		<parentid>626920800</parentid>
+		<timestamp>2014-11-21T20:47:49Z</timestamp>
+		<contributor>
+			<username>Ezhiki</username>
+			<id>48143</id>
+		</contributor>
+		<comment>expanded on the Russian aspect</comment>
+		<model>wikitext</model>
+		<format>text/x-wiki</format>
+		<text xml:space="preserve">'''Abijah''' (אביה '' 'aḆiYaH''), alternatively spelled '''Abiah''' and '''[[Abia (name)|Abia]]''', in [[modern Hebrew]] '''Aviya''',{{citation needed|date=September 2014}} is a [[Biblical Hebrew]]&lt;ref name=&quot;Petrovsky&quot;&gt;Petrovsky, p.&amp;nbsp;35&lt;/ref&gt; [[unisex name]]&lt;ref name=&quot;Superanskaya2&quot;&gt;Superanskaya, p.&amp;nbsp;277&lt;/ref&gt; that means &quot;my Father is [[Yahweh]]&quot;.&lt;ref name=&quot;Petrovsky&quot;&gt;Petrovsky, p.&amp;nbsp;35&lt;/ref&gt;
 
 ==Russian name==
 The variant used in the [[Russian language]] is &quot;{{lang|ru|А́вия}}&quot; (''Aviya''),&lt;ref name=&quot;Petrovsky&quot; /&gt; with &quot;{{lang|ru|А́бия}}&quot;&lt;ref name=&quot;Petrovsky&quot; /&gt; or &quot;{{lang|ru|Аби́я}}&quot; (''Abiya''),&lt;ref name=&quot;Superanskaya2&quot; /&gt; being older forms.&lt;ref name=&quot;Petrovsky&quot; /&gt; Included into various, often handwritten, church calendars throughout the 17th–19th centuries, it was omitted from the official [[Synod]]al [[Menologium]] at the end of the 19th century.&lt;ref name=&quot;Superanskaya2a&quot;&gt;Superanskaya, pp.&amp;nbsp;23 and 277&lt;/ref&gt; In 1924–1930, the name (as &quot;{{lang|ru|Ави́я}}&quot;, a form of &quot;Abiya&quot;&lt;ref name=&quot;Superanskaya2&quot; /&gt;) was included into various Soviet calendars,&lt;ref name=&quot;Superanskaya2a&quot;&gt;Superanskaya, pp.&amp;nbsp;22 and 277&lt;/ref&gt; which included the new and often artificially created names promoting the new Soviet realities and encouraging the break with the tradition of using the names in the Synodal Menologia.&lt;ref name=&quot;Dushechkina&quot;&gt;Toronto Slavic Quarterly. Елена Душечкина. &quot;[http://sites.utoronto.ca/tsq/12/dushechkina12.shtml Мессианские тенденции в советской антропонимической практике 1920-х - 1930-х годов]&quot; {{ru icon}}&lt;/ref&gt; In Russian it is only used as a female name.&lt;ref name=&quot;Petrovsky&quot; /&gt;&lt;ref name=&quot;Superanskaya2&quot; /&gt; [[Diminutive]]s of this name include &quot;{{lang|ru|А́ва}}&quot; (''Ava'') and &quot;{{lang|ru|Ви́я}}&quot; (''Viya'').&lt;ref name=&quot;Petrovsky&quot;&gt;Petrovsky, p.&amp;nbsp;35&lt;/ref&gt;
@@ -2674,6 +2692,6 @@ The variant used in the [[Russian language]] is &quot;{{lang|ru|А́вия}}&quo
 [[Category:Hebrew Bible people]]
 [[Category:Women in the Bible]]
 [[Category:Russian feminine given names]]</text>
-      <sha1>czqdu75l0h4zi321b76x9ufcgmtq977</sha1>
-    </revision>
-  </page>
+		<sha1>czqdu75l0h4zi321b76x9ufcgmtq977</sha1>
+	</revision>
+</page>

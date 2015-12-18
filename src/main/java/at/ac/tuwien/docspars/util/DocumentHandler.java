@@ -1,22 +1,21 @@
 package at.ac.tuwien.docspars.util;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
+import java.sql.Timestamp;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.TransactionSystemException;
 
 import at.ac.tuwien.docspars.entity.Batch;
 import at.ac.tuwien.docspars.entity.Dict;
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Document;
 import at.ac.tuwien.docspars.entity.SimpleDict;
-import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 
 public class DocumentHandler {
@@ -24,9 +23,10 @@ public class DocumentHandler {
 	protected static final Logger logger = LogManager.getLogger(DocumentHandler.class.getPackage().getName());
 	// persisted dict table read from database in order to improve processing
 	// time
-	private Map<String, Integer> persistedDict;
+	// saving memory consumption US Ascii Strings are converted to byte[] arrays to be stored in a map-like collection
+	private TObjectIntMap<ASCIIString2ByteArrayWrapper> persistedDict;
 	// Set of IDs stored in database
-	private Set<Integer> persistedDocs;
+	private TIntSet persistedDocs;
 	// temporary collections storing pages for the next batch update of the
 	// database
 	private int lastDictID = 0;
@@ -40,14 +40,17 @@ public class DocumentHandler {
 	private ProcessMetrics metrics = new ProcessMetrics();
 
 	private ProcessPropertiesHandler control;
+	
+	private boolean useDocumentTimestamp = false;
+	
 
 	@SuppressWarnings("unused")
 	@Deprecated
 	private DocumentHandler() {
 		this.persistService = null;
-		this.persistedDict = new HashMap<String, Integer>();
+		this.persistedDict = new TObjectIntHashMap<ASCIIString2ByteArrayWrapper>(1000000);
 		this.lastDictID = this.persistedDict.size()+1;
-		this.persistedDocs = new HashSet<Integer>();
+		this.persistedDocs = new TIntHashSet(1000000);
 	}
 
 	public DocumentHandler(PersistanceService persistService, ProcessPropertiesHandler handle) {
@@ -61,16 +64,14 @@ public class DocumentHandler {
 	private void flushNew() {
 		// trying to repeat flushing for a max of 3 times
 		int maxTries = 3;		
-		while(true) {		
+		while(this.addBatch.getBatchSize()>0) {		
 			try {		
-				this.addBatch.setTimestamp(new Timestamp(System.currentTimeMillis()));;
+				this.addBatch.setTimestamp(new Timestamp(System.currentTimeMillis()));
 				if (persistService.addBatch(addBatch)) {
 					// restore data structure if update was not successful!
 					logger.info("Batch Add Successful: " + addBatch.getBatchSize() + " docs, " + addBatch.getNrOfNewDictEntries() + " dicts, " + addBatch.getNrOfTerms() + " terms");
-					this.metrics.addNumberOfDictEntries(addBatch.getNrOfNewDictEntries());
-					this.metrics.addNumberOfDocuments(addBatch.getBatchSize());
-					this.metrics.addNumberOfTerms(addBatch.getNrOfTerms());
-					this.metrics.updateBatch();
+					this.metrics.addNewBatch(this.addBatch);
+					reset(this.addBatch);
 				} else {
 					// in case update was successful and committed but no exception was thrown (shuould never be the case)
 					throw new PersistanceException("Number of written terms and parsed terms do not match");
@@ -81,23 +82,20 @@ public class DocumentHandler {
 				if (maxTries <= 0) throw new PersistanceException("Failed To Flush Batch of: " + addBatch.getBatchSize() + " docs, " + addBatch.getNrOfNewDictEntries() + " dicts, " + addBatch.getNrOfTerms() + " terms");
 				logger.warn("Writing Batch failed! - retrying: " + (4-maxTries) + " out of " +  maxTries);
 				maxTries--;			
-				flushNew();
 			}
 		} 
 	}
 
 	private void flushUpdate() {
 		int maxTries = 3;		
-		while(true) {		
+		while(this.updateBatch.getBatchSize()>0) {		
 			try {			
 				this.updateBatch.setTimestamp(new Timestamp(System.currentTimeMillis()));;
 				if (persistService.updateBatch(updateBatch)) {
 					// restore data structure if update was not successful!updateBatch
 					logger.info("Batch Update Successful: " + updateBatch.getBatchSize() + " docs, " + updateBatch.getNrOfNewDictEntries() + " dicts, " + updateBatch.getNrOfTerms() + " terms");
-					this.metrics.addNumberOfDictEntries(updateBatch.getNrOfNewDictEntries());
-					this.metrics.addNumberOfDocuments(updateBatch.getBatchSize());
-					this.metrics.addNumberOfTerms(updateBatch.getNrOfTerms());
-					this.metrics.updateBatch();
+					this.metrics.addUpdateBatch(this.updateBatch);
+					reset(this.updateBatch);
 				} else {
 					// in case update was successful and committed but no exception was thrown (shuould never be the case)
 					throw new PersistanceException("Number of written terms and parsed terms do not match");
@@ -108,7 +106,6 @@ public class DocumentHandler {
 				if (maxTries <= 0) throw new PersistanceException("Failed To Flush Batch of: " + updateBatch.getBatchSize() + " docs, " + updateBatch.getNrOfNewDictEntries() + " dicts, " + updateBatch.getNrOfTerms() + " terms");
 				logger.warn("Writing Batch failed! - retrying: " + (4-maxTries) + " out of " +  maxTries);
 				maxTries--;			
-				flushUpdate();
 			}
 		} 
 	}
@@ -120,40 +117,43 @@ public class DocumentHandler {
 		if (!control.allowNextPage()) {
 			flushAll();
 			resetAll();
-			throw new EndOfProcessParameterReachedException("Done processing " + this.control.getProcessed_Page_Count());
+			throw new EndOfProcessReachedException("Done processing " + this.control.getProcessed_Page_Count());
 		}
 		// add only new documents, with ids not already stored in the collection
 		// or if page exists, accept only newer revisions
 		Batch batch = this.addBatch;
 		// init new document
-		Document newDoc = new Document(pageid, revid, title, timestamp, null, text.size(), false);
+		Document newDoc = new Document(pageid, revid, title, timestamp, text.size());
 		// if document is already contained in document store update flag is activated
 		if (this.getPersistedDocs().contains(pageid)) {
 			batch = this.updateBatch;
 			newDoc.setUpdate(true);
 		}
-		// iterating through all words in document
+		// iterating over all terms in document
 		for (int i = 0; i < text.size(); i++) {
 			// check if dict already contains term.. returns null if dict is not stored in db
-			Integer tmp = this.getPersistedDict().get(text.get(i));			
-			Dict tmpdic;
-			if (tmp == null) {
+			ASCIIString2ByteArrayWrapper bytesText = new ASCIIString2ByteArrayWrapper(text.get(i));
+			int tmp = this.getPersistedDict().get(bytesText);			
+			Dict tmpdic = null;
+			if (tmp == 0) {
 				// if word is not contained in dict, a new dict entry is created
 				tmpdic = new SimpleDict(this.getNextDictID(), text.get(i));
 				// new dict is added in batch for new dict entries
 				batch.addNewVocab(tmpdic);
-				this.getPersistedDict().put(text.get(i), tmpdic.getId());
+				this.getPersistedDict().put(bytesText, tmpdic.getTid());
+//				System.out.println(text.get(i));
 			} else {
 				tmpdic = new SimpleDict(tmp, text.get(i));
 			}
 			// add term to document with position in document
 			batch.addTerm(newDoc, tmpdic, i);
 		}		
+		//
 		batch.addDocs(newDoc);
 		this.getPersistedDocs().add(pageid);
-		logger.debug("Document with PAGE-ID: " + pageid + " REVISION-ID: " + revid + " TITLE: " + title + " TIMESTAMP:  " + timestamp + " DOC-LENGTH: " + text.size() + " added");
+		logger.debug("Document with PAGE-ID: " + pageid +  " TITLE: " + title + " TIMESTAMP:  " + timestamp + " DOC-LENGTH: " + text.size() + " added");
 		// if max batch size is reached documents in concerned batch are stored
-		if (batch.getDocs().size() % this.control.getBatch_size() == 0) {
+		if (batch.getBatchSize() % this.control.getBatch_size() == 0) {
 			if (batch == this.updateBatch) {
 				logger.debug("inserting update batch " + this.control.getBatch_size() + " docs up to " + this.control.getProcessed_Page_Count());
 				this.flushUpdate(); 				
@@ -161,10 +161,13 @@ public class DocumentHandler {
 				logger.debug("inserting add batch " + this.control.getBatch_size() + " docs up to " + this.control.getProcessed_Page_Count());
 				this.flushNew();
 			}
-			reset(batch);
 		};		
 	}
 
+	public void skipDocument() {
+		this.metrics.skipElement();
+	}
+	
 	/**
 	 * reverts all temporal document and dictionary data from data structure
 	 * which have not been persisted use with caution!
@@ -180,21 +183,17 @@ public class DocumentHandler {
 			this.persistedDocs.remove(doc.getDid());
 			i++;
 		}
-		for (Dict dic : this.addBatch.getNewVocab()) {
-			this.persistedDict.remove(dic.getId());
+		for (Dictionable dic : this.addBatch.getNewVocab()) {
+			this.persistedDict.remove(dic.getTid());
 			j++;
-		}		
-		for (Dict dic : this.addBatch.getNewVocab()) {
-			this.persistedDict.remove(dic.getId());
-			j++;
-		}		
+		}			
 		logger.debug("reverted " + i + " temporal docs & " + j + " temporal dict entries");
 		resetAll();
 	}
 
-	private void flushAll() {
-		this.flushUpdate();
+	public void flushAll() {
 		this.flushNew();
+		this.flushUpdate();
 		this.resetAll();
 	}
 
@@ -208,11 +207,11 @@ public class DocumentHandler {
 		batch.reset();
 	}
 
-	public Map<String, Integer> getPersistedDict() {
+	public TObjectIntMap<ASCIIString2ByteArrayWrapper> getPersistedDict() {
 		return this.persistedDict;
 	}
 
-	public Set<Integer> getPersistedDocs() {
+	public TIntSet getPersistedDocs() {
 		return this.persistedDocs;
 	}
 
@@ -229,13 +228,26 @@ public class DocumentHandler {
 	}
 	
 	public Batch getUpdateBatch() {
-		return this.updateBatch;
-	}
+		return this.updateBatch;	}
 
 	/**
 	 * @return the metrics
 	 */
 	public ProcessMetrics getMetrics() {
 		return metrics;
+	}
+
+	/**
+	 * @return the useDocumentTimestamp
+	 */
+	public boolean isUseDocumentTimestamp() {
+		return useDocumentTimestamp;
+	}
+
+	/**
+	 * @param useDocumentTimestamp the useDocumentTimestamp to set
+	 */
+	public void setUseDocumentTimestamp(boolean useDocumentTimestamp) {
+		this.useDocumentTimestamp = useDocumentTimestamp;
 	}
 }

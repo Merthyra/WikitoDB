@@ -1,48 +1,32 @@
 package at.ac.tuwien.docspars.entity;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public abstract class Dict {
+public class Dict implements Dictionable {
 
-	private int id;
-	private String term;
-	private int df;
+	private int tid = 0;
+	private String term = "";
 
 	@SuppressWarnings("unused")
 	private Dict() {
 
 	}
-	
-	/**
-	 * constructor used to build dict
-	 * 
-	 * @param id
-	 * @param term
-	 */
-	public Dict(int id, String term, Timestamp created) {
-		this.id = id;
+
+	public Dict(int tid, String term) {
+		if (tid <= 0 || term == null || term.length() <= 0|| term.length() > 100) {
+			throw new RuntimeException("Invalid initiation of Dictionary Element");
+		}
+		this.tid = tid;
 		this.term = term;
 	}
 	
-	public Dict(int id, String term) {
-		this.id = id;
-		this.term = term;
-	}
-	
-	public Dict(int id, String term, int df) {
-		this.id = id;
-		this.term = term;
-		this.df = df;
+	public int getTid() {
+		return tid;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
+	public void setTid(int id) {
+		this.tid = id;
 	}
 
 	public String getTerm() {
@@ -52,10 +36,24 @@ public abstract class Dict {
 	public void setTerm(String term) {
 		this.term = term;
 	}
-	
-	public int getDf() {
-		return this.df;
+		
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(9, 35).append(this.getTid()).hashCode();
 	}
 
-
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		Dict rhs = (Dict) obj;
+		return new EqualsBuilder().append(this.getTid(), rhs.getTid()).isEquals();
+	}
 }

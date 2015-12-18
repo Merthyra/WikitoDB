@@ -4,88 +4,92 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import at.ac.tuwien.docspars.entity.Batch;
+
 public class ProcessMetrics {
 
-	private long numberOfDocuments;
-	private long numberOfTerms;
-	private long numberOfDictEntries;
+	private long numberOfNewDocuments;
+	private long numberOfNewTerms;
+	private long numberOfAllNewTerms;
+	private long numberOfNewDictEntries;
+	
+	private long numberOfUpdateDocuments;
+	private long numberOfUpdateTerms;
+	private long numberOfUpdateDictEntries;
+	private long numberOfAllUpdateTerms;
+	
+	private long skippedElemets;
+	
 	private long startTime;
-	private int batchupdates;
+	private int addBatch;
+	private int updateBatch;
 
 	public ProcessMetrics() {
-		this.numberOfDictEntries=0;
-		this.numberOfTerms=0;
-		this.numberOfDocuments=0;
+		this.numberOfNewDictEntries=0;
+		this.numberOfNewTerms=0;
+		this.numberOfAllNewTerms = 0;
+		this.numberOfNewDocuments=0;
+		
+		this.numberOfUpdateDictEntries = 0;
+		this.numberOfUpdateDocuments = 0;
+		this.numberOfUpdateTerms = 0;
+		this.numberOfAllUpdateTerms = 0;
+		
+		this.skippedElemets = 0;
+		
 		this.startTime = System.currentTimeMillis();
-		this.batchupdates = 0;
+		this.addBatch = 0;
+		this.updateBatch = 0;
 	}
 
-	/**
-	 * @return the numberOfDocuments
-	 */
-	public long getNumberOfDocuments() {
-		return numberOfDocuments;
+	public void addUpdateBatch(Batch batch) {
+		this.numberOfUpdateDocuments+=batch.getBatchSize();
+		this.numberOfUpdateDictEntries+=batch.getNrOfNewDictEntries();
+		this.numberOfUpdateTerms+=batch.getNrOfUniqueTerms();
+		this.numberOfAllUpdateTerms+= batch.getNrOfTerms();
+		this.updateBatch++;
 	}
 
-	/**
-	 * @param numberOfDocuments the numberOfDocuments to set
-	 */
-	public void addNumberOfDocuments(long numberOfDocuments) {
-		this.numberOfDocuments+=numberOfDocuments;
-	}
-
-	/**
-	 * @return the numberOfTerms
-	 */
-	public long getNumberOfTerms() {
-		return numberOfTerms;
-	}
-
-	/**
-	 * @param numberOfTerms the numberOfTerms to set
-	 */
-	public void addNumberOfTerms(long numberOfTerms) {
-		this.numberOfTerms+=numberOfTerms;
-	}
-
-	/**
-	 * @return the numberOfDictEntries
-	 */
-	public long getNumberOfDictEntries() {
-		return numberOfDictEntries;
-	}
-
-	/**
-	 * @param numberOfDictEntries the numberOfDictEntries to set
-	 */
-	public void addNumberOfDictEntries(long numberOfDictEntries) {
-		this.numberOfDictEntries+=numberOfDictEntries;
+	public void addNewBatch(Batch batch) {
+		this.numberOfNewDocuments+=batch.getBatchSize();
+		this.numberOfNewDictEntries+=batch.getNrOfNewDictEntries();
+		this.numberOfNewTerms+=batch.getNrOfUniqueTerms();
+		this.numberOfAllNewTerms+= batch.getNrOfTerms();
+		this.addBatch++;
 	}
 	
-	public void updateBatch() {
-		this.batchupdates++;
+	public void skipElement() {
+		this.skippedElemets++;
 	}
-	
-	public int getBatchSize() {
-		return this.batchupdates++;
-	}
-
 
 	@Override
 	public String toString() {
 		long endTime = System.currentTimeMillis();
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		DecimalFormat df = (DecimalFormat)nf;
+		String sep = System.getProperty("line.separator");
 		df.applyPattern("###,###.###");
-		if (this.batchupdates == 0) this.batchupdates = 1;
-		return "\nProcess Metrics for Previous Run:\n" + 
-				"Documents: " + df.format(this.numberOfDocuments) + " \n" + 
-				"Dicts-Entries: " + df.format(this.numberOfDictEntries) + " \n" + 
-				"Term-Entries: " + df.format(this.numberOfTerms) + " \n" + 
-				"in " + (((double)endTime-this.startTime)/1000) + " seconds\n" + 
-				"Batch-Updates: " + df.format(this.batchupdates) + " \n" + 
-				"avg-terms/batch: " + df.format(this.numberOfTerms/this.batchupdates) + "\n" +
-				"avg-dicts/batch: " + df.format(this.numberOfDictEntries/this.batchupdates);
+		return "\nProcess Metrics for Previous Run:" + sep + sep +
+				"Batch-Adds:                   \t" + df.format(this.addBatch) + sep + 
+				"New Documents:	               \t" + df.format(this.numberOfNewDocuments) + sep + 
+				"New Dicts-Entries: 	       \t" + df.format(this.numberOfNewDictEntries) + sep + 
+				"New Term-Entries:             \t" + df.format(this.numberOfNewTerms) + sep + 
+				"New ALL Term-Entries: 	       \t" + df.format(this.numberOfAllNewTerms) + sep + 
+				"avg-unique-terms/document:    \t" + df.format(this.numberOfNewDocuments == 0 ? 0 : this.numberOfNewTerms/this.numberOfNewDocuments) + sep +
+				"avg-terms/batch:              \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewTerms/this.addBatch) + sep +
+				"avg-dicts/batch:              \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewDictEntries/this.addBatch) + sep + 		
+				"--------------------------------------------" + sep + 
+				"Batch-Updates:                \t" + df.format(this.updateBatch) + sep + 
+				"Updated New Documents:        \t" + df.format(this.numberOfUpdateDocuments) + sep + 
+				"Updated New Dicts-Entries:    \t" + df.format(this.numberOfUpdateDictEntries) + sep + 
+				"Updated New Term-Entries:     \t" + df.format(this.numberOfUpdateTerms) + sep + 
+				"Updated ALL New Term-Entries: \t" + df.format(this.numberOfAllUpdateTerms) + sep + 
+				"avg-unique-terms/document:    \t" + df.format(this.numberOfUpdateDocuments == 0 ? 0 : this.numberOfUpdateTerms/this.numberOfUpdateDocuments) + sep +
+				"avg-terms/batch:              \t" + df.format(this.updateBatch == 0 ? 0 : this.numberOfUpdateTerms/this.updateBatch) + sep +
+				"avg-dicts/batch:              \t" + df.format(this.updateBatch == 0 ? 0 : this.numberOfUpdateDictEntries/this.updateBatch) + sep + 
+				"--------------------------------------------" + sep +
+				"skipped documents:            \t" + df.format(this.skippedElemets) + sep + 
+				"++++++++++++++++++++++++++++++++++++++++++++" + sep +
+ 				" -------------------- in ->   \t" + (((double)endTime-this.startTime)/1000) + " seconds";
 	}
-
 }

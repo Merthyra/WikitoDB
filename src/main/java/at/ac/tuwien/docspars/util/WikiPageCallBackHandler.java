@@ -13,8 +13,6 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 
 	private static final Logger logger = LogManager.getLogger(WikiPageCallBackHandler.class.getPackage().getName());
 	private final DocumentHandler docHandler;
-	private boolean useDocumentTimestamp = false;
-	private String dateFormat;
 
 	public WikiPageCallBackHandler(DocumentHandler docHandler) {
 		this.docHandler = docHandler;
@@ -22,46 +20,33 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
 
 	@Override
 	public void process(WikiPage page) {
-		//		if (processProperties.getProcessed_Page_Count() % 10000 == 0) {
-		//			logger.info("parsed " + processProperties.getProcessed_Page_Count() + " documents from file");
-		//		}
-		//		if (this.currentTime == null && this.processProperties.isSystemTimeStampUsed()) {
-		//			this.currentTime = new Timestamp(System.currentTimeMillis());
-		//		}
-		//		if (!processProperties.skipPageDueToOffset() && processProperties.allowNextPage()) {
 		logger.debug("parsing " + page.getTitle());
 		// using title and text values for IR retrieval
-		String text = page.getTitle() + " " + page.getText(); 
-		List<String> cleanTerms = null;
+		String wikitext = page.getTitle() + " " + page.getWikiText();
+		List<String> tokens = null;
 		Timestamp tstmp = null;
-		String title = page.getTitle();
+		String wikititle = page.getTitle();
+		// excluding redirection, special, stubs and disambiguation pages
+		// skipping text processing
+		if (page.isRedirect() || page.isSpecialPage() || page.isStub() || page.isDisambiguationPage()) {
+			docHandler.skipDocument();
+			return;
+		}
 		try {
-			// now using the Lucene EnglishAnalyzer to tokenize the String
-			cleanTerms = DocumentTextProcessor.clearUpText(text);
-			title = DocumentTextProcessor.deAccent(title);
-			title = DocumentTextProcessor.trimTextTitle(title);
+			// now using the Lucene CustomAnalyzer to tokenize the String
+			tokens = DocumentTextProcessor.tokenizeTextStream(wikitext);
+			wikititle = DocumentTextProcessor.trimTextTitle(DocumentTextProcessor.deAccent(wikititle));
 			// skip timestamp converstion if insert timestamp is uesed
 			// converting String to Timestamp Datatype
-			if (useDocumentTimestamp) tstmp = DocumentTextProcessor.convertStringToSQLTimestamp(page.getTimestamp(), this.dateFormat);
+			// tstmp =
+			// DocumentTextProcessor.convertStringToSQLTimestamp(page.getTimestamp(),
+			// this.dateFormat);
 
 		} catch (ParsingDocumentException e1) {
-			logger.error("Error tokenizing Text Stream " + e1.getLocalizedMessage());
+			logger.error("Error in tokenization of text stream " + e1.getLocalizedMessage());
+			// proceed to next page
+			return;
 		}
-		docHandler.addDocument(Integer.parseInt(page.getID()), Integer.parseInt(page.getRevid()), title, tstmp, cleanTerms);
-		// if document handler store is as large as batch_size, the
-		// documents are being stored in the db
-		//			if ((docHandler.getNewDocumentEntries().size() % processProperties.getBatch_size()) == 0) {
-		//				logger.debug("inserting " + this.processProperties.getBatch_size() + " docs up to " + this.processProperties.getProcessed_Page_Count());
-		//				this.docHandler.flush();
-		//				this.docHandler.reset();
-		//				this.currentTime = null;
-		//			}
-		//		} else if (!processProperties.allowPage()) {
-		//			logger.debug("inserting last documents");
-		//			this.docHandler.flush();
-		//			this.docHandler.reset();
-		//			throw new EndOfProcessParameterReachedException();
-		//		}
+		docHandler.addDocument(Integer.parseInt(page.getID()), Integer.parseInt(page.getRevid()), wikititle, tstmp, tokens);
 	}
-
 }

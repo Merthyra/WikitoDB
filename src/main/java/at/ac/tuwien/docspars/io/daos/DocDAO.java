@@ -1,16 +1,14 @@
 package at.ac.tuwien.docspars.io.daos;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import gnu.trove.set.TIntSet;
 
-import org.apache.commons.collections4.map.MultiValueMap;
+import java.sql.Timestamp;
 
-import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Document;
 
-public interface DocDAO extends CrudOperations<List<Document>, Set<Integer>>{
+public interface DocDAO extends CrudOperations<Document, TIntSet>{
 
-
+	public void setTimestamp(Timestamp time);
+	
+	public Timestamp getTimestamp();
 }

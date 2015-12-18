@@ -1,4 +1,4 @@
-package at.ac.tuwien.docspars.io.db;
+package at.ac.tuwien.docspars.io.daos.db;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import at.ac.tuwien.docspars.entity.Batch;
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
 
@@ -35,13 +35,15 @@ public class Term1DAODdb implements TermDAO {
 	}
 	
 	@Override
-	public boolean add(List<Term> terms) {	
+	public boolean add(List<Dictionable> terms) {	
+			
 		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms1.insert"), new BatchPreparedStatementSetter() {
-			//INSERT INTO terms (tid, pageid, revid, pos) VALUES (?,?,?,?)
+			//INSERT INTO terms (tid, pageid, pos) VALUES (?,?,?,?)
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				ps.setInt(1, terms.get(i).getTid());
-				ps.setInt(2, terms.get(i).getRevid());
-				ps.setInt(3, i);		
+				ps.setInt(1, ((Term) terms.get(i)).getTid());
+				ps.setInt(2, ((Term) terms.get(i)).getDid());
+				ps.setInt(3, ((Term) terms.get(i)).getRevid());
+				ps.setInt(4, ((Term) terms.get(i)).getNextPos());		
 			}
 
 			public int getBatchSize() {
@@ -54,30 +56,28 @@ public class Term1DAODdb implements TermDAO {
 
 	@Override
 	public List<Term> read() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean create() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean drop() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean remove(List<Term> a) {
-		throw new UnsupportedOperationException("not intended to be removed");
+	public boolean remove(List<Dictionable> a) {
+		return false;
 	}
 
 	@Override
-	public boolean update(List<Term> a) {
-		throw new UnsupportedOperationException("not intended to be updated");
+	public boolean update(List<Dictionable> a) {
+		return false;
 	}
+
 
 }

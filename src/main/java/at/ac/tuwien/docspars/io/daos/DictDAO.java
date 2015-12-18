@@ -1,12 +1,10 @@
 package at.ac.tuwien.docspars.io.daos;
 
-import java.util.List;
-import java.util.Map;
+import gnu.trove.map.TObjectIntMap;
+import at.ac.tuwien.docspars.entity.Dictionable;
+import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 
-import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.Dict;
-
-public interface DictDAO extends CrudOperations<List<Dict>, Map<String,Integer>> {
+public interface DictDAO extends CrudOperations<Dictionable, TObjectIntMap<ASCIIString2ByteArrayWrapper>> {
 
 
 }

@@ -22,7 +22,6 @@ import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 
 public class DocumentTextProcessor {
 
-	
 	public static Analyzer ANALYZER;
 	// max length of term / terms exceeding will be ignored
 	public static int MAX_TERM_LENGTH;

@@ -3,6 +3,7 @@ package at.ac.tuwien.docspars.io.services.impl;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.set.TIntSet;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -29,6 +30,7 @@ public class DBPersistanceServiceV2 extends DBPersistanceService {
 	@PerformanceMonitored
 	public boolean addBatch(Batch batch) {
 		getDictDAO().add(batch.getNewVocab());
+		getDocDAO().setTimestamp(batch.getTimestamp());
 		getDocDAO().add(batch.getDocs());
 		getTermDAO().add((List<Dictionable>) batch.getUniqueElements());
 		return true;
@@ -37,6 +39,7 @@ public class DBPersistanceServiceV2 extends DBPersistanceService {
 	@Override
 	@PerformanceMonitored
 	public boolean updateBatch(Batch batch) {
+		getDocDAO().setTimestamp(new Timestamp(System.currentTimeMillis()));
 		getDocDAO().remove(batch.getDocs());
 		addBatch(batch);
 		return true;

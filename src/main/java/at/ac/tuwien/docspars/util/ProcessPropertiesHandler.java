@@ -36,12 +36,22 @@ public class ProcessPropertiesHandler {
 		this.dictsCached = dictsCached;
 		//logger.info("Process Properties " + " BATCH SIZE = " + this.batch_size + ", DOCUMENT START OFFSET = " + this.start_offset + ", MAX PROCESSED PAGES = " + this.max_pages + ", LANGUAGE = " + this.lan);
 	}
-
-	@SuppressWarnings("unused")
-	private ProcessPropertiesHandler() {
+	
+	/**
+	 * Init ProcessProperties Handler with default settings
+	 */
+	public ProcessPropertiesHandler() {
+		this.batch_size = 1000;
+		this.start_offset = 0;
+		this.max_pages = 1000;
+		this.processed_Page_Count = 0;
+		this.date_format = "yyyy-MM-dd'T'hh:mm:ss'Z'";
 		this.lan = "en";
-		this.maxTermLength = -1;
-	};
+		this.variant = PersistVariant.V1;
+		this.maxTermLength = 100;
+		this.updates=false;
+		this.dictsCached = 0;
+	}
 
 	public boolean skipPageDueToOffset() {
 		return --this.start_offset >= 0;

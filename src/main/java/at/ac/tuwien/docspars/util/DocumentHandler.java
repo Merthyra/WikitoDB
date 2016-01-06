@@ -25,7 +25,7 @@ public class DocumentHandler {
 	// time
 	// saving memory consumption US Ascii Strings are converted to byte[] arrays to be stored in a map-like collection
 	private TObjectIntMap<ASCIIString2ByteArrayWrapper> persistedDict;
-	// Set of IDs stored in database
+	// Set of document IDs stored in database
 	private TIntSet persistedDocs;
 	// temporary collections storing pages for the next batch update of the
 	// database
@@ -136,7 +136,7 @@ public class DocumentHandler {
 			int tmp = this.getPersistedDict().get(bytesText);			
 			Dict tmpdic = null;
 			if (tmp == 0) {
-				// if word is not contained in dict, a new dict entry is created
+				// if word is not contained in dictionary, a new dict entry is created
 				tmpdic = new SimpleDict(this.getNextDictID(), text.get(i));
 				// new dict is added in batch for new dict entries
 				batch.addNewVocab(tmpdic);

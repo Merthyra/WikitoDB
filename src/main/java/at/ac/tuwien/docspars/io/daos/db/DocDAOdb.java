@@ -122,8 +122,8 @@ public class DocDAOdb implements DocDAO {
 	}
 
 	@Override
-	public void setTimestamp(Timestamp time) {
-		this.time = time;
+	public void setTimestamp(Timestamp stamp) {
+		this.time = stamp;
 	}
 
 	@Override

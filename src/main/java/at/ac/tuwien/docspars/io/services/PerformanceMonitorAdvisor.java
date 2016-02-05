@@ -9,13 +9,13 @@ import org.springframework.aop.MethodBeforeAdvice;
 
 public class PerformanceMonitorAdvisor implements MethodBeforeAdvice, AfterReturningAdvice {
 
-	private static final Logger logger = LogManager.getLogger(PerformanceMonitorAdvisor.class.getName());
+	private static final Logger logger = LogManager.getLogger("PerformanceReport");
 
 	/** Time in milliseconds */
-	long startTime = 0;
+	private long startTime = 0;
 
 	/** Time in milliseconds */
-	long finishTime = 0;
+	private long finishTime = 0;
 
 	@Override
 	public void before(Method method, Object[] args, Object target) throws Throwable {

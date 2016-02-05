@@ -41,9 +41,10 @@ public class FileProvider {
 		return null;
 	}
 	
-	private void init() {
+	private void init() throws NullPointerException {
 		File[] files = new File(this.file_path).listFiles();
-		this.files = new ArrayList<File>(Arrays.asList(files));
+		if (files == null) files = new File[] {};
+		this.files =  new ArrayList<File>(Arrays.asList(files));
 		this.it = this.files.iterator();
 		processed = "";
 		logger.debug("Found " + this.files.size() + " Files in directory " + this.file_path);

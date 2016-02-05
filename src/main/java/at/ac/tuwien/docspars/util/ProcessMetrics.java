@@ -4,10 +4,15 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import at.ac.tuwien.docspars.entity.Batch;
 
 public class ProcessMetrics {
 
+	private static final Logger logger = LogManager.getLogger("PerformanceReport");
+	
 	private long numberOfNewDocuments;
 	private long numberOfNewTerms;
 	private long numberOfAllNewTerms;
@@ -23,6 +28,20 @@ public class ProcessMetrics {
 	private long startTime;
 	private int addBatch;
 	private int updateBatch;
+	// this ist the number of batches to be processed after intermediate logging reports is triggered
+	private int reportLimit;
+	private int reportCount = 0;
+	private long reportStartTime = 0;
+	
+	private void triggerTimeReport() {
+		if (this.reportCount == 0) { 
+			reportStartTime = System.currentTimeMillis(); 
+					}
+		if (reportLimit >= reportCount) {
+			logger.info("It took " + (System.currentTimeMillis() - this.reportStartTime)/1000 + "seconds to insert " + this.reportLimit + " batches");
+			reportCount= 0;
+		}
+	}
 
 	public ProcessMetrics() {
 		this.numberOfNewDictEntries=0;
@@ -40,6 +59,8 @@ public class ProcessMetrics {
 		this.startTime = System.currentTimeMillis();
 		this.addBatch = 0;
 		this.updateBatch = 0;
+		
+		this.reportLimit = 20;
 	}
 
 	public void addUpdateBatch(Batch batch) {
@@ -48,6 +69,7 @@ public class ProcessMetrics {
 		this.numberOfUpdateTerms+=batch.getNrOfUniqueTerms();
 		this.numberOfAllUpdateTerms+= batch.getNrOfTerms();
 		this.updateBatch++;
+		triggerTimeReport();
 	}
 
 	public void addNewBatch(Batch batch) {
@@ -56,12 +78,17 @@ public class ProcessMetrics {
 		this.numberOfNewTerms+=batch.getNrOfUniqueTerms();
 		this.numberOfAllNewTerms+= batch.getNrOfTerms();
 		this.addBatch++;
+		triggerTimeReport();
 	}
 	
 	public void skipElement() {
 		this.skippedElemets++;
 	}
-
+	
+	public void setReportLimit(int limit) {
+		this.reportLimit = limit;
+	}
+ 
 	@Override
 	public String toString() {
 		long endTime = System.currentTimeMillis();

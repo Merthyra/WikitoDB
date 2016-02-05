@@ -13,47 +13,41 @@ public class Dict implements Dictionable {
 
 	}
 
-	public Dict(int tid, String term) {
-		if (tid <= 0 || term == null || term.length() <= 0|| term.length() > 100) {
+	public Dict(final int tid, final String term) {
+		if (tid <= 0 || term == null || term.length() <= 0 || term.length() > 100) {
 			throw new RuntimeException("Invalid initiation of Dictionary Element");
 		}
 		this.tid = tid;
 		this.term = term;
 	}
-	
-	public int getTid() {
-		return tid;
+
+	@Override
+	public int getTId() {
+		return this.tid;
 	}
 
-	public void setTid(int id) {
-		this.tid = id;
-	}
-
+	@Override
 	public String getTerm() {
-		return term;
+		return this.term;
 	}
 
-	public void setTerm(String term) {
-		this.term = term;
-	}
-		
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(9, 35).append(this.getTid()).hashCode();
+		return new HashCodeBuilder(9, 35).append(this.getTId()).hashCode();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
 		if (obj == this) {
 			return true;
 		}
-		if (obj.getClass() != getClass()) {
+		if (obj.getClass() != this.getClass()) {
 			return false;
 		}
-		Dict rhs = (Dict) obj;
-		return new EqualsBuilder().append(this.getTid(), rhs.getTid()).isEquals();
+		final Dict rhs = (Dict) obj;
+		return new EqualsBuilder().append(this.getTId(), rhs.getTId()).isEquals();
 	}
 }

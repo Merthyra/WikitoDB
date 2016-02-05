@@ -26,30 +26,33 @@ public class Term1DAODdb implements TermDAO {
 		super();
 	}
 
-	public Term1DAODdb(DataSource dataSource) {
+	public Term1DAODdb(final DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	public Term1DAODdb(JdbcTemplate template) {
+	public Term1DAODdb(final JdbcTemplate template) {
 		this.jdbcTemplate = template;
 	}
-	
-	@Override
-	public boolean add(List<Dictionable> terms) {	
-			
-		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms1.insert"), new BatchPreparedStatementSetter() {
-			//INSERT INTO terms (tid, pageid, pos) VALUES (?,?,?,?)
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				ps.setInt(1, ((Term) terms.get(i)).getTid());
-				ps.setInt(2, ((Term) terms.get(i)).getDid());
-				ps.setInt(3, ((Term) terms.get(i)).getRevid());
-				ps.setInt(4, ((Term) terms.get(i)).getNextPos());		
-			}
 
-			public int getBatchSize() {
-				return terms.size();
-			}
-		});
+	@Override
+	public <B extends Dictionable> boolean add(final List<B> terms) {
+
+		final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms1.insert"),
+				new BatchPreparedStatementSetter() {
+					// INSERT INTO terms (tid, pageid, pos) VALUES (?,?,?,?)
+					@Override
+					public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+						ps.setInt(1, ((Term) terms.get(i)).getTId());
+						ps.setInt(2, ((Term) terms.get(i)).getDid());
+						ps.setInt(3, ((Term) terms.get(i)).getRevid());
+						ps.setInt(4, ((Term) terms.get(i)).getNextPos());
+					}
+
+					@Override
+					public int getBatchSize() {
+						return terms.size();
+					}
+				});
 		logger.debug(Term1DAODdb.class.getName() + " inserted " + updateCounts.length + " terms to terms table");
 		return updateCounts.length == terms.size();
 	}
@@ -70,14 +73,13 @@ public class Term1DAODdb implements TermDAO {
 	}
 
 	@Override
-	public boolean remove(List<Dictionable> a) {
+	public <B extends Dictionable> boolean remove(final List<B> a) {
 		return false;
 	}
 
 	@Override
-	public boolean update(List<Dictionable> a) {
+	public <B extends Dictionable> boolean update(final List<B> a) {
 		return false;
 	}
-
 
 }

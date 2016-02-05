@@ -1,13 +1,13 @@
 package at.ac.tuwien.docspars.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.entity.PersistVariant;
 
 public class ProcessPropertiesHandler {
 
-	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getPackage().getName());
+//	private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class.getPackage().getName());
 	private PersistVariant variant;
 	private int batch_size;
 	private int start_offset;
@@ -19,8 +19,9 @@ public class ProcessPropertiesHandler {
 	private final int maxTermLength;
 	private int dictsCached;
 	private boolean updates;
+	private final int reportLimit;
 
-	public ProcessPropertiesHandler(int batch_size, int start_offset, int max_pages, String date_format, String language, String sc, int maxLength, int dictsCached) {
+	public ProcessPropertiesHandler(int batch_size, int start_offset, int max_pages, String date_format, String language, String sc, int maxLength, int dictsCached, int reportLimit) {
 		this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;
 		this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
 		this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
@@ -34,11 +35,12 @@ public class ProcessPropertiesHandler {
 		this.maxTermLength = maxLength;
 		this.updates=false;
 		this.dictsCached = dictsCached;
+		this.reportLimit = reportLimit;
 		//logger.info("Process Properties " + " BATCH SIZE = " + this.batch_size + ", DOCUMENT START OFFSET = " + this.start_offset + ", MAX PROCESSED PAGES = " + this.max_pages + ", LANGUAGE = " + this.lan);
 	}
 	
 	/**
-	 * Init ProcessProperties Handler with default settings
+	 * Init ProcessProperties Handler with preconfigured default settings (according to the project settings file)
 	 */
 	public ProcessPropertiesHandler() {
 		this.batch_size = 1000;
@@ -51,6 +53,7 @@ public class ProcessPropertiesHandler {
 		this.maxTermLength = 100;
 		this.updates=false;
 		this.dictsCached = 0;
+		this.reportLimit = 20;
 	}
 
 	public boolean skipPageDueToOffset() {
@@ -235,5 +238,10 @@ public class ProcessPropertiesHandler {
 	public void setUpdates(boolean updates) {
 		this.updates = updates;
 	}
+
+	public int getReportLimit() {
+		return reportLimit;
+	}
+	
 	
 }

@@ -56,12 +56,12 @@ public class DocumentPars {
 			logger.info("Max Number Of Pages processed");
 //			docHandler.flushAll();
 		} catch (Throwable e) {
-			logger.fatal("Unspecified Exception/Error " + e.getMessage() + " cause " + e.getCause() + " StackTrace: \n" + e.getStackTrace().toString());
+			logger.fatal("Unspecified Exception/Error " + e.getMessage() + " cause " + e.getCause() + " StackTrace: \n" + e.getStackTrace());
 			e.printStackTrace();
 		} finally {
-			System.out.println("End of Processing:\n Wrote:\n " + docHandler.getMetrics());
+			logger.info("End of Processing:\n Wrote:\n " + docHandler!=null ? docHandler.getMetrics() : "no process metrics available");
 //			System.out.println("skipped: " + (props.getProcessed_Page_Count()-docHandler.getMetrics().getNumberOfDocuments()) + " documents, because they were already in the db");
-			System.out.println("processed files: " + System.getProperty("line.separator") + files.getProcessed());
+			logger.info("processed files: " + System.getProperty("line.separator") + files.getProcessed());
 			((ConfigurableApplicationContext) context).close();
 		}
 	}

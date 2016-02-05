@@ -14,7 +14,7 @@ import org.springframework.transaction.TransactionSystemException;
 import at.ac.tuwien.docspars.entity.Batch;
 import at.ac.tuwien.docspars.entity.Dict;
 import at.ac.tuwien.docspars.entity.Dictionable;
-import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.TimestampedDocument;
 import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 
@@ -59,6 +59,7 @@ public class DocumentHandler {
 		this.lastDictID = this.persistedDict.size()+1;
 		this.persistedDocs = persistService.readDocs();
 		this.control = handle;
+		this.metrics.setReportLimit(handle.getReportLimit());
 	}
 
 	private void flushNew() {
@@ -69,7 +70,7 @@ public class DocumentHandler {
 				this.addBatch.setTimestamp(new Timestamp(System.currentTimeMillis()));
 				if (persistService.addBatch(addBatch)) {
 					// restore data structure if update was not successful!
-					logger.info("Batch Add Successful: " + addBatch.getBatchSize() + " docs, " + addBatch.getNrOfNewDictEntries() + " dicts, " + addBatch.getNrOfTerms() + " terms");
+					logger.debug("Batch Add Successful: " + addBatch.getBatchSize() + " docs, " + addBatch.getNrOfNewDictEntries() + " dicts, " + addBatch.getNrOfTerms() + " terms");
 					this.metrics.addNewBatch(this.addBatch);
 					reset(this.addBatch);
 				} else {
@@ -93,7 +94,7 @@ public class DocumentHandler {
 				this.updateBatch.setTimestamp(new Timestamp(System.currentTimeMillis()));;
 				if (persistService.updateBatch(updateBatch)) {
 					// restore data structure if update was not successful!updateBatch
-					logger.info("Batch Update Successful: " + updateBatch.getBatchSize() + " docs, " + updateBatch.getNrOfNewDictEntries() + " dicts, " + updateBatch.getNrOfTerms() + " terms");
+					logger.debug("Batch Update Successful: " + updateBatch.getBatchSize() + " docs, " + updateBatch.getNrOfNewDictEntries() + " dicts, " + updateBatch.getNrOfTerms() + " terms");
 					this.metrics.addUpdateBatch(this.updateBatch);
 					reset(this.updateBatch);
 				} else {
@@ -123,7 +124,7 @@ public class DocumentHandler {
 		// or if page exists, accept only newer revisions
 		Batch batch = this.addBatch;
 		// init new document
-		Document newDoc = new Document(pageid, revid, title, timestamp, text.size());
+		TimestampedDocument newDoc = new TimestampedDocument(pageid, revid, title, timestamp, text.size());
 		// if document is already contained in document store update flag is activated
 		if (this.getPersistedDocs().contains(pageid)) {
 			batch = this.updateBatch;
@@ -140,7 +141,7 @@ public class DocumentHandler {
 				tmpdic = new SimpleDict(this.getNextDictID(), text.get(i));
 				// new dict is added in batch for new dict entries
 				batch.addNewVocab(tmpdic);
-				this.getPersistedDict().put(bytesText, tmpdic.getTid());
+				this.getPersistedDict().put(bytesText, tmpdic.getTId());
 //				System.out.println(text.get(i));
 			} else {
 				tmpdic = new SimpleDict(tmp, text.get(i));
@@ -175,16 +176,16 @@ public class DocumentHandler {
 	public void revert() {
 		int i = 0;
 		int j = 0;
-		for (Document doc : this.addBatch.getDocs()) {
+		for (TimestampedDocument doc : this.addBatch.getDocs()) {
 			this.persistedDocs.remove(doc.getDid());
 			i++;
 		}
-		for (Document doc : this.updateBatch.getDocs()) {
+		for (TimestampedDocument doc : this.updateBatch.getDocs()) {
 			this.persistedDocs.remove(doc.getDid());
 			i++;
 		}
 		for (Dictionable dic : this.addBatch.getNewVocab()) {
-			this.persistedDict.remove(dic.getTid());
+			this.persistedDict.remove(dic.getTId());
 			j++;
 		}			
 		logger.debug("reverted " + i + " temporal docs & " + j + " temporal dict entries");

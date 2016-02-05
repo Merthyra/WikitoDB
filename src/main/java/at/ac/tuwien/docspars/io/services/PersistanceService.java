@@ -6,7 +6,7 @@ import gnu.trove.set.TIntSet;
 import java.util.List;
 
 import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.TimestampedDocument;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 
 public interface PersistanceService {
@@ -15,7 +15,7 @@ public interface PersistanceService {
 
 	public boolean updateBatch(Batch batch);
 	
-	boolean remove(List<Document> docs);
+	boolean remove(List<TimestampedDocument> docs);
 
 	public TIntSet readDocs();
 

@@ -39,7 +39,7 @@ public class Term2DAODdb implements TermDAO {
 		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms2.insert"), new BatchPreparedStatementSetter() {
 			//sql.terms2.insert=INSERT INTO terms (tid, pageid, revid, tf) VALUES (?,?,?,?)
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				ps.setInt(1, terms.get(i).getTid());
+				ps.setInt(1, terms.get(i).getTId());
 				ps.setInt(2, ((Term) terms.get(i)).getDid());
 				ps.setInt(3, ((Term) terms.get(i)).getRevid());
 				ps.setInt(4, ((Term) terms.get(i)).getTF());

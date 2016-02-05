@@ -6,7 +6,7 @@ import gnu.trove.set.TIntSet;
 import java.util.List;
 
 import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.TimestampedDocument;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
 import at.ac.tuwien.docspars.io.daos.TermDAO;
@@ -41,7 +41,7 @@ public abstract class DBPersistanceService implements PersistanceService {
 	
 	@Override
 	@PerformanceMonitored
-	public abstract boolean remove(List<Document> docs);
+	public abstract boolean remove(List<TimestampedDocument> docs);
 	
 	
 	@Override

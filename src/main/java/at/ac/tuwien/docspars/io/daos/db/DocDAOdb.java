@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.TimestampedDocument;
 import at.ac.tuwien.docspars.io.daos.DocDAO;
 
 public class DocDAOdb implements DocDAO {
@@ -56,7 +56,7 @@ public class DocDAOdb implements DocDAO {
 	}
 
 	@Override
-	public boolean remove(List<Document> docs) {
+	public boolean remove(List<TimestampedDocument> docs) {
 		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.update"),  new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				// sql.docs.insert=INSERT INTO docs (pageID, revID, added, name, len) VALUES (?,?,?,?,?)
@@ -73,7 +73,7 @@ public class DocDAOdb implements DocDAO {
 	}
 
 	@Override
-	public boolean add(List<Document> docs) {
+	public boolean add(List<TimestampedDocument> docs) {
 		int[] updateCounts = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.insert"), new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				// sql.docs.insert=INSERT INTO docs (pageID, added, name, len) VALUES (?,?,?,?)
@@ -92,12 +92,12 @@ public class DocDAOdb implements DocDAO {
 	}
 	
 	@Override
-	public boolean update(List<Document> docs) {	
+	public boolean update(List<TimestampedDocument> docs) {	
 		int updateCounts[] = jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.update"), new BatchPreparedStatementSetter() {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				// (docid, added, removed, name, len)
 				// UPDATE docs SET removed = ? WHERE pageid = ? AND revid = ?
-				ps.setTimestamp(1, docs.get(i).getAddedTimestamp());
+				ps.setTimestamp(1, docs.get(i).getTimestamp());
 				ps.setInt(2, docs.get(i).getDid());
 				ps.setInt(3, docs.get(i).getRevId());
 			}

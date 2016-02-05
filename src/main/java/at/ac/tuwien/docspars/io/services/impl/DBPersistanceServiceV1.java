@@ -8,7 +8,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.TimestampedDocument;
 import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.Term1DAODdb;
@@ -43,7 +43,7 @@ public class DBPersistanceServiceV1 extends DBPersistanceService {
 	}
 
 	@Override
-	public boolean remove(List<Document> docs) {
+	public boolean remove(List<TimestampedDocument> docs) {
 		return false;
 	}
 

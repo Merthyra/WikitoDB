@@ -35,9 +35,9 @@
 		</RollingFile>
 	</Appenders>
 	<Loggers>
-		<Logger name="at.ac.tuwien.docspars.io.services.PerformanceMonitorAdvisor" level="info" additivity="false">
+		<Logger name="PerformanceReport" level="info" additivity="false">
 			<appender-ref ref="performance-log" level="info"/>
-			<appender-ref ref="console-log" level="info" />
+			<appender-ref ref="console-log" level="debug" />
 		</Logger>	
 		<Logger name="at.ac.tuwien.docspars.io.db" level="ALL" additivity="false">
 			<appender-ref ref="trace-log" level="info" />

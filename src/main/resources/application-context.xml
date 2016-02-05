@@ -33,6 +33,7 @@
 	    <constructor-arg name="sc" value="${doc.scenario}"/>
 	    <constructor-arg name="maxLength" value="${doc.maxTermLength}"/>
 	    <constructor-arg name="dictsCached" value="${doc.maxDictCache}"/>
+	    <constructor-arg name="reportLimit" value="${doc.reportLimit}"/>
 <!-- 	    <constructor-arg name="validTime" value="${doc.validTime}"/> -->
 <!-- 	    <property name="dataSource" ref="dataSource"/> -->
 	</bean>

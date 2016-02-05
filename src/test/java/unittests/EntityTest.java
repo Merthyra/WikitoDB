@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import at.ac.tuwien.docspars.entity.Batch;
 import at.ac.tuwien.docspars.entity.Dict;
-import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.TimestampedDocument;
 import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.entity.Term;
 
@@ -23,17 +23,17 @@ public class EntityTest {
 	@Test
 	public void testDocumentEquals() {
 		//(int pageID, int revID, String title, Timestamp added, Timestamp removed, int length, boolean update)
-		Document one = new Document(800, 1, "one", new Timestamp(100), 100);
-		Document two = new Document(800, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
-		Document three = new Document(810, 2, "three", new Timestamp(System.currentTimeMillis()),100);
-		Document four = new Document(800, 3, "four", new Timestamp(150), 200);
-		Document four_2 = new Document(800,4, "four_update", new Timestamp(200),30);
+		TimestampedDocument one = new TimestampedDocument(800, 1, "one", new Timestamp(100), 100);
+		TimestampedDocument two = new TimestampedDocument(800, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
+		TimestampedDocument three = new TimestampedDocument(810, 2, "three", new Timestamp(System.currentTimeMillis()),100);
+		TimestampedDocument four = new TimestampedDocument(800, 3, "four", new Timestamp(150), 200);
+		TimestampedDocument four_2 = new TimestampedDocument(800,4, "four_update", new Timestamp(200),30);
 		
 		assertThat (one, is (equalTo(two)));
 		assertThat (one, not( equalTo(three)));
 		assertThat (one, not( equalTo(four)));	
 		
-		List<Document> docList = new ArrayList<Document>();
+		List<TimestampedDocument> docList = new ArrayList<TimestampedDocument>();
 		docList.add(one);
 		docList.add(two);
 		docList.add(three);
@@ -51,8 +51,8 @@ public class EntityTest {
 		// copy of term with the same id as one
 		Dict dicte = new SimpleDict(1, "E");
 		
-		Document doc1 = new Document(800, 1,"one", new Timestamp(100), 100);
-		Document doc2 = new Document(850, 2,"two", new Timestamp(System.currentTimeMillis()), 100);
+		TimestampedDocument doc1 = new TimestampedDocument(800, 1,"one", new Timestamp(100), 100);
+		TimestampedDocument doc2 = new TimestampedDocument(850, 2,"two", new Timestamp(System.currentTimeMillis()), 100);
 				
 		Term term1 = doc1.addTerm(dicta, 1);
 		Term term2 = doc1.addTerm(dictb, 2);
@@ -73,8 +73,8 @@ public class EntityTest {
 		// copy of term with the same id as one
 		Dict dicte = new SimpleDict(1, "E");
 		
-		Document doc1 = new Document(800, 1, "one", new Timestamp(100), 100);
-		Document doc2 = new Document(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
+		TimestampedDocument doc1 = new TimestampedDocument(800, 1, "one", new Timestamp(100), 100);
+		TimestampedDocument doc2 = new TimestampedDocument(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
 		
 		Batch addBatch = new Batch();
 		addBatch.addDocs(doc1);
@@ -103,8 +103,8 @@ public class EntityTest {
 		Dict dictb = new SimpleDict(2, "B");
 		Dict dictc = new SimpleDict(1, "A");
 		Dict dictd = new SimpleDict(4, "D");	
-		Document doc1 = new Document(800, 1, "one", new Timestamp(100), 100);
-		Document doc2 = new Document(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
+		TimestampedDocument doc1 = new TimestampedDocument(800, 1, "one", new Timestamp(100), 100);
+		TimestampedDocument doc2 = new TimestampedDocument(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
 
 		Batch batch = new Batch();
 		
@@ -121,8 +121,8 @@ public class EntityTest {
 		Dict dictc = new SimpleDict(1, "A");
 		Dict dictd = new SimpleDict(4, "D");
 		
-		Document doc1 = new Document(800, 1, "one", new Timestamp(100), 100);
-		Document doc2 = new Document(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
+		TimestampedDocument doc1 = new TimestampedDocument(800, 1, "one", new Timestamp(100), 100);
+		TimestampedDocument doc2 = new TimestampedDocument(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
 	
 		Batch batch = new Batch();
 		batch.addDocs(doc1);

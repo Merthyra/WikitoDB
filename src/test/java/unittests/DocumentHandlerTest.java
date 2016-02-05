@@ -58,7 +58,7 @@ public class DocumentHandlerTest {
         ds.setPassword(props.getProperty("jdbc.pw"));    
         persSer = new DBPersistanceServiceV1(ds);	
         //int batch_size, int start_offset, int max_pages, String date_format, String language, String sc, int maxLength, int dictsCached
-        propsHandler = new ProcessPropertiesHandler(10, 0,20, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100 , 1000);
+        propsHandler = new ProcessPropertiesHandler(10, 0,20, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100 , 1000, 20);
 	}
 	
 

@@ -26,7 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
-import at.ac.tuwien.docspars.entity.Document;
+import at.ac.tuwien.docspars.entity.TimestampedDocument;
 import at.ac.tuwien.docspars.entity.SimpleDict;
 import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
@@ -52,7 +52,7 @@ public class DAOTests {
 	public static BasicDataSource ds = new BasicDataSource();
 	public static Properties props;
 	public static ProcessPropertiesHandler processProperties;
-	private static List<Document> docList = new ArrayList<Document>();
+	private static List<TimestampedDocument> docList = new ArrayList<TimestampedDocument>();
 	private static List<Dictionable> dictList = new CountItemList<Dictionable>();
 	private static List<Dictionable> termList = new CountItemList<Dictionable>();
 	
@@ -78,7 +78,7 @@ public class DAOTests {
 		ds.setPassword(props.getProperty("jdbc.pw"));    
 		persSer = new DBPersistanceServiceV1(ds);
 		//(int batch_size, int start_offset, int max_pages, String date_format, String language, String sc, int maxLength, int dictsCached)
-		processProperties = new ProcessPropertiesHandler(2, 0, 2, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100 , 1000);	
+		processProperties = new ProcessPropertiesHandler(2, 0, 2, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100 , 1000, 0);	
 		
 		Connection con = ds.getConnection();
 		Statement st = con.createStatement();
@@ -149,11 +149,11 @@ public class DAOTests {
 		docList.clear();
 		dictList.clear();
 		termList.clear();
-		docList.add(new Document(10, 1, "one", new Timestamp(1000), 30));
-		docList.add(new Document(20, 1, "two", new Timestamp(2000), 35));
-		docList.add(new Document(30, 1, "three", new Timestamp(3000), 45));
-		docList.add(new Document(40, 5876, "four", new Timestamp(3000), 45));
-		docList.add(new Document(30, 1, "five", new Timestamp(5000), 85));
+		docList.add(new TimestampedDocument(10, 1, "one", new Timestamp(1000), 30));
+		docList.add(new TimestampedDocument(20, 1, "two", new Timestamp(2000), 35));
+		docList.add(new TimestampedDocument(30, 1, "three", new Timestamp(3000), 45));
+		docList.add(new TimestampedDocument(40, 5876, "four", new Timestamp(3000), 45));
+		docList.add(new TimestampedDocument(30, 1, "five", new Timestamp(5000), 85));
 
 		dictList.add(new SimpleDict(10, "AA"));
 		dictList.add(new SimpleDict(20, "AB"));
@@ -247,7 +247,6 @@ public class DAOTests {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testDAOV3() {
 		DictHistDAO dictdao = new DictHistDAOdb(ds);	
@@ -263,7 +262,7 @@ public class DAOTests {
 			assertThat(rs.getInt(1), is(5));
 			dictdao.setTimestamp(new Timestamp(100000000000L));			
 			dictdao.add((List<Dictionable>) list.subList(0,2));
-			rs = st.executeQuery("SELECT * FROM dict_hist WHERE tid = " + ((Dictionable) termList.get(0)).getTid() + " order by df asc");
+			rs = st.executeQuery("SELECT * FROM dict_hist WHERE tid = " + ((Dictionable) termList.get(0)).getTId() + " order by df asc");
 
 			assertTrue(rs.next());
 			assertThat(rs.getInt("df"), is(1));

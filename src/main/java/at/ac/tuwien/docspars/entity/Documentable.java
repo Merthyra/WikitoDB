@@ -1,11 +1,16 @@
 package at.ac.tuwien.docspars.entity;
 
-public interface Documentable {
+import java.sql.Timestamp;
 
-	public int getDId();
+public interface Documentable extends Timestampable {
 
-	public String getName();
+  public int getDId();
 
-	public int getLength();
+  public String getName();
+
+  public int getLength();
+
+  @Override
+  public Timestamp getTimestamp();
 
 }

@@ -81,7 +81,7 @@ public class DocumentHandlerTest {
 		terms.add(term4); //2	
 		docHandler.addDocument(10, 1, "DOCUMENT A", new Timestamp(4000), terms);	
 		List<Dictionable> newDictEntries = docHandler.getAddBatch().getNewVocab();
-		assertTrue(docHandler.getAddBatch().getBatchSize() == 1);
+		assertTrue(docHandler.getAddBatch().getDocumentNumberForBatch() == 1);
 		assertEquals(newDictEntries.get(1).getTerm(), term2);
 
 		terms.clear();
@@ -97,11 +97,11 @@ public class DocumentHandlerTest {
 		
 		docHandler.addDocument(20, 1, "DOCUMENT B", new Timestamp(2000), terms);
 		newDictEntries = docHandler.getAddBatch().getNewVocab();
-		assertSame(docHandler.getAddBatch().getBatchSize(), 2);
+		assertSame(docHandler.getAddBatch().getDocumentNumberForBatch(), 2);
 		assertSame(docHandler.getAddBatch().getNrOfUniqueTerms(), 7);
 		assertSame(docHandler.getAddBatch().getNrOfTerms(), 12);
 		assertSame(docHandler.getAddBatch().getNrOfNewDictEntries(), 5);
-		assertSame(docHandler.getUpdateBatch().getBatchSize(), 0);
+		assertSame(docHandler.getUpdateBatch().getDocumentNumberForBatch(), 0);
 		assertEquals(newDictEntries.get(0).getTerm(), term1);
 		assertEquals(newDictEntries.get(4).getTerm(), term3);
 
@@ -138,7 +138,7 @@ public class DocumentHandlerTest {
 		docHandler.addDocument(10, 1, "DOCUMENT A", new Timestamp(4000), terms);	
 		assertTrue(docHandler.getPersistedDocs().contains(10));
 		docHandler.addDocument(10, 2, "DOCUMENT A", new Timestamp(4000), terms);
-		assertTrue(docHandler.getUpdateBatch().getBatchSize()==1);	
+		assertTrue(docHandler.getUpdateBatch().getDocumentNumberForBatch()==1);	
 	}
 	
 

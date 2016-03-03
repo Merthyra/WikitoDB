@@ -1,101 +1,91 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
+import at.ac.tuwien.docspars.entity.Documentable;
+import at.ac.tuwien.docspars.entity.impl.Batch;
+import at.ac.tuwien.docspars.entity.impl.Document;
+import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.io.daos.db.AbstractTermDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
+import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.set.TIntSet;
 
 import java.util.List;
 
-import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.TimestampedDocument;
-import at.ac.tuwien.docspars.io.daos.DictDAO;
-import at.ac.tuwien.docspars.io.daos.DocDAO;
-import at.ac.tuwien.docspars.io.daos.TermDAO;
-import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-import at.ac.tuwien.docspars.io.services.PersistanceService;
-import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
+public abstract class DBPersistanceService<T extends Term, D extends Documentable, W extends Dictionable>
+    implements PersistanceService<T, D, W> {
 
-public abstract class DBPersistanceService implements PersistanceService {
+  private DocDAOdb docDAO;
+  private DictDAOdb dictDAO;
+  private AbstractTermDAOdb<Term> termDAO;
 
-	private DocDAO docDAO;
-	private DictDAO dictDAO;
-	private TermDAO termDAO;
+  public DBPersistanceService() {
+
+  }
+
+  @Override
+  @PerformanceMonitored
+  public abstract boolean addBatch(Batch<T> batch);
+
+  @Override
+  @PerformanceMonitored
+  public abstract boolean updateBatch(Batch<T> batch);
+
+  @Override
+  @PerformanceMonitored
+  public abstract boolean remove(List<Document> docs);
 
 
-	public DBPersistanceService() {
+  @Override
+  @PerformanceMonitored
+  public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict() {
+    return dictDAO.read();
+  }
 
-	}
+  @Override
+  @PerformanceMonitored
+  public TIntSet readDocs() {
+    return docDAO.read();
+  }
 
-//	public DBPersistanceService(DataSource ds, DocDAO docDAO, DictDAO dictDAO, TermDAO termDAO) {
-//		this.docDAO = docDAO;
-//		this.termDAO = termDAO;
-//		this.dictDAO = dictDAO;
-//	}
+  /**
+   * @return the docDAO
+   */
+  public DocDAOdb getDocDAO() {
+    return docDAO;
+  }
 
-	@Override
-	@PerformanceMonitored
-	public abstract boolean addBatch(Batch batch);
-	
-	@Override
-	@PerformanceMonitored
-	public abstract boolean updateBatch(Batch batch);
-	
-	@Override
-	@PerformanceMonitored
-	public abstract boolean remove(List<TimestampedDocument> docs);
-	
-	
-	@Override
-	@PerformanceMonitored
-	public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict() {
-		return dictDAO.read();
-	}
+  /**
+   * @param docDAO the docDAO to set
+   */
+  public void setDocDAO(DocDAOdb docDAO) {
+    this.docDAO = docDAO;
+  }
 
-	@Override
-	@PerformanceMonitored
-	public TIntSet readDocs() {
-		return docDAO.read();
-	}
+  /**
+   * @return the dictDAO
+   */
+  public DictDAOdb getDictDAO() {
+    return dictDAO;
+  }
 
-	/**
-	 * @return the docDAO
-	 */
-	public DocDAO getDocDAO() {
-		return docDAO;
-	}
+  /**
+   * @param dictDAO the dictDAO to set
+   */
+  public void setDictDAO(DictDAOdb dictDAO) {
+    this.dictDAO = dictDAO;
+  }
 
-	/**
-	 * @param docDAO the docDAO to set
-	 */
-	public void setDocDAO(DocDAO docDAO) {
-		this.docDAO = docDAO;
-	}
 
-	/**
-	 * @return the dictDAO
-	 */
-	public DictDAO getDictDAO() {
-		return dictDAO;
-	}
+  public AbstractTermDAOdb<Term> getTermDAO() {
+    return this.termDAO;
+  }
 
-	/**
-	 * @param dictDAO the dictDAO to set
-	 */
-	public void setDictDAO(DictDAO dictDAO) {
-		this.dictDAO = dictDAO;
-	}
-
-	/**
-	 * @return the termDAO
-	 */
-	public TermDAO getTermDAO() {
-		return termDAO;
-	}
-
-	/**
-	 * @param termDAO the termDAO to set
-	 */
-	public void setTermDAO(TermDAO termDAO) {
-		this.termDAO = termDAO;
-	}
-
+  public void setTermDAO(AbstractTermDAOdb<Term> termDAO) {
+    this.termDAO = termDAO;
+  }
 }

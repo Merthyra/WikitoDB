@@ -1,6 +1,9 @@
-package at.ac.tuwien.docspars.entity;
+package at.ac.tuwien.docspars.entity.impl;
 
 import java.sql.Timestamp;
+
+import at.ac.tuwien.docspars.entity.Dictionable;
+import at.ac.tuwien.docspars.entity.Timestampable;
 
 public class TimestampedDict extends Dict implements Timestampable {
 

@@ -12,11 +12,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import at.ac.tuwien.docspars.entity.Batch;
-import at.ac.tuwien.docspars.entity.Dict;
-import at.ac.tuwien.docspars.entity.TimestampedDocument;
+import at.ac.tuwien.docspars.entity.impl.Batch;
+import at.ac.tuwien.docspars.entity.impl.Dict;
+import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.entity.impl.TimestampedDocument;
 import at.ac.tuwien.docspars.entity.SimpleDict;
-import at.ac.tuwien.docspars.entity.Term;
 
 public class EntityTest {
 
@@ -87,7 +87,7 @@ public class EntityTest {
 		addBatch.addTerm(doc2, dicte, 3);
 			
 		assertThat(addBatch.getNrOfNewDictEntries(), is(0));
-		assertThat(addBatch.getBatchSize(), is(2));
+		assertThat(addBatch.getDocumentNumberForBatch(), is(2));
 		addBatch.addNewVocab(dicta);
 		addBatch.addNewVocab(dictc);
 		

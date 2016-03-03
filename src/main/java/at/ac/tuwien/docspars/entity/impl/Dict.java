@@ -1,7 +1,9 @@
-package at.ac.tuwien.docspars.entity;
+package at.ac.tuwien.docspars.entity.impl;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import at.ac.tuwien.docspars.entity.Dictionable;
 
 public class Dict implements Dictionable {
 

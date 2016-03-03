@@ -26,9 +26,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
-import at.ac.tuwien.docspars.entity.TimestampedDocument;
+import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.entity.impl.TimestampedDocument;
 import at.ac.tuwien.docspars.entity.SimpleDict;
-import at.ac.tuwien.docspars.entity.Term;
 import at.ac.tuwien.docspars.io.daos.DictDAO;
 import at.ac.tuwien.docspars.io.daos.DictHistDAO;
 import at.ac.tuwien.docspars.io.daos.DocDAO;

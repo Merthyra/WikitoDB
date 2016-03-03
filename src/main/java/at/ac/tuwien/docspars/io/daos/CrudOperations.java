@@ -4,16 +4,16 @@ import java.util.List;
 
 public interface CrudOperations<A, C> {
 
-	public <B extends A> boolean add(List<B> a);
+  public boolean add(List<A> a);
 
-	public <B extends A> boolean remove(List<B> a);
+  public boolean remove(List<A> a);
 
-	public <B extends A> boolean update(List<B> a);
+  public boolean update(List<A> a);
 
-	public C read();
+  public C read();
 
-	public boolean create();
+  public boolean create();
 
-	public boolean drop();
+  public boolean drop();
 
 }

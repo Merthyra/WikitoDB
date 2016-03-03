@@ -1,85 +1,70 @@
 package at.ac.tuwien.docspars.io.daos.db;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.sql.DataSource;
-
+import at.ac.tuwien.docspars.entity.impl.RevTerm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import at.ac.tuwien.docspars.entity.Dictionable;
-import at.ac.tuwien.docspars.entity.Term;
-import at.ac.tuwien.docspars.io.daos.TermDAO;
+import javax.sql.DataSource;
 
-public class Term1DAODdb implements TermDAO {
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
-	private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
-	private JdbcTemplate jdbcTemplate;
+public class Term1DAODdb extends AbstractTermDAOdb<RevTerm> {
 
-	@SuppressWarnings("unused")
-	@Deprecated
-	private Term1DAODdb() {
-		super();
-	}
+  private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
+  private JdbcTemplate jdbcTemplate;
 
-	public Term1DAODdb(final DataSource dataSource) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-	}
+  @SuppressWarnings("unused")
+  @Deprecated
+  private Term1DAODdb() {
+    super();
+  }
 
-	public Term1DAODdb(final JdbcTemplate template) {
-		this.jdbcTemplate = template;
-	}
+  public Term1DAODdb(final DataSource dataSource) {
+    this.jdbcTemplate = new JdbcTemplate(dataSource);
+  }
 
-	@Override
-	public <B extends Dictionable> boolean add(final List<B> terms) {
+  public Term1DAODdb(final JdbcTemplate template) {
+    this.jdbcTemplate = template;
+  }
 
-		final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms1.insert"),
-				new BatchPreparedStatementSetter() {
-					// INSERT INTO terms (tid, pageid, pos) VALUES (?,?,?,?)
-					@Override
-					public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-						ps.setInt(1, ((Term) terms.get(i)).getTId());
-						ps.setInt(2, ((Term) terms.get(i)).getDid());
-						ps.setInt(3, ((Term) terms.get(i)).getRevid());
-						ps.setInt(4, ((Term) terms.get(i)).getNextPos());
-					}
+  @Override
+  public boolean add(final List<RevTerm> terms) {
 
-					@Override
-					public int getBatchSize() {
-						return terms.size();
-					}
-				});
-		logger.debug(Term1DAODdb.class.getName() + " inserted " + updateCounts.length + " terms to terms table");
-		return updateCounts.length == terms.size();
-	}
+    final int[] updateCounts = this.jdbcTemplate.batchUpdate(
+        SQLStatements.getString("sql.terms1.insert"), new BatchPreparedStatementSetter() {
+          // INSERT INTO terms (tid, pageid, pos) VALUES (?,?,?,?)
+          @Override
+          public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+            ps.setInt(1, terms.get(i).getTId());
+            ps.setInt(2, terms.get(i).getDId());
+            ps.setInt(3, terms.get(i).getRevId());
+            ps.setInt(4, terms.get(i).getPos());
+          }
 
-	@Override
-	public List<Term> read() {
-		return null;
-	}
+          @Override
+          public int getBatchSize() {
+            return terms.size();
+          }
+        });
+    logger.debug(
+        Term1DAODdb.class.getName() + " inserted " + updateCounts.length + " terms to terms table");
+    return updateCounts.length == terms.size();
+  }
 
-	@Override
-	public boolean create() {
-		return false;
-	}
+  @Override
+  public boolean remove(List<RevTerm> a) {
+    // TODO Auto-generated method stub
+    return false;
+  }
 
-	@Override
-	public boolean drop() {
-		return false;
-	}
-
-	@Override
-	public <B extends Dictionable> boolean remove(final List<B> a) {
-		return false;
-	}
-
-	@Override
-	public <B extends Dictionable> boolean update(final List<B> a) {
-		return false;
-	}
+  @Override
+  public boolean update(List<RevTerm> a) {
+    // TODO Auto-generated method stub
+    return false;
+  }
 
 }

@@ -24,7 +24,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  */
 public class CLIArgProcessor {
 
-  private static Logger logger = LogManager.getLogger(CLIArgProcessor.class.getPackage().getName());
+  private static Logger logger = LogManager.getLogger(CLIArgProcessor.class);
   private Options options;
   private CommandLine cl;
   private final ProcessPropertiesHandler pH;
@@ -78,7 +78,6 @@ public class CLIArgProcessor {
     OptionBuilder.hasArg();
     OptionBuilder.withDescription("which variant to use [V1 (default), V2, V3, V4, V5] ");
     final Option setUpdates = OptionBuilder.create("u");
-
     this.options.addOption(help);
     this.options.addOption(version);
     this.options.addOption(debug);
@@ -133,7 +132,7 @@ public class CLIArgProcessor {
       ctx.updateLoggers();
     }
     if (this.cl.hasOption("i")) {
-      this.fP.updateFilePath(this.cl.getOptionValue("i"));
+      this.fP.setFilePath(this.cl.getOptionValue("i"));
       logger
           .info("SET INPUT SOURCE FOLDER TO PARAMETER MAX_DOCUMENTS TO " + this.cl.getOptionValue("i"));
     }

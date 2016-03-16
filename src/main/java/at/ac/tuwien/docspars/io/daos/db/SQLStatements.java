@@ -1,10 +1,10 @@
 package at.ac.tuwien.docspars.io.daos.db;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public class SQLStatements {
 	private static final String BUNDLE_NAME = "sql_statements";

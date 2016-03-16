@@ -3,8 +3,6 @@ package at.ac.tuwien.docspars.io.daos.db;
 import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.CrudOperations;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,7 +21,6 @@ import java.util.Map;
 public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>, Timestampable {
 
   private final JdbcTemplate jdbcTemplate;
-  private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
   private Timestamp time = null;
 
   public DictHistDAOdb(final JdbcTemplate template) {
@@ -68,15 +65,15 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
     };
     // get all term df values of previously inserted documents sharing the same document id and
     final Map<Integer, Integer> dfUpdatedValues = this.jdbcTemplate.query(SQLStatements.getString("sql.dict_hist.readupdated") + " (" + idsB.toString() + ") GROUP BY tid", resEx);
-    logger.debug(DictHistDAOdb.class.getName() + " extracted " + dfUpdatedValues.size() + " dict history updated df values");
-
+    logger.debug("{} extracted {} dict history updated df values", DictHistDAOdb.class.getName(), dfUpdatedValues.size());
     final Map<Integer, Integer> dfValues = this.jdbcTemplate.query(SQLStatements.getString("sql.dict_hist.read") + " (" + idsB.toString() + ")", resEx);
-    logger.debug(DictHistDAOdb.class.getName() + " extracted " + dfValues.size() + " dict history df values");
+    logger.debug("{} extracted {} dict history df values", dfValues.size(), DictHistDAOdb.class.getName());
 
     // now update all former null values in removed timestamps with timestamp of current batch
     // set removed timestamp for all dict_hist elements affected
     final int nrOfTsUpds = this.jdbcTemplate.update(SQLStatements.getString("sql.dict_hist.update") + " (" + idsB.toString() + ")", new Object[] {getTimestamp()});
-    logger.trace(DictHistDAOdb.class.getName() + " updated " + nrOfTsUpds + " dict history timestamp values");
+//    logger.trace(DictHistDAOdb.class.getName() + " updated " + nrOfTsUpds + " dict history timestamp values");
+    logger.debug("{} updated {} dict history timestamp values", DictHistDAOdb.class.getName() ,nrOfTsUpds);
     // assert(dfValues.size() == nrOfTsUpds);
 
     final int[] updateCountsHist = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict_hist.insert"), new BatchPreparedStatementSetter() {
@@ -103,7 +100,7 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
         return dicts.size();
       }
     });
-    logger.debug(DictHistDAOdb.class.getName() + " added " + updateCountsHist.length + " dict entries to dict history table");
+    logger.debug("{} added {} dict entries to dict history table", DictHistDAOdb.class.getName() ,updateCountsHist.length);
     return true;
   }
 

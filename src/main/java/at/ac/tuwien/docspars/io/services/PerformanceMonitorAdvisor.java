@@ -1,11 +1,11 @@
 package at.ac.tuwien.docspars.io.services;
 
-import java.lang.reflect.Method;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.aop.MethodBeforeAdvice;
+
+import java.lang.reflect.Method;
 
 public class PerformanceMonitorAdvisor implements MethodBeforeAdvice, AfterReturningAdvice {
 
@@ -20,8 +20,6 @@ public class PerformanceMonitorAdvisor implements MethodBeforeAdvice, AfterRetur
 	@Override
 	public void before(Method method, Object[] args, Object target) throws Throwable {
 		startTime = System.currentTimeMillis();
-		// logger.debug("Executing method " + method.getName() + " on object " +
-		// target.getClass().getName());
 	}
 
 	@Override

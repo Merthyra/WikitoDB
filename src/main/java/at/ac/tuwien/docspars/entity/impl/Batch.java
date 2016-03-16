@@ -2,16 +2,14 @@ package at.ac.tuwien.docspars.entity.impl;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Timestampable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author Hannes
- *
- */
 public class Batch implements Timestampable {
 
   // list of all documents from the batch
@@ -25,6 +23,7 @@ public class Batch implements Timestampable {
   private Timestamp timestamp;
 
   private final BatchMode batchMode;
+  private static final Logger logger = LogManager.getLogger(Batch.class);
 
   public Batch(final BatchMode mode) {
     this.batchMode = mode;
@@ -33,6 +32,7 @@ public class Batch implements Timestampable {
   public void addDocs(final Document doc) {
     this.docs.add(doc);
     this.batchTerms.addAll(doc.getTerms());
+    logger.trace("Document {} added to Batch", doc);
   }
 
   public void addNewVocab(final Dictionable dict) {
@@ -77,7 +77,6 @@ public class Batch implements Timestampable {
     this.batchTerms.clear();
     // this.uniqueTermsPerBatch.clear();
     this.timestamp = null;
-    // this.timestamp.;
   }
 
   public void setTimestamp(final Timestamp ts) {

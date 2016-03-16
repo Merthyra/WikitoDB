@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampable {
+public class DocReducedDAOdb implements CrudOperations<Document, TIntSet>, Timestampable {
 
   private Timestamp timestamp = null;
 
@@ -34,11 +34,11 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
   private JdbcTemplate jdbcTemplate;
 
   @SuppressWarnings("unused")
-  private DocDAOdb() {
+  private DocReducedDAOdb() {
 
   }
 
-  public DocDAOdb(final DataSource dataSource) {
+  public DocReducedDAOdb(final DataSource dataSource) {
     this.jdbcTemplate = new JdbcTemplate(dataSource);
   }
 
@@ -58,7 +58,7 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
       }
     };
     final TIntSet retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"), resEx);
-    logger.debug(DocDAOdb.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
+    logger.debug(DocReducedDAOdb.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
     return retrievedDocs;
   }
 
@@ -68,7 +68,7 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
       @Override
       public void setValues(final PreparedStatement ps, final int i) throws SQLException {
         // sql.docs.insert=INSERT INTO docs (pageID, revID, added, name, len) VALUES (?,?,?,?,?)
-        ps.setTimestamp(1, DocDAOdb.this.getTimestamp());
+        ps.setTimestamp(1, DocReducedDAOdb.this.getTimestamp());
         ps.setInt(2, docs.get(i).getDId());
         ps.setInt(3, docs.get(i).getDId());
       }
@@ -78,7 +78,7 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
         return docs.size();
       }
     });
-    logger.debug("{} inserted {} docs to docs table",DocDAOdb.class.getTypeName() ,updateCounts.length);
+    logger.debug("{} inserted {} docs to docs table", DocReducedDAOdb.class.getTypeName(), updateCounts.length);
     return docs.size() == updateCounts.length;
   }
 
@@ -90,9 +90,9 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
         // sql.docs.insert=INSERT INTO docs (pageID, added, name, len) VALUES (?,?,?,?)
         ps.setInt(1, docs.get(i).getDId());
         ps.setInt(2, docs.get(i).getRevId());
-        ps.setTimestamp(3, DocDAOdb.this.getTimestamp());
-        ps.setString(4, docs.get(i).getName());
-        ps.setInt(5, docs.get(i).getLength());
+        // ps.setTimestamp(3, DocReducedDAOdb.this.getTimestamp());
+        ps.setString(3, docs.get(i).getName());
+        // ps.setInt(5, docs.get(i).getLength());
       }
 
       @Override
@@ -100,7 +100,7 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
         return docs.size();
       }
     });
-    logger.debug("{} inserted {} docs to docs table",DocDAOdb.class.getTypeName() ,updateCounts.length);
+    logger.debug("{} inserted {} docs to docs table", DocReducedDAOdb.class.getTypeName(), updateCounts.length);
     return docs.size() == updateCounts.length;
   }
 

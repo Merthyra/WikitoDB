@@ -10,11 +10,14 @@ import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.set.TIntSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public abstract class DBPersistanceService implements PersistanceService {
 
+  final static Logger logger = LogManager.getLogger(DBPersistanceService.class);
   private DocDAOdb docDAO;
   private DictDAOdb dictDAO;
   private AbstractTermDAOdb termDAO;
@@ -77,7 +80,7 @@ public abstract class DBPersistanceService implements PersistanceService {
   }
 
 
-  public AbstractTermDAOdb TermDAO() {
+  public AbstractTermDAOdb getTermDAO() {
     return this.termDAO;
   }
 

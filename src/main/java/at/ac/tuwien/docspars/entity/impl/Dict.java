@@ -65,4 +65,5 @@ public class Dict implements Dictionable {
   public void setDf(final int df) {
     this.df = df;
   }
+
 }

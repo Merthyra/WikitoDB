@@ -73,7 +73,7 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     this.batchService.addDocument(latest);
     this.persistedDocs.add(did);
     this.processMetrics.processedDocument();
-    logger.debug("Document with PAGE-ID: " + did + " TITLE: " + name + " TIMESTAMP:  " + added + " DOC-LENGTH: " + content.size() + " added");
+    logger.trace("{} processed and added to batch", latest.toString());
     if (this.processPropertiesHandler.isReportLimitReached(++this.docCounter)) {
       logger.info(this.processMetrics.getIntermediateReport());
     }
@@ -115,7 +115,8 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
   private void checkBatchSizeOverrun() {
     if (this.batchService.getActiveBatch().getSize() >= this.processPropertiesHandler.getBatch_size()) {
       persistBatch(this.batchService.getActiveBatch());
-      logger.debug("{} batch: {} docs up to {}", this.batchService.getBatchMode().name(), this.batchService.getBatchSize(), this.processPropertiesHandler.getProcessed_Page_Count());
+      logger.debug("{} batch: {} docs up to {}", this.batchService.getBatchMode().name(), this.batchService.getBatchSize(),
+          this.processPropertiesHandler.getProcessed_Page_Count());
     }
   }
 
@@ -155,14 +156,15 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     this.persistedDocs = this.persistService.readDocs();
     this.persistedDict = this.persistService.readDict();
     this.lastDictID = this.persistedDict.size() + 1;
+    logger.trace("{} Environment initialized ", mode);
+  }
+
+  public boolean isNew(int id) {
+    return !this.persistedDocs.contains(id);
   }
 
   public boolean isMaxElementsReached() {
     return this.processPropertiesHandler.getMax_Pages() < this.processMetrics.getProcessedElements();
-  }
-
-  public boolean isSkippedByOffset() {
-    return (this.processPropertiesHandler.getStart_offset() > this.processMetrics.getTotalDocuments());
   }
 
   private void persistAddition(final Batch batch) {
@@ -171,6 +173,10 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     } else {
       throw new TransactionSystemException("Number of written terms and parsed terms do not match");
     }
+  }
+
+  public boolean isSkippedByOffset(int startDoc) {
+    return (this.processPropertiesHandler.getStart_offset() < startDoc);
   }
 
   public BatchService getBatchService() {
@@ -187,22 +193,14 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     while (batch.getSize() > 0) {
       try {
         batch.setTimestamp(new Timestamp(System.currentTimeMillis()));
-        switch (batch.getBatchMode()) {
-          case UPDATE:
-            persistUpdate(batch);
-            break;
-          case ADD:
-            persistAddition(batch);
-            break;
-          default:
-            throw new UnsupportedOperationException("Batch mode not supported");
-        }
-        logger.debug("Batch {} successful: Documents {}, Terms {}, Dictionary-Terms {} persisted", this.batchService.getBatchMode(), batch.getSize(), batch.getTerms().size(),
-            batch.getNewVocab().size());
-        batch.reset();
 
-        // if update fails the
-      } catch (final TransactionSystemException ex) {
+        logger.debug("Batch {} successful: Documents {}, Terms {}, Dictionary-Terms {} persisted", this.batchService.getBatchMode(), batch.getSize(),
+            batch.getTerms().size(), batch.getNewVocab().size());
+        batch.reset();
+        throw new UnsupportedOperationException("Batch mode not supported");
+      }
+      // if update fails the
+      catch (final TransactionSystemException ex) {
         if (maxTries <= 0) {
           throw new PersistanceException("Failed To Write " + this.batchService.getBatchMode() + " Batch after 3 tries");
         }
@@ -210,14 +208,13 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
         maxTries--;
       }
     }
+
   }
 
-  private void persistUpdate(final Batch batch) {
-    if (this.persistService.updateBatch(batch)) {
-      this.processMetrics.addUpdateBatch(batch);
-    } else {
-      throw new TransactionSystemException("Number of written terms and parsed terms do not match");
-    }
+
+
+  public void skippedDocument() {
+    this.processMetrics.skipDocument();
   }
 
   private void resetAll() {
@@ -243,8 +240,7 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
   }
 
   /**
-   * reverts all temporal document and dictionary data from data structure which have not been
-   * persisted use with caution!
+   * reverts all temporal document and dictionary data from data structure which have not been persisted use with caution!
    */
   public void revert() {
     int i = 0;
@@ -276,8 +272,18 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     throw new EndOfProcessReachedException("Done processing " + this.processPropertiesHandler.getProcessed_Page_Count());
   }
 
-  public void skippedDocument() {
+  public void skipDocument() {
     this.processMetrics.skipDocument();
   }
 
+  public boolean isDocumentProcessed(int id) {
+    if (this.processPropertiesHandler.isOnlyNewDocumentProcessed() && this.persistedDocs.contains(id)) {
+      return false;
+    } else if (this.isMaxElementsReached()) {
+      throw new EndOfProcessReachedException("Process Ended at" + this.processPropertiesHandler.getProcessed_Page_Count() + " documents");
+    } else if (this.isSkippedByOffset(id)) {
+      return false;
+    }
+    return true;
+  }
 }

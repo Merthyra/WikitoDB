@@ -5,8 +5,6 @@ import at.ac.tuwien.docspars.io.daos.CrudOperations;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,7 +20,6 @@ import java.util.List;
 public class DictDAOdb
     implements CrudOperations<Dictionable, TObjectIntMap<ASCIIString2ByteArrayWrapper>> {
 
-  private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
   private JdbcTemplate jdbcTemplate;
 
   @SuppressWarnings("unused")
@@ -50,8 +47,7 @@ public class DictDAOdb
         };
     final TObjectIntMap<ASCIIString2ByteArrayWrapper> dicts =
         this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"), resEx);
-    logger.debug(
-        DictDAOdb.class.getName() + " retrieved " + dicts.size() + " dict entries from dict table");
+    logger.debug("{} read {} dict entries from dict table",DictDAOdb.class.getTypeName() ,dicts.size());
     return dicts;
   }
 
@@ -64,7 +60,7 @@ public class DictDAOdb
         new BatchPreparedStatementSetter() {
           @Override
           public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-            logger.trace("writing dict term " + dicts.get(i).toString() + " " + i);
+
             ps.setInt(1, dicts.get(i).getTId());
             // currTerm[i] = dicts.get(i).getTerm();
             ps.setString(2, dicts.get(i).getTerm());
@@ -75,12 +71,7 @@ public class DictDAOdb
             return dicts.size();
           }
         });
-    // }catch(Exception ex) {
-    // System.out.println(currTerm[0]);
-    // }
-
-    logger.debug(DictDAOdb.class.getName() + " added " + updateCounts.length
-        + " dict entries to dict table");
+    logger.debug("{} wrote {} dict entries to dict table",DictDAOdb.class.getTypeName() ,updateCounts.length);
     return updateCounts.length == dicts.size();
 
   }

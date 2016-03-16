@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DocumentHandler {
 
-  protected static final Logger logger = LogManager.getLogger(DocumentHandler.class.getPackage().getName());
+  protected static final Logger logger = LogManager.getLogger(DocumentHandler.class);
 
   private final EnvironmentService environmentService;
 
@@ -26,15 +26,10 @@ public class DocumentHandler {
   }
 
   public void skipDocument() {
-    this.environmentService.skippedDocument();
+    this.environmentService.skipDocument();
   }
 
-  public boolean isNextElementSkipped() {
-    return this.environmentService.isSkippedByOffset();
-
-  }
-
-  public boolean isMaxElementsReached() {
-    return this.environmentService.isMaxElementsReached();
+  public boolean isDocumentProcessed(int id) {
+    return this.environmentService.isDocumentProcessed(id);
   }
 }

@@ -103,6 +103,14 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
 
   }
 
+  public int getDocLength() {
+    return this.doc.getLength();
+  }
+
+  public String getDocName() {
+    return this.doc.getName();
+  }
+
   @Override
   public String toString() {
     return "tid:" + getTId() + " term:" + getTerm() + " did:" + getDId();

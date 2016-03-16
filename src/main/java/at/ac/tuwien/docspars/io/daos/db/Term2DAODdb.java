@@ -1,8 +1,6 @@
 package at.ac.tuwien.docspars.io.daos.db;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -14,27 +12,18 @@ import java.util.List;
 
 public class Term2DAODdb extends AbstractTermDAOdb {
 
-  private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
-  private JdbcTemplate jdbcTemplate;
-
-  @SuppressWarnings("unused")
-  @Deprecated
-  private Term2DAODdb() {
-    super();
-  }
-
   public Term2DAODdb(final JdbcTemplate template) {
-    this.jdbcTemplate = template;
+    super(template);
   }
 
   public Term2DAODdb(final DataSource ds) {
-    this.jdbcTemplate = new JdbcTemplate(ds);
+    super(ds);
   }
 
   @Override
   public boolean add(final List<Term> terms) {
 
-    final int[] updateCounts = this.jdbcTemplate.batchUpdate(
+    final int[] updateCounts = getJdbcTemplate().batchUpdate(
         SQLStatements.getString("sql.terms2.insert"), new BatchPreparedStatementSetter() {
           // sql.terms2.insert=INSERT INTO terms (tid, pageid, revid, tf) VALUES (?,?,?,?)
           @Override
@@ -50,8 +39,7 @@ public class Term2DAODdb extends AbstractTermDAOdb {
             return terms.size();
           }
         });
-    logger.debug(
-        Term2DAODdb.class.getName() + " inserted " + updateCounts.length + " terms to terms table");
+    logger.debug("{} inserted {} terms to terms table",Term2DAODdb.class.getTypeName() ,updateCounts.length);
     return updateCounts.length == terms.size();
   }
 

@@ -4,11 +4,11 @@ package at.ac.tuwien.docspars.util;
 // import org.apache.logging.log4j.Logger;
 
 import at.ac.tuwien.docspars.entity.Mode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ProcessPropertiesHandler {
-
-  // private static final Logger logger =
-  // LogManager.getLogger(ProcessPropertiesHandler.class.getPackage().getName());
+  private static final Logger logger = LogManager.getLogger(ProcessPropertiesHandler.class);
   private Mode variant;
   private int batch_size;
   private int start_offset;
@@ -21,9 +21,10 @@ public class ProcessPropertiesHandler {
   private int dictsCached;
   private boolean updates;
   private final int reportLimit;
+  private final boolean onlyNew;
 
-  public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format, final String language, final String sc, final int maxLength,
-      final int dictsCached, final int reportLimit) {
+  public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format, final String language,
+      final String sc, final int maxLength, final int dictsCached, final int reportLimit, final String onlyNew) {
     this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;
     this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
     this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
@@ -38,11 +39,12 @@ public class ProcessPropertiesHandler {
     this.updates = false;
     this.dictsCached = dictsCached;
     this.reportLimit = reportLimit;
+    this.onlyNew = Boolean.valueOf(onlyNew);
+    logger.info("Properties successfully initialized");
   }
 
   /**
-   * Init ProcessProperties Handler with preconfigured default settings (according to the project
-   * settings file)
+   * Init ProcessProperties Handler with preconfigured default settings (according to the project settings file)
    */
   public ProcessPropertiesHandler() {
     this.batch_size = 1000;
@@ -56,6 +58,7 @@ public class ProcessPropertiesHandler {
     this.updates = false;
     this.dictsCached = 0;
     this.reportLimit = 20;
+    this.onlyNew = true;
   }
 
   public boolean skipPageDueToOffset() {
@@ -67,7 +70,7 @@ public class ProcessPropertiesHandler {
   }
 
   /**
-   * increments processed page count and compares it to max pages to processes
+   * increments processed page count and comparess it to max pages to processes
    *
    * @return true if one more page allowed for processing
    */
@@ -240,4 +243,7 @@ public class ProcessPropertiesHandler {
     return this.reportLimit <= processedItemCount;
   }
 
+  public boolean isOnlyNewDocumentProcessed() {
+    return this.onlyNew;
+  }
 }

@@ -1,10 +1,20 @@
 package unittests;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+
+import at.ac.tuwien.docspars.entity.Dictionable;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
+import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceFactory;
+import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV1;
+import at.ac.tuwien.docspars.util.DocumentHandler;
+import at.ac.tuwien.docspars.util.EnvironmentService;
+import at.ac.tuwien.docspars.util.ProcessPropertiesHandler;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
@@ -59,7 +69,7 @@ public class DocumentHandlerTest {
     persSer = new DBPersistanceServiceV1(ds);
     // int batch_size, int start_offset, int max_pages, String date_format, String language, String
     // sc, int maxLength, int dictsCached
-    propsHandler = new ProcessPropertiesHandler(10, 0, 20, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100, 1000, 20);
+    propsHandler = new ProcessPropertiesHandler(10, 0, 20, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100, 1000, 20, null);
   }
 
 

@@ -15,7 +15,8 @@ public class Document implements Documentable, Timestampable, Revisionable {
 
   public enum Status {
 
-    OPENED, CLOSED
+    OPENED,
+    CLOSED
   }
 
   private final int docId;
@@ -118,4 +119,10 @@ public class Document implements Documentable, Timestampable, Revisionable {
   public boolean isReady() {
     return this.status == Status.CLOSED;
   }
+
+  @Override
+  public String toString() {
+    return "Document [docId=" + docId + ", revision=" + revision + ", name=" + name + ", added=" + added + ", len=" + len + ", status=" + status + "]";
+  }
+
 }

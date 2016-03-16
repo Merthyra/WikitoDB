@@ -71,4 +71,5 @@ public class BatchService {
   public int totalElementsSize() {
     return getAddBatch().getSize() + getUpdateBatch().getSize();
   }
+
 }

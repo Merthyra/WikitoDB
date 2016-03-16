@@ -107,11 +107,7 @@ public class ProcessMetrics {
    * @return a intermediate short String representation of the current process metrics
    */
   public String getIntermediateReport() {
-    return String.format("Total docs: %f, skipped: %f, batches: %f, time elapsed: %f, avg(item-persist-ratio): %d", this.processedElements, this.skippedElemets, (this.addBatch + this.updateBatch),
-        DateFormatUtils.format((System.currentTimeMillis() - this.startTime), "HHMMSS:sss"), getSumOfAllPersistedItems());
-  }
-
-  public int getTotalNrOfDocuments() {
-    return 1;
+    return String.format("Total docs: %s, skipped: %s, batches: %s, time elapsed: %s, avg(item-persist-ratio)[items/min]: %s", this.processedElements, this.skippedElemets, (this.addBatch + this.updateBatch),
+        DateFormatUtils.format((System.currentTimeMillis() - this.startTime), "HHMMSS:sss"), getSumOfAllPersistedItems()/60000/(System.currentTimeMillis() - this.startTime));
   }
 }

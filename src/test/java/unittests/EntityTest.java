@@ -1,10 +1,13 @@
 package unittests;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+
+import at.ac.tuwien.docspars.entity.impl.Batch;
+import at.ac.tuwien.docspars.entity.impl.BatchMode;
+import at.ac.tuwien.docspars.entity.impl.Dict;
+import at.ac.tuwien.docspars.entity.impl.Document;
+import org.junit.Test;
 
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.BatchMode;
@@ -22,11 +25,11 @@ public class EntityTest {
   public void testDocumentEquals() {
     // (int pageID, int revID, String title, Timestamp added, Timestamp removed, int length, boolean
     // update)
-    final Document one = new Document(800, 1, "one", new Timestamp(100), 100);
-    final Document two = new Document(800, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
-    final Document three = new Document(810, 2, "three", new Timestamp(System.currentTimeMillis()), 100);
-    final Document four = new Document(800, 3, "four", new Timestamp(150), 200);
-    final Document four_2 = new Document(800, 4, "four_update", new Timestamp(200), 30);
+    final Document one = new Document(800, 1, "one", new Timestamp(100), 100, false);
+    final Document two = new Document(800, 1, "two", new Timestamp(System.currentTimeMillis()), 100, false);
+    final Document three = new Document(810, 2, "three", new Timestamp(System.currentTimeMillis()), 100, false);
+    final Document four = new Document(800, 3, "four", new Timestamp(150), 200, false);
+    final Document four_2 = new Document(800, 4, "four_update", new Timestamp(200), 30, false);
 
     assertThat(one, is(equalTo(two)));
     assertThat(one, not(equalTo(three)));
@@ -105,8 +108,8 @@ public class EntityTest {
     final Dict dictb = new Dict(2, "B");
     final Dict dictc = new Dict(1, "A");
     final Dict dictd = new Dict(4, "D");
-    final Document doc1 = new Document(800, 1, "one", new Timestamp(100), 100);
-    final Document doc2 = new Document(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
+    final Document doc1 = new Document(800, 1, "one", new Timestamp(100), 100, false);
+    final Document doc2 = new Document(850, 1, "two", new Timestamp(System.currentTimeMillis()), 100, false);
 
     final Batch batch = new Batch(BatchMode.ADD);
 

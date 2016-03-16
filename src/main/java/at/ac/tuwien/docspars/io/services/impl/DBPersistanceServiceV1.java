@@ -22,6 +22,7 @@ public class DBPersistanceServiceV1 extends DBPersistanceService {
     this.setDictDAO(new DictDAOdb(ds));
     this.setDocDAO(new DocDAOdb(ds));
     this.termDAO = new Term1DAODdb(ds);
+    logger.debug("V1 persistance service attached");
   }
 
   @Override

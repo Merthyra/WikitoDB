@@ -1,8 +1,6 @@
 package at.ac.tuwien.docspars.io.daos.db;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -14,21 +12,14 @@ import java.util.List;
 
 public class Term1DAODdb extends AbstractTermDAOdb {
 
-  private static final Logger logger = LogManager.getLogger("at.ac.tuwien.docspars.io.db");
   private JdbcTemplate jdbcTemplate;
 
-  @SuppressWarnings("unused")
-  @Deprecated
-  private Term1DAODdb() {
-    super();
-  }
-
   public Term1DAODdb(final DataSource dataSource) {
-    this.jdbcTemplate = new JdbcTemplate(dataSource);
+    super(dataSource);
   }
 
   public Term1DAODdb(final JdbcTemplate template) {
-    this.jdbcTemplate = template;
+    super(template);
   }
 
   @Override
@@ -49,7 +40,8 @@ public class Term1DAODdb extends AbstractTermDAOdb {
         return terms.size();
       }
     });
-    logger.debug(Term1DAODdb.class.getName() + " inserted " + updateCounts.length + " terms to terms table");
+    
+    logger.debug("{} inserted {} terms to terms table",Term1DAODdb.class.getTypeName() ,updateCounts.length);
     return updateCounts.length == terms.size();
   }
 

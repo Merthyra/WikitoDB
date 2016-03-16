@@ -45,6 +45,7 @@
 		<constructor-arg name="maxLength" value="${doc.maxTermLength}" />
 		<constructor-arg name="dictsCached" value="${doc.maxDictCache}" />
 		<constructor-arg name="reportLimit" value="${doc.reportLimit}" />
+		<constructor-arg name="onlyNew" value="${doc.onlyNew}"/>
 	</bean>
 
 	<bean id="documentHandler" class="at.ac.tuwien.docspars.util.DocumentHandler">
@@ -84,10 +85,8 @@
 
 	<aop:config>
 		<!-- new @ annotation replaces package execution(* at.ac.tuwien.docspars.io.db.*.*(..)) -->
-		<aop:pointcut id="springMonitoringPointcut"
-			expression="@annotation(at.ac.tuwien.docspars.io.services.PerformanceMonitored)" />
-		<aop:advisor advice-ref="performanceMonitorAdvisor"
-			pointcut-ref="springMonitoringPointcut" />
+		<aop:pointcut id="springMonitoringPointcut" expression="@annotation(at.ac.tuwien.docspars.io.services.PerformanceMonitored)" />
+		<aop:advisor advice-ref="performanceMonitorAdvisor" pointcut-ref="springMonitoringPointcut" />
 	</aop:config>
 
 	<bean id="txManager"

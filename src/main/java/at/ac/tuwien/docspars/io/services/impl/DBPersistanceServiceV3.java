@@ -1,9 +1,7 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
-import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.entity.impl.TrceRevTerm;
 import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DictHistDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
@@ -17,23 +15,21 @@ import javax.sql.DataSource;
 
 import java.util.List;
 
-public class DBPersistanceServiceV3
-    extends DBPersistanceService<TrceRevTerm, Document, Dictionable> {
+public class DBPersistanceServiceV3 extends DBPersistanceService {
 
+  private final DictHistDAOdb dict_histDAO;
+  private final Term2DAODdb term_daoDB;
 
-  private DictHistDAOdb dict_histDAO;
-  private Term2DAODdb term_daoDB;
-
-  public DBPersistanceServiceV3(DataSource ds) {
-    this.setDictDAO(new DictDAOdb(ds));
-    this.setDocDAO(new DocDAOdb(ds));
+  public DBPersistanceServiceV3(final DataSource ds) {
+    setDictDAO(new DictDAOdb(ds));
+    setDocDAO(new DocDAOdb(ds));
     this.term_daoDB = new Term2DAODdb(ds);
     this.dict_histDAO = new DictHistDAOdb(ds);
   }
 
   @Override
   @PerformanceMonitored
-  public boolean addBatch(Batch<TrceRevTerm> batch) {
+  public boolean addBatch(final Batch batch) {
     // add new dict entries from batch to dict table
     getDictDAO().add(batch.getNewVocab());
     // add all new documents to docs table
@@ -50,7 +46,25 @@ public class DBPersistanceServiceV3
 
   @Override
   @PerformanceMonitored
-  public boolean updateBatch(Batch<TrceRevTerm> batch) {
+  public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict() {
+    return getDictDAO().read();
+  }
+
+  @Override
+  @PerformanceMonitored
+  public TIntSet readDocs() {
+    return getDocDAO().read();
+  }
+
+  @Override
+  @PerformanceMonitored
+  public boolean remove(final List<Document> docs) {
+    return super.getDocDAO().remove(docs);
+  }
+
+  @Override
+  @PerformanceMonitored
+  public boolean updateBatch(final Batch batch) {
     // boolean removed = remove(batch.getDocs());
     // this.dict_histDAO.remove(batch.getDictList());
     // generate List of Dicts according to batch
@@ -62,29 +76,11 @@ public class DBPersistanceServiceV3
     // add new dict entries from batch to dict table
     getDictDAO().add(batch.getNewVocab());
     // add all new documents to docs table
-    term_daoDB.add(batch.getTerms());
+    this.term_daoDB.add(batch.getTerms());
     getDocDAO().setTimestamp(batch.getTimestamp());
     getDocDAO().remove(batch.getDocs());
     getDocDAO().add(batch.getDocs());
     return true;
-  }
-
-  @Override
-  @PerformanceMonitored
-  public boolean remove(List<Document> docs) {
-    return super.getDocDAO().remove(docs);
-  }
-
-  @Override
-  @PerformanceMonitored
-  public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict() {
-    return getDictDAO().read();
-  }
-
-  @Override
-  @PerformanceMonitored
-  public TIntSet readDocs() {
-    return getDocDAO().read();
   }
 
 }

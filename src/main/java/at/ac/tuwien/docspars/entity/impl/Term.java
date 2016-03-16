@@ -2,63 +2,23 @@ package at.ac.tuwien.docspars.entity.impl;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Documentable;
+import at.ac.tuwien.docspars.entity.Revisionable;
+import at.ac.tuwien.docspars.entity.Traceable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.sql.Timestamp;
 
-public class Term implements Dictionable, Documentable {
+public class Term implements Dictionable, Documentable, Traceable, Revisionable {
 
-  protected final Documentable doc;
-  protected final Dictionable dict;
-  private final int pos;
+  private final Documentable doc;
+  private final Dictionable dict;
+  private int trace;
 
-  public Term(final Documentable doc, final Dictionable dict, final int pos) {
+  public Term(final Documentable doc, final Dictionable dict, final int trace) {
     this.dict = dict;
     this.doc = doc;
-    this.pos = pos;
-  }
-
-  /**
-   * @return the did
-   */
-  @Override
-  public int getTId() {
-    return this.doc.getDId();
-  }
-
-  @Override
-  public int getDId() {
-    // TODO Auto-generated method stub
-    return this.doc.getDId();
-  }
-
-  @Override
-  public String getName() {
-    // TODO Auto-generated method stub
-    return this.doc.getName();
-  }
-
-  @Override
-  public int getLength() {
-    // TODO Auto-generated method stub
-    return this.doc.getLength();
-  }
-
-  @Override
-  public String getTerm() {
-    // TODO Auto-generated method stub
-    return this.dict.getTerm();
-  }
-
-  @Override
-  public String toString() {
-    return "tid:" + this.getTId() + " term:" + this.getTerm() + " did:" + this.getTId();
-  }
-
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(9, 35).append(this.getTId()).append(this.getDId()).hashCode();
+    this.trace = trace;
   }
 
   @Override
@@ -73,17 +33,78 @@ public class Term implements Dictionable, Documentable {
       return false;
     }
     final Term rhs = (Term) obj;
-    return new EqualsBuilder().append(this.getTId(), rhs.getTId())
-        .append(this.getDId(), rhs.getDId()).isEquals();
+    return new EqualsBuilder().append(getTId(), rhs.getTId()).append(getDId(), rhs.getDId()).append(getRevId(), rhs.getRevId()).isEquals();
+  }
+
+  @Override
+  public int getDId() {
+    // TODO Auto-generated method stub
+    return this.doc.getDId();
+  }
+
+  @Override
+  public int getLength() {
+    // TODO Auto-generated method stub
+    return this.doc.getLength();
+  }
+
+  @Override
+  public String getName() {
+    // TODO Auto-generated method stub
+    return this.doc.getName();
+  }
+
+
+  @Override
+  public int getRevId() {
+    // TODO Auto-generated method stub
+    return this.doc.getRevId();
+  }
+
+  @Override
+  public String getTerm() {
+    // TODO Auto-generated method stub
+    return this.dict.getTerm();
+  }
+
+  /**
+   * @return the did
+   */
+  @Override
+  public int getTId() {
+    return this.dict.getTId();
   }
 
   @Override
   public Timestamp getTimestamp() {
     // TODO Auto-generated method stub
-    return doc.getTimestamp();
+    return this.doc.getTimestamp();
   }
 
-  public int getPos() {
-    return this.pos;
+  @Override
+  public int getTrace() {
+    return this.trace;
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(9, 35).append(getTId()).append(getDId()).append(getRevId()).hashCode();
+  }
+
+  @Override
+  public boolean isReady() {
+    // TODO Auto-generated method stub
+    return this.doc.isReady();
+  }
+
+  @Override
+  public void setTrace(final int trace) {
+    this.trace = trace;
+
+  }
+
+  @Override
+  public String toString() {
+    return "tid:" + getTId() + " term:" + getTerm() + " did:" + getDId();
   }
 }

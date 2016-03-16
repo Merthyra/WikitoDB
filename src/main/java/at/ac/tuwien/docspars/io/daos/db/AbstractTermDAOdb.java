@@ -5,19 +5,19 @@ import at.ac.tuwien.docspars.io.daos.CrudOperations;
 
 import java.util.List;
 
-public abstract class AbstractTermDAOdb<T extends Term> implements CrudOperations<T, List<T>> {
+public abstract class AbstractTermDAOdb implements CrudOperations<Term, List<Term>> {
 
   @Override
-  public abstract boolean add(List<T> a);
+  public abstract boolean add(List<Term> a);
 
   @Override
-  public abstract boolean remove(List<T> a);
+  public abstract boolean remove(List<Term> a);
 
   @Override
-  public abstract boolean update(List<T> a);
+  public abstract boolean update(List<Term> a);
 
   @Override
-  public List<T> read() {
+  public List<Term> read() {
     throw new UnsupportedOperationException(
         "Term reading is not supported due to mass of database entries");
   }

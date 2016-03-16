@@ -5,15 +5,14 @@ import at.ac.tuwien.docspars.entity.Timestampable;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Hannes
  *
  */
-public class Batch<T> implements Timestampable {
+public class Batch implements Timestampable {
 
   // list of all documents from the batch
   private final List<Document> docs = new ArrayList<>();
@@ -21,85 +20,47 @@ public class Batch<T> implements Timestampable {
   // to the dictionary table
   private final List<Dictionable> newVocab = new ArrayList<>();
   // linear copy of all terms in batch for efficiency reasons
-  private final List<T> batchTerms = new ArrayList<>();
-  // list of dict terms uniquely added for each batch
-  private final Set<Dictionable> uniqueTermsPerBatch = new HashSet<>();
+  private final List<Term> batchTerms = new ArrayList<>();
 
   private Timestamp timestamp;
 
-  public Batch() {}
+  private final BatchMode batchMode;
+
+  public Batch(final BatchMode mode) {
+    this.batchMode = mode;
+  }
 
   public void addDocs(final Document doc) {
     this.docs.add(doc);
+    this.batchTerms.addAll(doc.getTerms());
   }
 
-  public void addNewVocab(final Dictionable dic) {
-    this.newVocab.add(dic);
+  public void addNewVocab(final Dictionable dict) {
+    this.newVocab.add(dict);
   }
 
-  public void addTerm(final Term term) {
-
-    // final Term t = doc.addTerm(dict, pos);
-    // if (t.get <= 1) {
-    // // add term for each document only once
-    // this.uniqueTerms.add(t);
-    // }
-    // this.allTerms.add(t);
+  public BatchMode getBatchMode() {
+    return this.batchMode;
   }
-
-  public void addTerm(final TrceRevTerm term) {
-
-  }
-
-  // public void addTerm(final TimestampedDocument doc, final Dict dict, final int pos) {
-  // final Term t = doc.addTerm(dict, pos);
-  // if (t.get <= 1) {
-  // // add term for each document only once
-  // this.uniqueTerms.add(t);
-  // }
-  // this.allTerms.add(t);
-  // }
 
   public List<Document> getDocs() {
     return this.docs;
+  }
+
+  public int getSize() {
+    return this.docs.size();
+  }
+
+  public List<Term> getTerms() {
+    return this.batchTerms;
   }
 
   public List<Dictionable> getNewVocab() {
     return this.newVocab;
   }
 
-  /**
-   * @return the nrOfTerms
-   */
-  public int getNrOfTerms() {
-    return this.batchTerms.size();
-  }
-
-  public int getDocumentNumberForBatch() {
-    return this.docs.size();
-  }
-
-  public int getNrOfNewDictEntries() {
-    return this.getNewVocab().size();
-  }
-
-  public void setTimestamp(Timestamp ts) {
-    this.timestamp = ts;
-  }
-
-  // public List<T> getRevisionableTerms() {
-  // return this.batchTerms;
-  // }
-  //
-  // public List<TrceRevTerm> getTrceRevTerms() {
-  // return null;
-  // }
-  public List<Dictionable> getUniqueTermsForBatch() {
-    return new ArrayList<Dictionable>(this.uniqueTermsPerBatch);
-  }
-
-  public List<T> getTerms() {
-    return this.batchTerms;
+  public List<Term> getUniqueTermsForBatch() {
+    return this.batchTerms.stream().distinct().collect(Collectors.toList());
   }
 
   /**
@@ -114,6 +75,12 @@ public class Batch<T> implements Timestampable {
     this.docs.clear();
     this.newVocab.clear();
     this.batchTerms.clear();
+    // this.uniqueTermsPerBatch.clear();
+    this.timestamp = null;
     // this.timestamp.;
+  }
+
+  public void setTimestamp(final Timestamp ts) {
+    this.timestamp = ts;
   }
 }

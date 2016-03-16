@@ -30,7 +30,7 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
    *
    * @param time the time to set
    */
-  public void setTimestamp(Timestamp time) {
+  public void setTimestamp(final Timestamp time) {
     this.timestamp = time;
   }
 
@@ -60,78 +60,71 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
         return docids;
       }
     };
-    final TIntSet retrievedDocs =
-        this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"), resEx);
-    logger.debug(DocDAOdb.class.getName() + " retrieved " + retrievedDocs.size()
-        + " documents from docs table");
+    final TIntSet retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"), resEx);
+    logger.debug(DocDAOdb.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
     return retrievedDocs;
   }
 
   @Override
   public boolean remove(final List<Document> docs) {
-    final int[] updateCounts = this.jdbcTemplate.batchUpdate(
-        SQLStatements.getString("sql.docs.update"), new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-            // sql.docs.insert=INSERT INTO docs (pageID, revID, added, name, len) VALUES (?,?,?,?,?)
-            ps.setTimestamp(1, DocDAOdb.this.getTimestamp());
-            ps.setInt(2, docs.get(i).getDId());
-            ps.setInt(3, docs.get(i).getDId());
-          }
+    final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.update"), new BatchPreparedStatementSetter() {
+      @Override
+      public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+        // sql.docs.insert=INSERT INTO docs (pageID, revID, added, name, len) VALUES (?,?,?,?,?)
+        ps.setTimestamp(1, DocDAOdb.this.getTimestamp());
+        ps.setInt(2, docs.get(i).getDId());
+        ps.setInt(3, docs.get(i).getDId());
+      }
 
-          @Override
-          public int getBatchSize() {
-            return docs.size();
-          }
-        });
-    logger.debug(DocDAOdb.class.getName() + " removed/updated " + docs.size()
-        + " documents from docs table");
+      @Override
+      public int getBatchSize() {
+        return docs.size();
+      }
+    });
+    logger.debug(DocDAOdb.class.getName() + " removed/updated " + docs.size() + " documents from docs table");
     return docs.size() == updateCounts.length;
   }
 
   @Override
   public boolean add(final List<Document> docs) {
-    final int[] updateCounts = this.jdbcTemplate.batchUpdate(
-        SQLStatements.getString("sql.docs.insert"), new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-            // sql.docs.insert=INSERT INTO docs (pageID, added, name, len) VALUES (?,?,?,?)
-            ps.setInt(1, docs.get(i).getDId());
-            ps.setInt(2, docs.get(i).getDId());
-            ps.setTimestamp(3, DocDAOdb.this.getTimestamp());
-            ps.setString(4, docs.get(i).getName());
-            ps.setInt(5, docs.get(i).getLength());
-          }
+    final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.insert"), new BatchPreparedStatementSetter() {
+      @Override
+      public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+        // sql.docs.insert=INSERT INTO docs (pageID, added, name, len) VALUES (?,?,?,?)
+        ps.setInt(1, docs.get(i).getDId());
+        ps.setInt(2, docs.get(i).getRevId());
+        ps.setTimestamp(3, DocDAOdb.this.getTimestamp());
+        ps.setString(4, docs.get(i).getName());
+        ps.setInt(5, docs.get(i).getLength());
+      }
 
-          @Override
-          public int getBatchSize() {
-            return docs.size();
-          }
-        });
-    logger
-        .debug(DocDAOdb.class.getName() + " inserted " + docs.size() + " documents in docs table");
+      @Override
+      public int getBatchSize() {
+        return docs.size();
+      }
+    });
+    logger.debug(DocDAOdb.class.getName() + " inserted " + docs.size() + " documents in docs table");
     return docs.size() == updateCounts.length;
   }
 
   @Override
   public boolean update(final List<Document> docs) {
-    final int updateCounts[] = this.jdbcTemplate.batchUpdate(
-        SQLStatements.getString("sql.docs.update"), new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-            // (docid, added, removed, name, len)
-            // UPDATE docs SET removed = ? WHERE pageid = ? AND revid = ?
-            ps.setTimestamp(1, docs.get(i).getTimestamp());
-            ps.setInt(2, docs.get(i).getDId());
-            ps.setInt(3, docs.get(i).getDId());
-          }
+    final int updateCounts[] = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.update"), new BatchPreparedStatementSetter() {
+      @Override
+      public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+        // (docid, added, removed, name, len)
+        // UPDATE docs SET removed = ? WHERE pageid = ? AND revid = ?
+        ps.setTimestamp(1, docs.get(i).getTimestamp());
+        ps.setInt(2, docs.get(i).getDId());
+        ps.setInt(3, docs.get(i).getDId());
+      }
 
-          @Override
-          public int getBatchSize() {
-            return docs.size();
-          }
-        });
-    final boolean add = this.add(docs);
+      @Override
+      public int getBatchSize() {
+        return docs.size();
+      }
+    });
+    final boolean add = add(docs);
     return add && docs.size() == updateCounts.length;
   }
 

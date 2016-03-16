@@ -8,11 +8,11 @@ import gnu.trove.set.TIntSet;
 
 import java.util.List;
 
-public interface PersistanceService<T, D, W> {
+public interface PersistanceService {
 
-  public boolean addBatch(Batch<T> batch);
+  public boolean addBatch(Batch batch);
 
-  public boolean updateBatch(Batch<T> batch);
+  public boolean updateBatch(Batch batch);
 
   boolean remove(List<Document> docs);
 

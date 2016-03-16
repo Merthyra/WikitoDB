@@ -10,6 +10,6 @@ public class DocumentFactory implements DocumentCreationable {
   @Override
   public Document createDocument(int documentId, int revisionId, String name, Timestamp added,
       int len) {
-    return new Document(documentId, name, added, len);
+    return new Document(documentId, revisionId, name, added, len);
   }
 }

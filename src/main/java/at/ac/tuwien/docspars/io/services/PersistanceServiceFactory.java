@@ -1,6 +1,6 @@
 package at.ac.tuwien.docspars.io.services;
 
-import at.ac.tuwien.docspars.entity.PersistVariant;
+import at.ac.tuwien.docspars.entity.Mode;
 
 import javax.sql.DataSource;
 
@@ -10,6 +10,6 @@ public abstract class PersistanceServiceFactory {
 
   }
 
-  public abstract PersistanceService createInstance(PersistVariant db);
+  public abstract PersistanceService createInstance(Mode db);
 
 }

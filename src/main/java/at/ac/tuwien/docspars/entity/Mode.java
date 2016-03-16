@@ -9,7 +9,7 @@ package at.ac.tuwien.docspars.entity;
  * @since 0.1.0
  * @version 0.1.0
  */
-public enum PersistVariant {
+public enum Mode {
 
     V1, V2, V3, V4, V5, V6;
 

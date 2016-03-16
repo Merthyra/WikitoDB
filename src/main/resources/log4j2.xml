@@ -6,20 +6,20 @@
 	<Appenders>
 		<Console name="console-log" target="SYSTEM_OUT">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1.} - %msg%n</pattern>
 			</PatternLayout>
 		</Console>
-		<RollingFile name="trace-log" fileName="${log-path}/error.log" filePattern="${log-path}/trace-log-%d{yyyy-MM-dd}.log">
+		<RollingFile name="trace-log" fileName="${log-path}/trace.log" filePattern="${log-path}/trace-log-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+				<pattern>[%-5level]{WARN=W, DEBUG=D, ERROR=E, TRACE=T, INFO=I} %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1.} - %msg%n</pattern>
 			</PatternLayout>
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
 			</Policies>
 		</RollingFile>
-		<RollingFile name="error-log" fileName="${log-path}/trace-log.log" filePattern="${log-path}/error-log-%d{yyyy-MM-dd}.log">
+		<RollingFile name="error-log" fileName="${log-path}/error.log" filePattern="${log-path}/error-log-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1.} - %msg%n</pattern>
 			</PatternLayout>
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
@@ -27,7 +27,7 @@
 		</RollingFile>
 		<RollingFile name="performance-log" fileName="${log-path}/performance-log.log" filePattern="${log-path}/performance-log-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1.} - %msg%n</pattern>
 			</PatternLayout>
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
@@ -37,20 +37,14 @@
 	<Loggers>
 		<Logger name="PerformanceReport" level="info" additivity="false">
 			<appender-ref ref="performance-log" level="info"/>
-			<appender-ref ref="console-log" level="debug" />
 		</Logger>	
-		<Logger name="at.ac.tuwien.docspars.io.db" level="ALL" additivity="false">
-			<appender-ref ref="trace-log" level="info" />
+		<Logger name="at.ac.tuwien.docspars" level="debug" additivity="false">
+			<appender-ref ref="trace-log" level="debug" />
 			<appender-ref ref="error-log" level="error" />
 			<appender-ref ref="console-log" level="debug" />
 		</Logger>
-		<Logger name="at.ac.tuwien.docspars.util" level="ALL" additivity="false">
-			<appender-ref ref="trace-log" level="info" />
-			<appender-ref ref="error-log" level="error" />
-			<appender-ref ref="console-log" level="info" />
-		</Logger>
-		<Root level="warn" additivity="false">
-			<appender-ref ref="console-log" />
+		<Root level="info">
+			<appender-ref ref="console-log" level="debug"/>
 			<appender-ref ref="error-log" level="error" />
 		</Root>
 	</Loggers>

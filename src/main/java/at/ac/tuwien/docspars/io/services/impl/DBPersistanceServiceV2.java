@@ -1,9 +1,7 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
-import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.entity.impl.TrceRevTerm;
 import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.Term2DAODdb;
@@ -17,8 +15,7 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class DBPersistanceServiceV2
-    extends DBPersistanceService<TrceRevTerm, Document, Dictionable> {
+public class DBPersistanceServiceV2 extends DBPersistanceService {
 
   private Term2DAODdb termDAO;
 
@@ -26,12 +23,13 @@ public class DBPersistanceServiceV2
     this.setDictDAO(new DictDAOdb(ds));
     this.setDocDAO(new DocDAOdb(ds));
     this.termDAO = new Term2DAODdb(ds);
+    logger.debug("V2 persistance service attached");
   }
 
 
   @Override
   @PerformanceMonitored
-  public boolean addBatch(Batch<TrceRevTerm> batch) {
+  public boolean addBatch(Batch batch) {
     getDictDAO().add(batch.getNewVocab());
     getDocDAO().setTimestamp(batch.getTimestamp());
     getDocDAO().add(batch.getDocs());
@@ -41,7 +39,7 @@ public class DBPersistanceServiceV2
 
   @Override
   @PerformanceMonitored
-  public boolean updateBatch(Batch<TrceRevTerm> batch) {
+  public boolean updateBatch(Batch batch) {
     getDocDAO().setTimestamp(new Timestamp(System.currentTimeMillis()));
     getDocDAO().remove(batch.getDocs());
     addBatch(batch);

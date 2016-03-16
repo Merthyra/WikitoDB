@@ -1,10 +1,7 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
-import at.ac.tuwien.docspars.entity.Dictionable;
-import at.ac.tuwien.docspars.entity.Documentable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.AbstractTermDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
@@ -13,15 +10,17 @@ import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.set.TIntSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public abstract class DBPersistanceService<T extends Term, D extends Documentable, W extends Dictionable>
-    implements PersistanceService<T, D, W> {
+public abstract class DBPersistanceService implements PersistanceService {
 
+  final static Logger logger = LogManager.getLogger(DBPersistanceService.class);
   private DocDAOdb docDAO;
   private DictDAOdb dictDAO;
-  private AbstractTermDAOdb<Term> termDAO;
+  private AbstractTermDAOdb termDAO;
 
   public DBPersistanceService() {
 
@@ -29,11 +28,11 @@ public abstract class DBPersistanceService<T extends Term, D extends Documentabl
 
   @Override
   @PerformanceMonitored
-  public abstract boolean addBatch(Batch<T> batch);
+  public abstract boolean addBatch(Batch batch);
 
   @Override
   @PerformanceMonitored
-  public abstract boolean updateBatch(Batch<T> batch);
+  public abstract boolean updateBatch(Batch batch);
 
   @Override
   @PerformanceMonitored
@@ -81,11 +80,11 @@ public abstract class DBPersistanceService<T extends Term, D extends Documentabl
   }
 
 
-  public AbstractTermDAOdb<Term> getTermDAO() {
+  public AbstractTermDAOdb getTermDAO() {
     return this.termDAO;
   }
 
-  public void setTermDAO(AbstractTermDAOdb<Term> termDAO) {
+  public void setTermDAO(AbstractTermDAOdb termDAO) {
     this.termDAO = termDAO;
   }
 }

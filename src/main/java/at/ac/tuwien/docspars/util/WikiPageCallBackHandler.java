@@ -34,6 +34,7 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
     if (page.getTitle().contains("(disambiguation)") || page.isRedirect() || page.isSpecialPage() || page.isStub() || page.isDisambiguationPage()) {
       this.docHandler.skipDocument();
       logger.trace("document {}  with id: {} skipped because of invalid format!", page.getTitle(), page.getID());
+      this.docHandler.skipDocument();
       return;
     }
     try {

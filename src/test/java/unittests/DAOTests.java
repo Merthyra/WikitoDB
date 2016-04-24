@@ -2,7 +2,6 @@ package unittests;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.factories.DictCreationable;
 import at.ac.tuwien.docspars.entity.factories.DocumentCreationable;

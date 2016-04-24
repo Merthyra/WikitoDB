@@ -15,7 +15,8 @@ public class Document implements Documentable, Timestampable, Revisionable {
 
   public enum Status {
 
-    OPENED, CLOSED
+    OPENED,
+    CLOSED
   }
 
   private final int docId;
@@ -36,6 +37,7 @@ public class Document implements Documentable, Timestampable, Revisionable {
     this.terms = new ArrayList<Term>();
     this.status = Status.OPENED;
   }
+
   Document(final int docId, final int rev, final String name, final Timestamp added, final int len, final Collection<Term> terms) {
     this.docId = docId;
     this.name = name;
@@ -43,6 +45,7 @@ public class Document implements Documentable, Timestampable, Revisionable {
     this.added = added;
     this.revision = rev;
     this.terms = terms;
+    this.status = Status.OPENED;
     this.status = Status.OPENED;
   }
 
@@ -109,19 +112,18 @@ public class Document implements Documentable, Timestampable, Revisionable {
   }
 
   @Override
-  public int hashCode() {
-    return new HashCodeBuilder(19, 53).append(getDId()).append(getName()).append(getLength()).hashCode();
-  }
-
-  @Override
   public boolean isReady() {
     return this.status == Status.CLOSED;
   }
 
   @Override
+  public int hashCode() {
+    return new HashCodeBuilder(19, 53).append(getDId()).append(getName()).append(getLength()).hashCode();
+  }
+
+  @Override
   public String toString() {
-    return "Document [docId=" + docId + ", revision=" + revision + ", name=" + name+ ", added=" + added  + ", len=" + len + ", status="
-        + status + "]";
+    return "Document [docId=" + docId + ", revision=" + revision + ", name=" + name + ", added=" + added + ", len=" + len + ", status=" + status + "]";
   }
 
 }

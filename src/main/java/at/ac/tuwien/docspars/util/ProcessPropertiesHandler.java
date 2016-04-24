@@ -23,8 +23,8 @@ public class ProcessPropertiesHandler {
   private final int reportLimit;
   private final boolean onlyNew;
 
-  public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format,
-         final String language, final String sc, final int maxLength, final int dictsCached, final int reportLimit, final String onlyNew) {
+  public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format, final String language,
+      final String sc, final int maxLength, final int dictsCached, final int reportLimit, final String onlyNew) {
     this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;
     this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
     this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
@@ -44,8 +44,7 @@ public class ProcessPropertiesHandler {
   }
 
   /**
-   * Init ProcessProperties Handler with preconfigured default settings (according to the project
-   * settings file)
+   * Init ProcessProperties Handler with preconfigured default settings (according to the project settings file)
    */
   public ProcessPropertiesHandler() {
     this.batch_size = 1000;
@@ -71,7 +70,7 @@ public class ProcessPropertiesHandler {
   }
 
   /**
-   * increments processed page count and comparess it to max pages to processes
+   * increments processed page count and compares it to max pages to processes
    *
    * @return true if one more page allowed for processing
    */

@@ -9,6 +9,12 @@ import at.ac.tuwien.docspars.entity.impl.Dict;
 import at.ac.tuwien.docspars.entity.impl.Document;
 import org.junit.Test;
 
+import at.ac.tuwien.docspars.entity.impl.Batch;
+import at.ac.tuwien.docspars.entity.impl.BatchMode;
+import at.ac.tuwien.docspars.entity.impl.Dict;
+import at.ac.tuwien.docspars.entity.impl.Document;
+import org.junit.Test;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;

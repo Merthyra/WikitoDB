@@ -16,6 +16,19 @@ import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
+import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceFactory;
+import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV1;
+import at.ac.tuwien.docspars.util.DocumentHandler;
+import at.ac.tuwien.docspars.util.EnvironmentService;
+import at.ac.tuwien.docspars.util.ProcessPropertiesHandler;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

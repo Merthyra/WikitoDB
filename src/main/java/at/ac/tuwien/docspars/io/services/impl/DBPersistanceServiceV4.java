@@ -21,9 +21,8 @@ public class DBPersistanceServiceV4 extends DBPersistanceService {
     logger.debug("V4 persistance service attached");
   }
 
-
   @Override
-  public boolean addBatch(Batch batch) {
+  public <V extends Batch> boolean addBatch(V batch) {
     this.getDictDAO().add(batch.getNewVocab());
     this.getDocDAO().setTimestamp(batch.getTimestamp());
     this.getDocDAO().add(batch.getDocs());
@@ -33,8 +32,8 @@ public class DBPersistanceServiceV4 extends DBPersistanceService {
   }
 
   @Override
-  public boolean updateBatch(Batch batch) {
-    throw new UnsupportedOperationException("update batch not possible with this table schema");
+  public <V extends Batch> boolean updateBatch(V batch) {
+    throw new UnsupportedOperationException("Update of V4 is not yet supported");
   }
 
   @Override
@@ -42,7 +41,5 @@ public class DBPersistanceServiceV4 extends DBPersistanceService {
     // TODO Auto-generated method stub
     return false;
   }
-
-
 
 }

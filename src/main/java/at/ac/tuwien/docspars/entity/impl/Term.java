@@ -38,32 +38,27 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
 
   @Override
   public int getDId() {
-    // TODO Auto-generated method stub
     return this.doc.getDId();
   }
 
   @Override
   public int getLength() {
-    // TODO Auto-generated method stub
     return this.doc.getLength();
   }
 
   @Override
   public String getName() {
-    // TODO Auto-generated method stub
     return this.doc.getName();
   }
 
 
   @Override
   public int getRevId() {
-    // TODO Auto-generated method stub
     return this.doc.getRevId();
   }
 
   @Override
   public String getTerm() {
-    // TODO Auto-generated method stub
     return this.dict.getTerm();
   }
 
@@ -77,7 +72,6 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
 
   @Override
   public Timestamp getTimestamp() {
-    // TODO Auto-generated method stub
     return this.doc.getTimestamp();
   }
 
@@ -93,13 +87,13 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
 
   @Override
   public boolean isReady() {
-    // TODO Auto-generated method stub
     return this.doc.isReady();
   }
 
   @Override
   public void setTrace(final int trace) {
     this.trace = trace;
+
 
   }
 

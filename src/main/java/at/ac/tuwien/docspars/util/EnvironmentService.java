@@ -8,7 +8,6 @@ import at.ac.tuwien.docspars.entity.factories.DocumentCreationable;
 import at.ac.tuwien.docspars.entity.factories.TermCreationable;
 import at.ac.tuwien.docspars.entity.factories.impl.EntityFactory;
 import at.ac.tuwien.docspars.entity.impl.Batch;
-import at.ac.tuwien.docspars.entity.impl.BatchMode;
 import at.ac.tuwien.docspars.entity.impl.BatchService;
 import at.ac.tuwien.docspars.entity.impl.Dict;
 import at.ac.tuwien.docspars.entity.impl.Document;
@@ -27,9 +26,6 @@ import java.util.List;
 public class EnvironmentService implements TermCreationable, DictCreationable, DocumentCreationable {
 
   private static final Logger logger = LogManager.getLogger(EnvironmentService.class);
-
-  private Mode mode;
-
   private TObjectIntMap<ASCIIString2ByteArrayWrapper> persistedDict;
   // Set of document IDs stored in database
   private TIntSet persistedDocs;
@@ -58,24 +54,30 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
   }
 
   public void addDocument(final int did, final int revid, final String name, final Timestamp added, final List<String> content) {
-    if (this.persistedDocs.contains(did)) {
-      this.batchService.setBatchMode(BatchMode.UPDATE);
-    } else {
-      this.batchService.setBatchMode(BatchMode.ADD);
-    }
-    // checks whether the max batch size is reached, and persists intermediate results if true
-    checkBatchSizeOverrun();
-    // creating new document
-    final Document latest = createDocument(did, revid, name, added, content.size());
-    for (int i = 0; i < content.size(); i++) {
-      addTerm(latest, content.get(i), i);
-    }
-    this.batchService.addDocument(latest);
+    initBatchMode(did);
+    persistChangesWhenBatchSizeExceeds();
+    final Document newlyCreatedDoc = createDocument(did, revid, name, added, content.size());
+    addContentToDocument(newlyCreatedDoc, content);
+    this.batchService.addDocument(newlyCreatedDoc);
     this.persistedDocs.add(did);
-    this.processMetrics.processedDocument();
-    logger.trace("{} processed and added to batch", latest.toString());
+    this.processMetrics.reportDocumentProcessed();
+    logger.trace("{} processed and added to batch", newlyCreatedDoc.toString());
     if (this.processPropertiesHandler.isReportLimitReached(++this.docCounter)) {
       logger.info(this.processMetrics.getIntermediateReport());
+    }
+  }
+
+  private void addContentToDocument(final Document latest, final List<String> documentTerms) {
+    for (int i = 0; i < latest.getTerms().size(); i++) {
+      addTerm(latest, documentTerms.get(i), i);
+    }
+  }
+
+  private void initBatchMode(int documentId) {
+    if (this.persistedDocs.contains(documentId)) {
+      this.batchService.switchToUpdateMode();
+    } else {
+      this.batchService.switchToAddNewMode();
     }
   }
 
@@ -112,13 +114,14 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     doc.addTerm(createTerm(doc, dict, pos));
   }
 
-  private void checkBatchSizeOverrun() {
+  private void persistChangesWhenBatchSizeExceeds() {
     if (this.batchService.getActiveBatch().getSize() >= this.processPropertiesHandler.getBatch_size()) {
       persistBatch(this.batchService.getActiveBatch());
-      logger.debug("{} batch: {} docs up to {}", this.batchService.getBatchMode().name(), this.batchService.getBatchSize(), this.processPropertiesHandler.getProcessed_Page_Count());
+
+      logger.debug("Added {}, new total count of processed elements = {}", this.batchService.getActiveBatch(),
+          this.processPropertiesHandler.getProcessed_Page_Count());
     }
   }
-
 
   @Override
   public Dict createDict(final int id, final String name) {
@@ -144,9 +147,7 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     return this.processMetrics;
   }
 
-
   public void initialize(final Mode mode) {
-    this.mode = mode;
     final EntityFactory efact = new EntityFactory(mode);
     this.termFactory = efact.createTermFactory();
     this.dictFactory = efact.createDictFactory();
@@ -166,19 +167,11 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     return this.processPropertiesHandler.getMax_Pages() < this.processMetrics.getProcessedElements();
   }
 
-  public boolean isSkippedByOffset(int startDoc) {
+  boolean isSkippedByOffset(int startDoc) {
     return (this.processPropertiesHandler.getStart_offset() < startDoc);
   }
 
-  private void persistAddition(final Batch batch) {
-    if (this.persistService.addBatch(batch)) {
-      this.processMetrics.addNewBatch(batch);
-    } else {
-      throw new TransactionSystemException("Number of written terms and parsed terms do not match");
-    }
-  }
-
-  public BatchService getBatchService() {
+  BatchService getBatchService() {
     return this.batchService;
   }
 
@@ -191,15 +184,16 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     int maxTries = 3;
     while (batch.getSize() > 0) {
       try {
-        batch.setTimestamp(new Timestamp(System.currentTimeMillis()));
-        logger.debug("Batch {} successful: Documents {}, Terms {}, Dictionary-Terms {} persisted",
-            this.batchService.getBatchMode(), batch.getSize(), batch.getTerms().size(), batch.getNewVocab().size());
+        updateBatchTimestamp(batch);
+        persist(batch);
+        logger.debug("Batch {} successful: Documents {}, Terms {}, Dictionary-Terms {} persisted", this.batchService.getActiveBatch(), batch.getSize(),
+            batch.getTerms().size(), batch.getNewVocab().size());
         batch.reset();
-
-        // if update fails the
-      } catch (final TransactionSystemException ex) {
+      }
+      // if update fails for more than a specified number of tries, process terminates
+      catch (final TransactionSystemException ex) {
         if (maxTries <= 0) {
-          throw new PersistanceException("Failed To Write " + this.batchService.getBatchMode() + " Batch after 3 tries");
+          throw new PersistanceException("Failed To Write " + this.batchService.getActiveBatch() + " Batch after 3 tries");
         }
         logger.warn("Writing Batch failed! - retrying: " + (4 - maxTries) + " out of " + maxTries);
         maxTries--;
@@ -207,16 +201,22 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     }
   }
 
-  private void persistUpdate(final Batch batch) {
-    if (this.persistService.updateBatch(batch)) {
-      this.processMetrics.addUpdateBatch(batch);
-    } else {
-      throw new TransactionSystemException("Number of written terms and parsed terms do not match");
-    }
+  private void updateBatchTimestamp(Batch batch) {
+    batch.setTimestamp(new Timestamp(System.currentTimeMillis()));
   }
 
-  private void resetAll() {
-    initialize(this.mode);
+  private void persist(final Batch batch) {
+    batch.persist(this.persistService);
+    batch.updateMetrics(this.processMetrics);
+  }
+
+  public void shutDown() {
+    persistAll();
+    throw new EndOfProcessReachedException("Done processing " + this.processPropertiesHandler.getProcessed_Page_Count());
+  }
+
+  public void skippedDocument() {
+    this.processMetrics.skipDocument();
   }
 
   /**
@@ -238,8 +238,7 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
   }
 
   /**
-   * reverts all temporal document and dictionary data from data structure which have not been
-   * persisted use with caution!
+   * reverts all temporal document and dictionary data from data structure which have not been persisted use with caution!
    */
   public void revert() {
     int i = 0;
@@ -265,11 +264,6 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
   }
 
   public void setUseDocumentTimestamp(final boolean flag) {}
-
-  public void shutDown() {
-    persistAll();
-    throw new EndOfProcessReachedException("Done processing " + this.processPropertiesHandler.getProcessed_Page_Count());
-  }
 
   public void skipDocument() {
     this.processMetrics.skipDocument();

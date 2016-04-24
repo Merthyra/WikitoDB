@@ -23,7 +23,6 @@ public class DocumentPars {
 
     final ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
     final DocumentPars documentParser = (DocumentPars) context.getBean("docsPars");
-
     File file;
     try {
       // pass command line arguments to command line arguments processor
@@ -31,7 +30,7 @@ public class DocumentPars {
       documentParser.getCommandLineArgumentProcessor().init(args);
       documentParser.getFileProvider().init();
       documentParser.environmentService.initialize(documentParser.getProcessPropertiesHandler().getVariant());
-      logger.info("Process successfully initialized:\n" + "Process Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",
+      logger.info("Process successfully initialized:\nProcess Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",
           documentParser.getProcessPropertiesHandler().getStart_offset(), documentParser.getProcessPropertiesHandler().getMax_pages(),
           documentParser.getProcessPropertiesHandler().getBatch_size(), documentParser.getProcessPropertiesHandler().getVariant());
 
@@ -53,21 +52,17 @@ public class DocumentPars {
       npe.printStackTrace();
     } catch (final EndOfProcessReachedException eor) {
       logger.info("Max Number Of Pages processed");
-      // docHandler.flushAll();
     } catch (final Throwable e) {
       logger.fatal("Unspecified Exception/Error StackTrace: \n" + e);
       e.printStackTrace();
     } finally {
-      logger.info("End of Processing:\n Wrote:\n "
-          + documentParser.getDocumentHandler() != null ? documentParser.getEnvironmentService().getProcessMetrics()
+      logger.info("End of Processing:\n Wrote:\n " + documentParser.getDocumentHandler() != null ? documentParser.getEnvironmentService().getProcessMetrics()
           : "no process metrics available");
-       logger.info("processed files: " +
-          System.getProperty("line.separator") + documentParser.getFileProvider().getProcessed());
-          ((ConfigurableApplicationContext) context).close();
+      logger.info("processed files: " + System.getProperty("line.separator") + documentParser.getFileProvider().getProcessed());
+      ((ConfigurableApplicationContext) context).close();
     }
   }
 
-  private DocumentPars documentParser;
   private final EnvironmentService environmentService;
   private final FileProvider fileProvider;
   private final CLIArgProcessor commandLineArgumentProcessor;
@@ -85,6 +80,7 @@ public class DocumentPars {
     this.processPropertiesHandler = processPropertiesHandler;
   }
 
+
   /**
    * Gets the commandLineArgumentProcessor for DocumentPars.
    *
@@ -93,6 +89,8 @@ public class DocumentPars {
   private CLIArgProcessor getCommandLineArgumentProcessor() {
     return this.commandLineArgumentProcessor;
   }
+
+
 
   /**
    * Gets the documentHandler for DocumentPars.
@@ -104,15 +102,6 @@ public class DocumentPars {
   }
 
   /**
-   * Gets the documentParser for DocumentPars.
-   *
-   * @return documentParser
-   */
-  private DocumentPars getDocumentParser() {
-    return this.documentParser;
-  }
-
-  /**
    * Gets the environmentService for DocumentPars.
    *
    * @return environmentService
@@ -120,6 +109,8 @@ public class DocumentPars {
   private EnvironmentService getEnvironmentService() {
     return this.environmentService;
   }
+
+
 
   /**
    * Gets the fileProvider for DocumentPars.
@@ -130,6 +121,8 @@ public class DocumentPars {
     return this.fileProvider;
   }
 
+
+
   /**
    * Gets the processPropertiesHandler for DocumentPars.
    *
@@ -138,4 +131,5 @@ public class DocumentPars {
   private ProcessPropertiesHandler getProcessPropertiesHandler() {
     return this.processPropertiesHandler;
   }
+
 }

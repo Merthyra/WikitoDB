@@ -26,20 +26,17 @@ public class DBPersistanceServiceV2 extends DBPersistanceService {
     logger.debug("V2 persistance service attached");
   }
 
-
   @Override
-  @PerformanceMonitored
-  public boolean addBatch(Batch batch) {
+  public <V extends Batch> boolean addBatch(V batch) {
     getDictDAO().add(batch.getNewVocab());
     getDocDAO().setTimestamp(batch.getTimestamp());
     getDocDAO().add(batch.getDocs());
     this.termDAO.add(batch.getTerms());
-    return true;
+    return false;
   }
 
   @Override
-  @PerformanceMonitored
-  public boolean updateBatch(Batch batch) {
+  public <V extends Batch> boolean updateBatch(V batch) {
     getDocDAO().setTimestamp(new Timestamp(System.currentTimeMillis()));
     getDocDAO().remove(batch.getDocs());
     addBatch(batch);

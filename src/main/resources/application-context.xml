@@ -89,8 +89,7 @@
 		<aop:advisor advice-ref="performanceMonitorAdvisor" pointcut-ref="springMonitoringPointcut" />
 	</aop:config>
 
-	<bean id="txManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 

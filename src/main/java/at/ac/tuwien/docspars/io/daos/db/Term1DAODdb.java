@@ -40,7 +40,7 @@ public class Term1DAODdb extends AbstractTermDAOdb {
         return terms.size();
       }
     });
-    
+    logger.debug("{} inserted {} terms to terms table",Term1DAODdb.class.getTypeName() ,updateCounts.length);
     logger.debug("{} inserted {} terms to terms table",Term1DAODdb.class.getTypeName() ,updateCounts.length);
     return updateCounts.length == terms.size();
   }

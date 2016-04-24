@@ -46,6 +46,7 @@ public class Document implements Documentable, Timestampable, Revisionable {
     this.revision = rev;
     this.terms = terms;
     this.status = Status.OPENED;
+    this.status = Status.OPENED;
   }
 
   public void addAll(final Collection<Term> terms) {
@@ -111,13 +112,13 @@ public class Document implements Documentable, Timestampable, Revisionable {
   }
 
   @Override
-  public int hashCode() {
-    return new HashCodeBuilder(19, 53).append(getDId()).append(getName()).append(getLength()).hashCode();
+  public boolean isReady() {
+    return this.status == Status.CLOSED;
   }
 
   @Override
-  public boolean isReady() {
-    return this.status == Status.CLOSED;
+  public int hashCode() {
+    return new HashCodeBuilder(19, 53).append(getDId()).append(getName()).append(getLength()).hashCode();
   }
 
   @Override

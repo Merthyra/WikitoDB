@@ -1,7 +1,5 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
-import at.ac.tuwien.docspars.entity.impl.Batch;
-import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.io.daos.db.AbstractTermDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
@@ -13,30 +11,12 @@ import gnu.trove.set.TIntSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-
 public abstract class DBPersistanceService implements PersistanceService {
 
   final static Logger logger = LogManager.getLogger(DBPersistanceService.class);
   private DocDAOdb docDAO;
   private DictDAOdb dictDAO;
   private AbstractTermDAOdb termDAO;
-
-  public DBPersistanceService() {
-
-  }
-
-  @Override
-  @PerformanceMonitored
-  public abstract boolean addBatch(Batch batch);
-
-  @Override
-  @PerformanceMonitored
-  public abstract boolean updateBatch(Batch batch);
-
-  @Override
-  @PerformanceMonitored
-  public abstract boolean remove(List<Document> docs);
 
 
   @Override

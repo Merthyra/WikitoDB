@@ -66,4 +66,11 @@ public class Dict implements Dictionable {
     this.df = df;
   }
 
+  @Override
+  public String toString() {
+    return "Dict [tid=" + tid + ", term=" + term + ", df=" + df + "]";
+  }
+
+
+
 }

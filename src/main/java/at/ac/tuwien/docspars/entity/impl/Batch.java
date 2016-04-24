@@ -2,6 +2,8 @@ package at.ac.tuwien.docspars.entity.impl;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Timestampable;
+import at.ac.tuwien.docspars.io.services.PersistanceService;
+import at.ac.tuwien.docspars.util.ProcessMetrics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,24 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Batch implements Timestampable {
+public abstract class Batch implements Timestampable {
 
-  // list of all documents from the batch
   private final List<Document> docs = new ArrayList<>();
-  // list of all dictionary elements that have not been persisted earlier and requiere to be written
-  // to the dictionary table
   private final List<Dictionable> newVocab = new ArrayList<>();
-  // linear copy of all terms in batch for efficiency reasons
   private final List<Term> batchTerms = new ArrayList<>();
-
   private Timestamp timestamp;
-
-  private final BatchMode batchMode;
   private static final Logger logger = LogManager.getLogger(Batch.class);
 
-  public Batch(final BatchMode mode) {
-    this.batchMode = mode;
-  }
+  public Batch() {}
 
   public void addDocs(final Document doc) {
     this.docs.add(doc);
@@ -37,10 +30,6 @@ public class Batch implements Timestampable {
 
   public void addNewVocab(final Dictionable dict) {
     this.newVocab.add(dict);
-  }
-
-  public BatchMode getBatchMode() {
-    return this.batchMode;
   }
 
   public List<Document> getDocs() {
@@ -63,9 +52,12 @@ public class Batch implements Timestampable {
     return this.batchTerms.stream().distinct().collect(Collectors.toList());
   }
 
-  /**
-   * @return the timestamp
-   */
+  public void persist(PersistanceService service) {
+    service.addBatch(this);
+  }
+
+  public abstract void updateMetrics(ProcessMetrics metrics);
+
   @Override
   public Timestamp getTimestamp() {
     return this.timestamp;
@@ -75,11 +67,18 @@ public class Batch implements Timestampable {
     this.docs.clear();
     this.newVocab.clear();
     this.batchTerms.clear();
-    // this.uniqueTermsPerBatch.clear();
     this.timestamp = null;
+    logger.info("batch reset");
   }
 
   public void setTimestamp(final Timestamp ts) {
     this.timestamp = ts;
+    this.timestamp = ts;
   }
+
+  @Override
+  public String toString() {
+    return "Batch [Nr of Documents =" + docs.size() + ", timestamp=" + timestamp + "]";
+  }
+
 }

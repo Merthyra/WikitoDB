@@ -23,10 +23,6 @@ public class DocumentPars {
 
     final ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
     final DocumentPars documentParser = (DocumentPars) context.getBean("docsPars");
-
-    // PersistanceServiceFactory serviceFactory = (PersistanceServiceFactory)
-    // context.getBean("persistanceServiceFactory");
-    // DocumentHandler docHandler=null;
     File file;
     try {
       // pass command line arguments to command line arguments processor
@@ -34,7 +30,7 @@ public class DocumentPars {
       documentParser.getCommandLineArgumentProcessor().init(args);
       documentParser.getFileProvider().init();
       documentParser.environmentService.initialize(documentParser.getProcessPropertiesHandler().getVariant());
-      logger.info("Process successfully initialized:\n" + "Process Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",
+      logger.info("Process successfully initialized:\nProcess Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",
           documentParser.getProcessPropertiesHandler().getStart_offset(), documentParser.getProcessPropertiesHandler().getMax_pages(),
           documentParser.getProcessPropertiesHandler().getBatch_size(), documentParser.getProcessPropertiesHandler().getVariant());
 
@@ -56,7 +52,6 @@ public class DocumentPars {
       npe.printStackTrace();
     } catch (final EndOfProcessReachedException eor) {
       logger.info("Max Number Of Pages processed");
-      // docHandler.flushAll();
     } catch (final Throwable e) {
       logger.fatal("Unspecified Exception/Error StackTrace: \n" + e);
       e.printStackTrace();
@@ -68,7 +63,6 @@ public class DocumentPars {
     }
   }
 
-  private DocumentPars documentParser;
   private final EnvironmentService environmentService;
   private final FileProvider fileProvider;
   private final CLIArgProcessor commandLineArgumentProcessor;
@@ -107,8 +101,6 @@ public class DocumentPars {
     return this.documentHandler;
   }
 
-
-
   /**
    * Gets the environmentService for DocumentPars.
    *
@@ -140,5 +132,3 @@ public class DocumentPars {
     return this.processPropertiesHandler;
   }
 }
-
-

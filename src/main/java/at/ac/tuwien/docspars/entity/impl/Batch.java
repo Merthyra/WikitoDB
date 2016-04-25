@@ -52,9 +52,7 @@ public abstract class Batch implements Timestampable {
     return this.batchTerms.stream().distinct().collect(Collectors.toList());
   }
 
-  public void persist(PersistanceService service) {
-    service.addBatch(this);
-  }
+  public abstract void persist(PersistanceService service);
 
   public abstract void updateMetrics(ProcessMetrics metrics);
 

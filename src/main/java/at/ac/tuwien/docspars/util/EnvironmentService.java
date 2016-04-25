@@ -54,14 +54,22 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
   }
 
   public void addDocument(final int did, final int revid, final String name, final Timestamp added, final List<String> content) {
-    initBatchMode(did);
+    setBatchMode(did);
     persistChangesWhenBatchSizeExceeds();
     final Document newlyCreatedDoc = createDocument(did, revid, name, added, content.size());
     addContentToDocument(newlyCreatedDoc, content);
+    updateProcessVariables(did, newlyCreatedDoc);
+    logger.trace("{} processed and added to batch", newlyCreatedDoc.toString());
+    triggerIntermediateReport();
+  }
+
+  private void updateProcessVariables(final int did, final Document newlyCreatedDoc) {
     this.batchService.addDocument(newlyCreatedDoc);
     this.persistedDocs.add(did);
     this.processMetrics.reportDocumentProcessed();
-    logger.trace("{} processed and added to batch", newlyCreatedDoc.toString());
+  }
+
+  private void triggerIntermediateReport() {
     if (this.processPropertiesHandler.isReportLimitReached(++this.docCounter)) {
       logger.info(this.processMetrics.getIntermediateReport());
     }
@@ -73,21 +81,14 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     }
   }
 
-  private void initBatchMode(int documentId) {
-    if (this.persistedDocs.contains(documentId)) {
-      this.batchService.switchToUpdateMode();
-    } else {
+  private void setBatchMode(int documentId) {
+    if (isNew(documentId)) {
       this.batchService.switchToAddNewMode();
+    } else {
+      this.batchService.switchToUpdateMode();
     }
   }
 
-  /**
-   * adds dict to batch
-   *
-   * @param doc
-   * @param term
-   * @param pos
-   */
   private Dict addDict(final String term) {
     final ASCIIString2ByteArrayWrapper arrayWrapper = new ASCIIString2ByteArrayWrapper(term);
     int tid = this.persistedDict.get(arrayWrapper);
@@ -102,25 +103,22 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     return (dict == null) ? createDict(tid, term) : dict;
   }
 
-  /**
-   * adds term to batch
-   *
-   * @param doc
-   * @param term
-   * @param pos
-   */
   private void addTerm(final Document doc, final String term, final int pos) {
     final Dict dict = addDict(term);
     doc.addTerm(createTerm(doc, dict, pos));
   }
 
   private void persistChangesWhenBatchSizeExceeds() {
-    if (this.batchService.getActiveBatch().getSize() >= this.processPropertiesHandler.getBatch_size()) {
+    if (isBatchFull()) {
       persistBatch(this.batchService.getActiveBatch());
 
       logger.debug("Added {}, new total count of processed elements = {}", this.batchService.getActiveBatch(),
           this.processPropertiesHandler.getProcessed_Page_Count());
     }
+  }
+
+  private boolean isBatchFull() {
+    return this.batchService.getActiveBatch().getSize() >= this.processPropertiesHandler.getBatch_size();
   }
 
   @Override
@@ -159,15 +157,15 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     logger.trace("{} Environment initialized ", mode);
   }
 
-  public boolean isNew(int id) {
+  private boolean isNew(int id) {
     return !this.persistedDocs.contains(id);
   }
 
-  public boolean isMaxElementsReached() {
+  private boolean isMaxElementsReached() {
     return this.processPropertiesHandler.getMax_Pages() < this.processMetrics.getProcessedElements();
   }
 
-  boolean isSkippedByOffset(int startDoc) {
+  private boolean isSkippedByOffset(int startDoc) {
     return (this.processPropertiesHandler.getStart_offset() < startDoc);
   }
 
@@ -176,14 +174,12 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     persistBatch(this.batchService.getAddBatch());
   }
 
-  private void persistBatch(final Batch batch) {
+  private void persistBatch(final Batch batch) throws PersistanceException {
     int maxTries = 3;
     while (batch.getSize() > 0) {
       try {
         updateBatchTimestamp(batch);
         persist(batch);
-        logger.debug("Batch {} successful: Documents {}, Terms {}, Dictionary-Terms {} persisted", this.batchService.getActiveBatch(), batch.getSize(),
-            batch.getTerms().size(), batch.getNewVocab().size());
       }
       // if update fails for more than a specified number of tries, process terminates
       catch (final TransactionSystemException ex) {
@@ -203,7 +199,8 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
   private void persist(final Batch batch) {
     batch.persist(this.persistService);
     batch.updateMetrics(this.processMetrics);
-    this.processMetrics.skipDocument();
+    logger.debug("Batch {} successful: Documents {}, Terms {}, Dictionary-Terms {} persisted", this.batchService.getActiveBatch(), batch.getSize(),
+        batch.getTerms().size(), batch.getNewVocab().size());
   }
 
   public void shutDown() {

@@ -1,5 +1,6 @@
 package at.ac.tuwien.docspars.entity.impl;
 
+import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.util.ProcessMetrics;
 
 public class NewBatch extends Batch {
@@ -9,12 +10,17 @@ public class NewBatch extends Batch {
   }
 
   @Override
-  public String toString() {
-    return "Add " + super.toString();
+  public void updateMetrics(ProcessMetrics metrics) {
+    metrics.addBatch(this);
   }
 
   @Override
-  public void updateMetrics(ProcessMetrics metrics) {
-    metrics.addBatch(this);
+  public void persist(PersistanceService service) {
+    service.addBatch(this);
+  }
+
+  @Override
+  public String toString() {
+    return "Add " + super.toString();
   }
 }

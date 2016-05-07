@@ -45,12 +45,8 @@
 		</Logger>		
 		<Root level="info">
 			<appender-ref ref="console-log" level="debug"/>
-			<appender-ref ref="error-log" level="error" />
-			<appender-ref ref="console-log" level="ALL" />
-		<Root level="ALL">
 			<appender-ref ref="console-log" level="ALL"/>
 			<appender-ref ref="error-log" level="error" />
-
-		</Root>
+	   </Root>
 	</Loggers>
 </Configuration>

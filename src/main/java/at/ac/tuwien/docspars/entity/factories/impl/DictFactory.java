@@ -5,15 +5,11 @@ import at.ac.tuwien.docspars.entity.impl.Dict;
 
 public class DictFactory implements DictCreationable {
 
-	public DictFactory() {
+  public DictFactory() {}
 
-	}
-
-	@Override
-	public Dict createDict(final int tid, final String name) {
-
-		return new Dict(tid, name);
-
-	}
+  @Override
+  public Dict createDict(final int tid, final String name) {
+    return new Dict(tid, name);
+  }
 
 }

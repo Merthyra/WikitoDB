@@ -1,6 +1,7 @@
-package at.ac.tuwien.docspars.io.daos.db;
+package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -26,7 +27,6 @@ public class Term1DAODdb extends AbstractTermDAOdb {
   public boolean add(final List<Term> terms) {
 
     final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms1.insert"), new BatchPreparedStatementSetter() {
-      // INSERT INTO terms (tid, pageid, pos) VALUES (?,?,?,?)
       @Override
       public void setValues(final PreparedStatement ps, final int i) throws SQLException {
         ps.setInt(1, terms.get(i).getTId());
@@ -40,8 +40,7 @@ public class Term1DAODdb extends AbstractTermDAOdb {
         return terms.size();
       }
     });
-    logger.debug("{} inserted {} terms to terms table",Term1DAODdb.class.getTypeName() ,updateCounts.length);
-    logger.debug("{} inserted {} terms to terms table",Term1DAODdb.class.getTypeName() ,updateCounts.length);
+    logger.debug("{} inserted {} terms to terms table", Term1DAODdb.class.getTypeName(), updateCounts.length);
     return updateCounts.length == terms.size();
   }
 

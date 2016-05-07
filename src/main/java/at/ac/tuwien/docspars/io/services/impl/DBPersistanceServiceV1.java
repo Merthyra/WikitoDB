@@ -2,9 +2,9 @@ package at.ac.tuwien.docspars.io.services.impl;
 
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.Term1DAODdb;
+import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.term.Term1DAODdb;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;
@@ -26,7 +26,7 @@ public class DBPersistanceServiceV1 extends DBPersistanceService {
   }
 
   @Override
-  public <V extends Batch> boolean addBatch(V batch) {
+  public <B extends Batch> boolean addBatch(B batch) {
     getDictDAO().add(batch.getNewVocab());
     getDocDAO().setTimestamp(batch.getTimestamp());
     getDocDAO().add(batch.getDocs());
@@ -35,7 +35,7 @@ public class DBPersistanceServiceV1 extends DBPersistanceService {
   }
 
   @Override
-  public <V extends Batch> boolean updateBatch(V batch) {
+  public <B extends Batch> boolean updateBatch(B batch) {
     getDocDAO().setTimestamp(batch.getTimestamp());
     getDocDAO().remove(batch.getDocs());
     addBatch(batch);

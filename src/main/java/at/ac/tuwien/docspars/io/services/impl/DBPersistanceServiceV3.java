@@ -2,10 +2,10 @@ package at.ac.tuwien.docspars.io.services.impl;
 
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DictHistDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.Term2DAODdb;
+import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.dict.DictHistDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.term.Term2DAODdb;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;

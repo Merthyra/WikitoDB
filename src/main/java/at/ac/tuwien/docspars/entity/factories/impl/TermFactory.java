@@ -9,7 +9,6 @@ public class TermFactory implements TermCreationable {
 
   @Override
   public Term createTerm(final Documentable doc, final Dictionable dict, final int pos) {
-    // TODO Auto-generated method stub
     return new Term(doc, dict, pos);
   }
 

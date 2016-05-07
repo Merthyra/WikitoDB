@@ -272,4 +272,8 @@ public class EnvironmentService implements TermCreationable, DictCreationable, D
     }
     return true;
   }
+
+  public Batch getActiveBatch() {
+    return this.batchService.getActiveBatch();
+  }
 }

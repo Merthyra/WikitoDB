@@ -1,8 +1,7 @@
-package at.ac.tuwien.docspars.io.daos.db;
+package at.ac.tuwien.docspars.io.daos.db.doc;
 
-import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.CrudOperations;
+import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import org.springframework.dao.DataAccessException;
@@ -18,7 +17,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class DocReducedDAOdb implements CrudOperations<Document, TIntSet>, Timestampable {
+public class DocDAOdb5 extends DocDAOdb {
 
   private Timestamp timestamp = null;
 
@@ -27,19 +26,16 @@ public class DocReducedDAOdb implements CrudOperations<Document, TIntSet>, Times
    *
    * @param time the time to set
    */
+  @Override
   public void setTimestamp(final Timestamp time) {
     this.timestamp = time;
   }
 
   private JdbcTemplate jdbcTemplate;
 
-  @SuppressWarnings("unused")
-  private DocReducedDAOdb() {
 
-  }
-
-  public DocReducedDAOdb(final DataSource dataSource) {
-    this.jdbcTemplate = new JdbcTemplate(dataSource);
+  public DocDAOdb5(final DataSource dataSource) {
+    super(dataSource);
   }
 
   @Override
@@ -49,42 +45,25 @@ public class DocReducedDAOdb implements CrudOperations<Document, TIntSet>, Times
       public TIntSet extractData(final ResultSet res) throws SQLException, DataAccessException {
         final TIntSet docids = new TIntHashSet();
         while (res.next()) {
-          // Document doc = new Document(res.getInt("pageid"), res.getInt("revid"),
-          // res.getString("name"),
-          // res.getTimestamp("added"), res.getInt("len"));
           docids.add(res.getInt("did"));
         }
         return docids;
       }
     };
     final TIntSet retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"), resEx);
-    logger.debug(DocReducedDAOdb.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
+    logger.debug(DocDAOdb5.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
     return retrievedDocs;
   }
 
   @Override
   public boolean remove(final List<Document> docs) {
-    final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.update"), new BatchPreparedStatementSetter() {
-      @Override
-      public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-        // sql.docs.insert=INSERT INTO docs (pageID, revID, added, name, len) VALUES (?,?,?,?,?)
-        ps.setTimestamp(1, DocReducedDAOdb.this.getTimestamp());
-        ps.setInt(2, docs.get(i).getDId());
-        ps.setInt(3, docs.get(i).getDId());
-      }
-
-      @Override
-      public int getBatchSize() {
-        return docs.size();
-      }
-    });
-    logger.debug("{} inserted {} docs to docs table", DocReducedDAOdb.class.getTypeName(), updateCounts.length);
-    return docs.size() == updateCounts.length;
+    // TODO
+    return false;
   }
 
   @Override
   public boolean add(final List<Document> docs) {
-    final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.insert"), new BatchPreparedStatementSetter() {
+    final int[] updateCounts = this.jdbcTemplate.batchUpdate(getInsertStmnt(), new BatchPreparedStatementSetter() {
       @Override
       public void setValues(final PreparedStatement ps, final int i) throws SQLException {
         // sql.docs.insert=INSERT INTO docs (pageID, added, name, len) VALUES (?,?,?,?)
@@ -100,7 +79,7 @@ public class DocReducedDAOdb implements CrudOperations<Document, TIntSet>, Times
         return docs.size();
       }
     });
-    logger.debug("{} inserted {} docs to docs table", DocReducedDAOdb.class.getTypeName(), updateCounts.length);
+    logger.debug("{} inserted {} docs to docs table", DocDAOdb5.class.getTypeName(), updateCounts.length);
     return docs.size() == updateCounts.length;
   }
 
@@ -140,5 +119,15 @@ public class DocReducedDAOdb implements CrudOperations<Document, TIntSet>, Times
   @Override
   public Timestamp getTimestamp() {
     return this.timestamp;
+  }
+
+  @Override
+  String getInsertStmnt() {
+    return SQLStatements.getString("sql.docs5.insert");
+  }
+
+  @Override
+  String getReadStmnt() {
+    return SQLStatements.getString("sql.docs5.read");
   }
 }

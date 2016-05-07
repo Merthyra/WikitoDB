@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface PersistanceService {
 
-  public <V extends Batch> boolean addBatch(V batch);
+  public <B extends Batch> boolean addBatch(B batch);
 
-  public <V extends Batch> boolean updateBatch(V batch);
+  public <B extends Batch> boolean updateBatch(B batch);
 
   boolean remove(List<Document> docs);
 

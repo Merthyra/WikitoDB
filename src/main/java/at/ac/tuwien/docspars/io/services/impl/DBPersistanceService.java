@@ -1,8 +1,7 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
-import at.ac.tuwien.docspars.io.daos.db.AbstractTermDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
@@ -16,7 +15,6 @@ public abstract class DBPersistanceService implements PersistanceService {
   final static Logger logger = LogManager.getLogger(DBPersistanceService.class);
   private DocDAOdb docDAO;
   private DictDAOdb dictDAO;
-  private AbstractTermDAOdb termDAO;
 
 
   @Override
@@ -60,11 +58,4 @@ public abstract class DBPersistanceService implements PersistanceService {
   }
 
 
-  public AbstractTermDAOdb getTermDAO() {
-    return this.termDAO;
-  }
-
-  public void setTermDAO(AbstractTermDAOdb termDAO) {
-    this.termDAO = termDAO;
-  }
 }

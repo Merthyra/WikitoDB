@@ -1,6 +1,7 @@
-package at.ac.tuwien.docspars.io.daos.db;
+package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -87,13 +88,11 @@ public class Term4DAOdb extends AbstractTermDAOdb {
 
   @Override
   public boolean remove(List<Term> listOfTerms) {
-    // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   public boolean update(List<Term> listOfTerms) {
-    // TODO Auto-generated method stub
     return false;
   }
 

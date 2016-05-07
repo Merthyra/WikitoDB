@@ -16,19 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import at.ac.tuwien.docspars.entity.Dictionable;
-import at.ac.tuwien.docspars.io.services.PersistanceService;
-import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceFactory;
-import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV1;
-import at.ac.tuwien.docspars.util.DocumentHandler;
-import at.ac.tuwien.docspars.util.EnvironmentService;
-import at.ac.tuwien.docspars.util.ProcessPropertiesHandler;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -92,7 +79,7 @@ public class DocumentHandlerTest {
     terms.add(term2); // 1
     terms.add(term4); // 2
     docHandler.addDocument(10, 1, "DOCUMENT A", new Timestamp(4000), terms);
-    List<Dictionable> newDictEntries = env.getBatchService().getActiveBatch().getNewVocab();
+    List<Dictionable> newDictEntries = env.getActiveBatch().getNewVocab();
     // assertTrue(docHandler.getSize() == 1);
     assertEquals(newDictEntries.get(1).getTerm(), term2);
 
@@ -108,12 +95,12 @@ public class DocumentHandlerTest {
     terms.add(term8); // 3
 
     docHandler.addDocument(20, 1, "DOCUMENT B", new Timestamp(2000), terms);
-    newDictEntries = env.getBatchService().getActiveBatch().getNewVocab();
-    assertSame(env.getBatchService().getActiveBatch().getSize(), 2);
-    assertSame(env.getBatchService().getActiveBatch().getUniqueTermsForBatch().size(), 7);
-    assertSame(env.getBatchService().getActiveBatch().getTerms().size(), 12);
-    assertSame(env.getBatchService().getActiveBatch().getNewVocab().size(), 5);
-    assertSame(env.getBatchService().getActiveBatch().getSize(), 0);
+    newDictEntries = env.getActiveBatch().getNewVocab();
+    assertSame(env.getActiveBatch().getSize(), 2);
+    assertSame(env.getActiveBatch().getUniqueTermsForBatch().size(), 7);
+    assertSame(env.getActiveBatch().getTerms().size(), 12);
+    assertSame(env.getActiveBatch().getNewVocab().size(), 5);
+    assertSame(env.getActiveBatch().getSize(), 0);
     assertEquals(newDictEntries.get(0).getTerm(), term1);
     assertEquals(newDictEntries.get(4).getTerm(), term3);
 
@@ -135,11 +122,11 @@ public class DocumentHandlerTest {
     terms.add(term9); // 8
 
     docHandler.addDocument(40, 1, "DOCUMENT D", new Timestamp(5000), terms);
-    newDictEntries = env.getBatchService().getActiveBatch().getNewVocab();
-    assertSame(env.getBatchService().getActiveBatch().getDocs().size(), 4);
+    newDictEntries = env.getActiveBatch().getNewVocab();
+    assertSame(env.getActiveBatch().getDocs().size(), 4);
     // adding same document again - size of documents must not change
     docHandler.addDocument(40, 1, "DOCUMENT D", new Timestamp(5000), terms);
-    assertSame(env.getBatchService().getActiveBatch().getDocs().size(), 4);
+    assertSame(env.getActiveBatch().getDocs().size(), 4);
 
   }
 
@@ -151,7 +138,7 @@ public class DocumentHandlerTest {
     docHandler.addDocument(10, 1, "DOCUMENT A", new Timestamp(4000), terms);
     assertTrue(env.getPersistedDocs().contains(10));
     docHandler.addDocument(10, 2, "DOCUMENT A", new Timestamp(4000), terms);
-    assertTrue(env.getBatchService().getUpdateBatch().getSize() == 1);
+    assertTrue(env.getActiveBatch().getSize() == 1);
   }
 
 

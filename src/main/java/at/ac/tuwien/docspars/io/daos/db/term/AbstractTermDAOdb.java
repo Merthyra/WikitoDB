@@ -1,4 +1,4 @@
-package at.ac.tuwien.docspars.io.daos.db;
+package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.CrudOperations;
@@ -16,7 +16,7 @@ public abstract class AbstractTermDAOdb implements CrudOperations<Term, List<Ter
   }
 
   AbstractTermDAOdb(JdbcTemplate jdbc) {
-    this.jdbcTemplate =  jdbc;
+    this.jdbcTemplate = jdbc;
   }
 
   @Override
@@ -30,8 +30,7 @@ public abstract class AbstractTermDAOdb implements CrudOperations<Term, List<Ter
 
   @Override
   public List<Term> read() {
-    throw new UnsupportedOperationException(
-        "Term reading is not supported in this scenario");
+    throw new UnsupportedOperationException("Term reading is not supported in this scenario");
   }
 
   @Override
@@ -48,4 +47,5 @@ public abstract class AbstractTermDAOdb implements CrudOperations<Term, List<Ter
   public JdbcTemplate getJdbcTemplate() {
     return jdbcTemplate;
   }
+
 }

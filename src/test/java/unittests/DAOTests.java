@@ -2,6 +2,7 @@ package unittests;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.factories.DictCreationable;
 import at.ac.tuwien.docspars.entity.factories.DocumentCreationable;
@@ -9,13 +10,13 @@ import at.ac.tuwien.docspars.entity.factories.TermCreationable;
 import at.ac.tuwien.docspars.entity.impl.Dict;
 import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.entity.impl.Term;
-import at.ac.tuwien.docspars.io.daos.db.AbstractTermDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DictDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DictHistDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.DocDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
-import at.ac.tuwien.docspars.io.daos.db.Term1DAODdb;
-import at.ac.tuwien.docspars.io.daos.db.Term2DAODdb;
+import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.dict.DictHistDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.term.AbstractTermDAOdb;
+import at.ac.tuwien.docspars.io.daos.db.term.Term1DAODdb;
+import at.ac.tuwien.docspars.io.daos.db.term.Term2DAODdb;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV1;
 import at.ac.tuwien.docspars.util.DocumentHandler;
@@ -75,46 +76,38 @@ public class DAOTests {
     persSer = new DBPersistanceServiceV1(ds);
     // (int batch_size, int start_offset, int max_pages, String date_format, String language, String
     // sc, int maxLength, int dictsCached)
-    processProperties = new ProcessPropertiesHandler(2, 0, 2, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100, 1000, 0,null);
+    processProperties = new ProcessPropertiesHandler(2, 0, 2, "yyyy-MM-dd'T'hh:mm:ss'Z'", "en", "V1", 100, 1000, 0, null);
 
     final Connection con = ds.getConnection();
     final Statement st = con.createStatement();
     try {
       st.executeUpdate(SQLStatements.getString("sql.terms1.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.terms2.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     // try {
     // st.executeUpdate(SQLStatements.getString("sql.terms3.drop"));
     // }
     // catch (SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.terms4.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.terms5.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.dict.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.dict_hist.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.docs.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.docs5.drop"));
-    } catch (final SQLException ex) {
-    }
+    } catch (final SQLException ex) {}
     st.executeUpdate(SQLStatements.getString("sql.dict.create"));
     st.executeUpdate(SQLStatements.getString("sql.dict_hist.create"));
     st.executeUpdate(SQLStatements.getString("sql.docs.create"));
@@ -146,11 +139,11 @@ public class DAOTests {
     docList.clear();
     dictList.clear();
     termList.clear();
-    docList.add(new Document(10, 1, "one", new Timestamp(1000), 30, false));
-    docList.add(new Document(20, 1, "two", new Timestamp(2000), 35, false));
-    docList.add(new Document(30, 1, "three", new Timestamp(3000), 45, false));
-    docList.add(new Document(40, 5876, "four", new Timestamp(3000), 45, false));
-    docList.add(new Document(30, 1, "five", new Timestamp(5000), 85, false));
+    docList.add(new Document(10, 1, "one", new Timestamp(1000), 30));
+    docList.add(new Document(20, 1, "two", new Timestamp(2000), 35));
+    docList.add(new Document(30, 1, "three", new Timestamp(3000), 45));
+    docList.add(new Document(40, 5876, "four", new Timestamp(3000), 45));
+    docList.add(new Document(30, 1, "five", new Timestamp(5000), 85));
 
     dictList.add(new Dict(10, "AA"));
     dictList.add(new Dict(20, "AB"));

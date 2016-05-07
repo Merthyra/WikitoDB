@@ -1,6 +1,8 @@
-package at.ac.tuwien.docspars.io.daos.db;
+package at.ac.tuwien.docspars.io.daos.db.term;
 
+import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Term5DAOdb extends AbstractTermDAOdb {
+public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
 
   private Timestamp timestamp;
 
@@ -27,16 +29,14 @@ public class Term5DAOdb extends AbstractTermDAOdb {
 
   @Override
   public boolean add(List<Term> listOfTerms) {
-
     String listOfTidsForBatchUpdates = buildConcatedTidStringFromTermList(listOfTerms);
     Map<Integer, Integer> oldDfValues = readDfForTid(listOfTidsForBatchUpdates);
-    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms5.invalidateOldDf") + "(" + listOfTidsForBatchUpdates + ")", new PreparedStatementSetter() {
-      @Override
-      public void setValues(PreparedStatement stmt) throws SQLException {
-        stmt.setTimestamp(1, listOfTerms.get(0).getTimestamp());
-      }
-    });
+    invalidatedOldTermEntries(listOfTerms.get(0).getTimestamp(), listOfTidsForBatchUpdates);
+    insertNewTerms(listOfTerms, oldDfValues);
+    return true;
+  }
 
+  private void insertNewTerms(List<Term> listOfTerms, Map<Integer, Integer> oldDfValues) {
     this.getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.terms5.insert"), new BatchPreparedStatementSetter() {
       @Override
       public void setValues(PreparedStatement stmt, int i) throws SQLException {
@@ -53,7 +53,15 @@ public class Term5DAOdb extends AbstractTermDAOdb {
         return listOfTerms.size();
       }
     });
-    return true;
+  }
+
+  private void invalidatedOldTermEntries(Timestamp invalidatedAt, String listOfTidsForBatchUpdates) {
+    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms5.invalidateOldDf") + listOfTidsForBatchUpdates, new PreparedStatementSetter() {
+      @Override
+      public void setValues(PreparedStatement stmt) throws SQLException {
+        stmt.setTimestamp(1, invalidatedAt);
+      }
+    });
   }
 
   private Map<Integer, Integer> readDfForTid(String listOfTerms) {
@@ -86,15 +94,16 @@ public class Term5DAOdb extends AbstractTermDAOdb {
 
   @Override
   public boolean update(List<Term> listOfTerms) {
-    return false;
-  }
-
-  public Timestamp getTimetstamp() {
-    return this.timestamp;
+    throw new UnsupportedOperationException("Updates are not supported for PersistanceMode 5");
   }
 
   public void setTimestamp(Timestamp stamp) {
     this.timestamp = stamp;
+  }
+
+  @Override
+  public Timestamp getTimestamp() {
+    return this.timestamp;
   }
 
 }

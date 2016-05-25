@@ -17,6 +17,6 @@ public class VersionDAO {
   }
 
   public int getCurrentId() {
-    return latestVersion.orElse(jdbcTemplate.queryForInt(SQLStatements.getString("sql.version.maxid")));
+    return latestVersion.orElse(jdbcTemplate.queryForObject(SQLStatements.getString("sql.version.maxid"), Integer.class));
   }
 }

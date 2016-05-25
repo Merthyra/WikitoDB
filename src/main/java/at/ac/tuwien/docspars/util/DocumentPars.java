@@ -16,31 +16,43 @@ import java.sql.SQLException;
 public class DocumentPars {
 
   private static final Logger logger = LogManager.getLogger(DocumentPars.class);
-
   private static WikiXMLParser wxsp;
+
+  private final EnvironmentService environmentService;
+  private final FileProvider fileProvider;
+  private final DocumentHandler documentHandler;
+  private final ProcessPropertiesHandler processPropertiesHandler;
+
+  public DocumentPars(final EnvironmentService environmentService, final FileProvider fileProvider, final DocumentHandler documentHandler,
+      final ProcessPropertiesHandler processPropertiesHandler) {
+    this.environmentService = environmentService;
+    this.fileProvider = fileProvider;
+    this.documentHandler = documentHandler;
+    this.processPropertiesHandler = processPropertiesHandler;
+  }
 
   public static void main(final String args[]) throws SQLException {
 
     final ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
     final DocumentPars documentParser = (DocumentPars) context.getBean("docsPars");
+    new CLIArgProcessor(documentParser.processPropertiesHandler, documentParser.fileProvider).init(args);
     File file;
     try {
       // pass command line arguments to command line arguments processor
       // and update process properties automatically
-      documentParser.getCommandLineArgumentProcessor().init(args);
-      documentParser.getFileProvider().init();
-      documentParser.environmentService.initialize(documentParser.getProcessPropertiesHandler().getVariant());
+      documentParser.fileProvider.init();
+      documentParser.environmentService.initialize(documentParser.processPropertiesHandler.getVariant());
       logger.info("Process successfully initialized:\nProcess Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",
-          documentParser.getProcessPropertiesHandler().getStart_offset(), documentParser.getProcessPropertiesHandler().getMax_pages(),
-          documentParser.getProcessPropertiesHandler().getBatch_size(), documentParser.getProcessPropertiesHandler().getVariant());
+          documentParser.processPropertiesHandler.getStart_offset(), documentParser.processPropertiesHandler.getMax_pages(),
+          documentParser.processPropertiesHandler.getBatch_size(), documentParser.processPropertiesHandler.getVariant());
 
-      while ((file = documentParser.getFileProvider().getNextFile()) != null) {
+      while ((file = documentParser.fileProvider.getNextFile()) != null) {
         logger.info("Parsing File: {}", file.getAbsolutePath());
         DocumentPars.wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath());
-        wxsp.setPageCallback(new WikiPageCallBackHandler(documentParser.getDocumentHandler()));
+        wxsp.setPageCallback(new WikiPageCallBackHandler(documentParser.documentHandler));
         wxsp.parse();
       }
-      documentParser.getDocumentHandler().finalize();
+      documentParser.documentHandler.finalize();
     } catch (final CommandLineOptionException coe) {
       System.err.println(coe.getMessage());
     } catch (final MalformedURLException e1) {
@@ -56,79 +68,10 @@ public class DocumentPars {
       logger.fatal("Unspecified Exception/Error StackTrace: \n" + e);
       e.printStackTrace();
     } finally {
-      logger.info("End of Processing:\n Wrote:\n " + documentParser.getDocumentHandler() != null ? documentParser.getEnvironmentService().getProcessMetrics()
-          : "no process metrics available");
-      logger.info("processed files: " + System.getProperty("line.separator") + documentParser.getFileProvider().getProcessed());
+      logger.info("End of Processing:\n Wrote:\n " + documentParser.documentHandler != null
+          ? documentParser.environmentService.getProcessMetrics() : "no process metrics available");
+      logger.info("processed files: " + System.getProperty("line.separator") + documentParser.fileProvider.getProcessed());
       ((ConfigurableApplicationContext) context).close();
     }
-  }
-
-  private final EnvironmentService environmentService;
-  private final FileProvider fileProvider;
-  private final CLIArgProcessor commandLineArgumentProcessor;
-
-  private final DocumentHandler documentHandler;
-
-  private final ProcessPropertiesHandler processPropertiesHandler;
-
-  public DocumentPars(final EnvironmentService environmentService, final FileProvider fileProvider, final CLIArgProcessor cliArgProcessor,
-      final DocumentHandler documentHandler, final ProcessPropertiesHandler processPropertiesHandler) {
-    this.environmentService = environmentService;
-    this.fileProvider = fileProvider;
-    this.commandLineArgumentProcessor = cliArgProcessor;
-    this.documentHandler = documentHandler;
-    this.processPropertiesHandler = processPropertiesHandler;
-  }
-
-
-  /**
-   * Gets the commandLineArgumentProcessor for DocumentPars.
-   *
-   * @return commandLineArgumentProcessor
-   */
-  private CLIArgProcessor getCommandLineArgumentProcessor() {
-    return this.commandLineArgumentProcessor;
-  }
-
-
-
-  /**
-   * Gets the documentHandler for DocumentPars.
-   *
-   * @return documentHandler
-   */
-  private DocumentHandler getDocumentHandler() {
-    return this.documentHandler;
-  }
-
-  /**
-   * Gets the environmentService for DocumentPars.
-   *
-   * @return environmentService
-   */
-  private EnvironmentService getEnvironmentService() {
-    return this.environmentService;
-  }
-
-
-
-  /**
-   * Gets the fileProvider for DocumentPars.
-   *
-   * @return fileProvider
-   */
-  private FileProvider getFileProvider() {
-    return this.fileProvider;
-  }
-
-
-
-  /**
-   * Gets the processPropertiesHandler for DocumentPars.
-   *
-   * @return processPropertiesHandler
-   */
-  private ProcessPropertiesHandler getProcessPropertiesHandler() {
-    return this.processPropertiesHandler;
   }
 }

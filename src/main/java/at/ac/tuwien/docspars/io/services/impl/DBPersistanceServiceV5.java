@@ -5,6 +5,7 @@ import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb5;
 import at.ac.tuwien.docspars.io.daos.db.term.Term5DAOdb;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 
 import javax.sql.DataSource;
 
@@ -22,6 +23,7 @@ public class DBPersistanceServiceV5 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public <V extends Batch> boolean addBatch(V batch) {
     this.getDictDAO().add(batch.getNewVocab());
     this.getDocDAO().setTimestamp(batch.getTimestamp());
@@ -32,6 +34,7 @@ public class DBPersistanceServiceV5 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public <V extends Batch> boolean updateBatch(V batch) {
     // TODO Auto-generated method stub
     return false;

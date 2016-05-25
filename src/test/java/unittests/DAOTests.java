@@ -86,10 +86,6 @@ public class DAOTests {
     try {
       st.executeUpdate(SQLStatements.getString("sql.terms2.drop"));
     } catch (final SQLException ex) {}
-    // try {
-    // st.executeUpdate(SQLStatements.getString("sql.terms3.drop"));
-    // }
-    // catch (SQLException ex) {}
     try {
       st.executeUpdate(SQLStatements.getString("sql.terms4.drop"));
     } catch (final SQLException ex) {}

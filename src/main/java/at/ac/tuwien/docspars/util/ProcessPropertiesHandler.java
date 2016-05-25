@@ -13,7 +13,6 @@ public class ProcessPropertiesHandler {
   private int batch_size;
   private int start_offset;
   private int max_pages;
-  private int processed_Page_Count;
   private boolean use_systemTimestamp;
   private String date_format;
   private final String lan;
@@ -23,12 +22,11 @@ public class ProcessPropertiesHandler {
   private final int reportLimit;
   private final boolean onlyNew;
 
-  public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format, final String language,
-      final String sc, final int maxLength, final int dictsCached, final int reportLimit, final String onlyNew) {
+  public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format,
+      final String language, final String sc, final int maxLength, final int dictsCached, final int reportLimit, final String onlyNew) {
     this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;
     this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
     this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
-    this.processed_Page_Count = 0;
     this.date_format = date_format;
     this.lan = language;
     this.variant = Mode.valueOf(sc);
@@ -50,7 +48,6 @@ public class ProcessPropertiesHandler {
     this.batch_size = 1000;
     this.start_offset = 0;
     this.max_pages = 1000;
-    this.processed_Page_Count = 0;
     this.date_format = "yyyy-MM-dd'T'hh:mm:ss'Z'";
     this.lan = "en";
     this.variant = Mode.V1;
@@ -63,28 +60,6 @@ public class ProcessPropertiesHandler {
 
   public boolean skipPageDueToOffset() {
     return --this.start_offset >= 0;
-  }
-
-  public boolean allowPage() {
-    return this.processed_Page_Count <= this.max_pages;
-  }
-
-  /**
-   * increments processed page count and comparess it to max pages to processes
-   *
-   * @return true if one more page allowed for processing
-   */
-  public boolean allowNextPage() {
-    return countDocument() <= this.max_pages;
-  }
-
-  /**
-   * increments the process execution counter
-   *
-   * @return returns updated execution counter
-   */
-  public int countDocument() {
-    return ++this.processed_Page_Count;
   }
 
   /**
@@ -127,20 +102,6 @@ public class ProcessPropertiesHandler {
    */
   protected void setMax_Pages(final int max_Pages) {
     this.max_pages = max_Pages;
-  }
-
-  /**
-   * @return the processed_Page
-   */
-  public int getProcessed_Page_Count() {
-    return this.processed_Page_Count;
-  }
-
-  /**
-   * @param processed_Page the processed_Page to set
-   */
-  protected void setProcessed_Page_Count(final int processed_Page) {
-    this.processed_Page_Count = processed_Page;
   }
 
   /**
@@ -246,4 +207,5 @@ public class ProcessPropertiesHandler {
   public boolean isOnlyNewDocumentProcessed() {
     return this.onlyNew;
   }
+
 }

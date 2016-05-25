@@ -1,5 +1,6 @@
 package at.ac.tuwien.docspars.io;
 
+import at.ac.tuwien.docspars.util.ConfigException;
 import at.ac.tuwien.docspars.util.EndOfProcessReachedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,16 +37,26 @@ public class FileProvider {
     return null;
   }
 
-  public void init() throws NullPointerException {
-    List<File> filesList = Arrays.stream(new File(this.filePath).listFiles()).filter(f -> f.getName().matches(VALID_FILE_PATTERN)).distinct()
-        .sorted((fa, fb) -> compareFile(fa.getName(), fb.getName())).collect(Collectors.toList());
-    this.files = filesList.iterator();
-    if (!files.hasNext()) {
-      logger.info("no files for processing found in {} ", this.filePath);
-      throw new EndOfProcessReachedException("no files to process");
+  public void init() {
+    List<File> filesList = null;
+    try {
+      filesList = Arrays.stream(new File(this.filePath).listFiles()).filter(f -> f.getName().matches(VALID_FILE_PATTERN)).distinct()
+          .sorted((fa, fb) -> compareFile(fa.getName(), fb.getName())).collect(Collectors.toList());
+      this.files = filesList.iterator();
+      if (!files.hasNext()) {
+        logger.info("no files for processing found in {} ", this.filePath);
+        throw new EndOfProcessReachedException("no files to process");
+      }
+    } catch (NullPointerException e) {
+      logger.error("Error reading input directory, please check your input folder configuration, terminating now...");
+      throw new ConfigException("Error reading input directory", e);
     }
     logger.debug("FoundFiles {} in directory {} ", filesList.size(), this.filePath);
-    logger.trace(this.files);
+    logger.trace(printFileList(filesList));
+  }
+
+  private String printFileList(List<File> filesList) {
+    return filesList.stream().map(File::getName).collect(Collectors.joining(", "));
   }
 
   private int compareFile(String a, String b) {

@@ -14,7 +14,7 @@ public interface PersistanceService {
 
   public <B extends Batch> boolean updateBatch(B batch);
 
-  boolean remove(List<Document> docs);
+  public boolean remove(List<Document> docs);
 
   public TIntSet readDocs();
 

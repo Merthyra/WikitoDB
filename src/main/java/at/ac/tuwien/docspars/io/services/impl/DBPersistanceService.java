@@ -2,7 +2,6 @@ package at.ac.tuwien.docspars.io.services.impl;
 
 import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
 import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
-import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;
@@ -18,13 +17,11 @@ public abstract class DBPersistanceService implements PersistanceService {
 
 
   @Override
-  @PerformanceMonitored
   public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict() {
     return dictDAO.read();
   }
 
   @Override
-  @PerformanceMonitored
   public TIntSet readDocs() {
     return docDAO.read();
   }

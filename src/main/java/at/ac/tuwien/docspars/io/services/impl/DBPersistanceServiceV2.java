@@ -27,6 +27,7 @@ public class DBPersistanceServiceV2 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public <V extends Batch> boolean addBatch(V batch) {
     getDictDAO().add(batch.getNewVocab());
     getDocDAO().setTimestamp(batch.getTimestamp());
@@ -36,6 +37,7 @@ public class DBPersistanceServiceV2 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public <V extends Batch> boolean updateBatch(V batch) {
     getDocDAO().setTimestamp(new Timestamp(System.currentTimeMillis()));
     getDocDAO().remove(batch.getDocs());
@@ -44,6 +46,7 @@ public class DBPersistanceServiceV2 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public boolean remove(List<Document> docs) {
     return false;
   }

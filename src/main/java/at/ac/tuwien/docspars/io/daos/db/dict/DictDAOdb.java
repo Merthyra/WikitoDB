@@ -1,7 +1,7 @@
 package at.ac.tuwien.docspars.io.daos.db.dict;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
-import at.ac.tuwien.docspars.io.daos.CrudOperations;
+import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
 import gnu.trove.map.TObjectIntMap;

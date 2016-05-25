@@ -29,6 +29,7 @@ public class DBPersistanceServiceV3 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public <V extends Batch> boolean addBatch(V batch) {
     // add new dict entries from batch to dict table
     getDictDAO().add(batch.getNewVocab());
@@ -44,6 +45,7 @@ public class DBPersistanceServiceV3 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public <V extends Batch> boolean updateBatch(V batch) {
     // boolean removed = remove(batch.getDocs());
     // this.dict_histDAO.remove(batch.getDictList());

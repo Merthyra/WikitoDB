@@ -1,7 +1,7 @@
 package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
-import at.ac.tuwien.docspars.io.daos.CrudOperations;
+import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;

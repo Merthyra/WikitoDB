@@ -2,7 +2,7 @@ package at.ac.tuwien.docspars.io.daos.db.dict;
 
 import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Term;
-import at.ac.tuwien.docspars.io.daos.CrudOperations;
+import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -60,41 +60,43 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
     final Map<Integer, Integer> dfUpdatedValues =
         this.jdbcTemplate.query(SQLStatements.getString("sql.dict_hist.readupdated") + " (" + idsB.toString() + ") GROUP BY tid", resEx);
     logger.debug("{} extracted {} dict history updated df values", DictHistDAOdb.class.getName(), dfUpdatedValues.size());
-    final Map<Integer, Integer> dfValues = this.jdbcTemplate.query(SQLStatements.getString("sql.dict_hist.read") + " (" + idsB.toString() + ")", resEx);
+    final Map<Integer, Integer> dfValues =
+        this.jdbcTemplate.query(SQLStatements.getString("sql.dict_hist.read") + " (" + idsB.toString() + ")", resEx);
     logger.debug("{} extracted {} dict history df values", dfValues.size(), DictHistDAOdb.class.getName());
 
     // now update all former null values in removed timestamps with timestamp of current batch
     // set removed timestamp for all dict_hist elements affected
-    final int nrOfTsUpds =
-        this.jdbcTemplate.update(SQLStatements.getString("sql.dict_hist.update") + " (" + idsB.toString() + ")", new Object[] {getTimestamp()});
+    final int nrOfTsUpds = this.jdbcTemplate.update(SQLStatements.getString("sql.dict_hist.update") + " (" + idsB.toString() + ")",
+        new Object[] {getTimestamp()});
     // logger.trace(DictHistDAOdb.class.getName() + " updated " + nrOfTsUpds + " dict history timestamp values");
     logger.debug("{} updated {} dict history timestamp values", DictHistDAOdb.class.getName(), nrOfTsUpds);
     // assert(dfValues.size() == nrOfTsUpds);
 
-    final int[] updateCountsHist = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict_hist.insert"), new BatchPreparedStatementSetter() {
-      @Override
-      public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-        // logger.debug("writing dict hist term " + dicts.get(i).toString() + " " + i);
-        ps.setInt(1, dicts.get(i).getTId());
-        ps.setTimestamp(2, DictHistDAOdb.this.getTimestamp());
-        // ps.setTimestamp(3, null);
-        Integer df_old = dfValues.get(dicts.get(i).getTId());
-        Integer df_upd = dfUpdatedValues.get(dicts.get(i).getTId());
-        if (df_old == null) {
-          df_old = 0;
-        }
-        if (df_upd == null) {
-          df_upd = 0;
-        }
-        // add new values to old df values
-        ps.setInt(3, df_old - df_upd + dicts.get(i).getTrace());
-      }
+    final int[] updateCountsHist =
+        this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict_hist.insert"), new BatchPreparedStatementSetter() {
+          @Override
+          public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+            // logger.debug("writing dict hist term " + dicts.get(i).toString() + " " + i);
+            ps.setInt(1, dicts.get(i).getTId());
+            ps.setTimestamp(2, DictHistDAOdb.this.getTimestamp());
+            // ps.setTimestamp(3, null);
+            Integer df_old = dfValues.get(dicts.get(i).getTId());
+            Integer df_upd = dfUpdatedValues.get(dicts.get(i).getTId());
+            if (df_old == null) {
+              df_old = 0;
+            }
+            if (df_upd == null) {
+              df_upd = 0;
+            }
+            // add new values to old df values
+            ps.setInt(3, df_old - df_upd + dicts.get(i).getTrace());
+          }
 
-      @Override
-      public int getBatchSize() {
-        return dicts.size();
-      }
-    });
+          @Override
+          public int getBatchSize() {
+            return dicts.size();
+          }
+        });
     logger.debug("{} added {} dict entries to dict history table", DictHistDAOdb.class.getName(), updateCountsHist.length);
     return true;
   }
@@ -149,26 +151,27 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
   }
 
   private int[] updateCountsHistory(final List<Term> dicts, final Map<Integer, Integer> dfValues) {
-    final int[] updateCountsHist = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict_hist.insert"), new BatchPreparedStatementSetter() {
-      @Override
-      public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-        // logger.debug("writing dict hist term " + dicts.get(i).toString() + " " + i);
-        ps.setInt(1, dicts.get(i).getTId());
-        ps.setTimestamp(2, DictHistDAOdb.this.getTimestamp());
-        // ps.setTimestamp(3, null);
-        Integer df_old = dfValues.get(dicts.get(i).getTId());
-        if (df_old == null) {
-          df_old = 0;
-        }
-        // add new values to old df values
-        ps.setInt(3, df_old + dicts.get(i).getTrace());
-      }
+    final int[] updateCountsHist =
+        this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict_hist.insert"), new BatchPreparedStatementSetter() {
+          @Override
+          public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+            // logger.debug("writing dict hist term " + dicts.get(i).toString() + " " + i);
+            ps.setInt(1, dicts.get(i).getTId());
+            ps.setTimestamp(2, DictHistDAOdb.this.getTimestamp());
+            // ps.setTimestamp(3, null);
+            Integer df_old = dfValues.get(dicts.get(i).getTId());
+            if (df_old == null) {
+              df_old = 0;
+            }
+            // add new values to old df values
+            ps.setInt(3, df_old + dicts.get(i).getTrace());
+          }
 
-      @Override
-      public int getBatchSize() {
-        return dicts.size();
-      }
-    });
+          @Override
+          public int getBatchSize() {
+            return dicts.size();
+          }
+        });
     return updateCountsHist;
   }
 

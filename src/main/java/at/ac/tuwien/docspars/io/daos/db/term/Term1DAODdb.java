@@ -13,8 +13,6 @@ import java.util.List;
 
 public class Term1DAODdb extends AbstractTermDAOdb {
 
-  private JdbcTemplate jdbcTemplate;
-
   public Term1DAODdb(final DataSource dataSource) {
     super(dataSource);
   }
@@ -26,7 +24,7 @@ public class Term1DAODdb extends AbstractTermDAOdb {
   @Override
   public boolean add(final List<Term> terms) {
 
-    final int[] updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.terms1.insert"), new BatchPreparedStatementSetter() {
+    final int[] updateCounts = getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.terms1.insert"), new BatchPreparedStatementSetter() {
       @Override
       public void setValues(final PreparedStatement ps, final int i) throws SQLException {
         ps.setInt(1, terms.get(i).getTId());

@@ -2,7 +2,7 @@ package at.ac.tuwien.docspars.io.daos.db.doc;
 
 import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.CrudOperations;
+import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;

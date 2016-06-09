@@ -1,34 +1,35 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.term.Term6DAODb;
+import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.version.VersionDAO;
-
-import javax.sql.DataSource;
+import gnu.trove.set.TIntSet;
 
 import java.util.List;
+import java.util.Map;
 
 public class DBPersistanceServiceV6 extends DBPersistanceService {
 
-  private final Term6DAODb termDAO;
+  private final CrudOperations<Term, List<Term>> termDAO;
   private final VersionDAO versionDAO;
+  private Integer latestVersion;
 
-  public DBPersistanceServiceV6(final DataSource ds) {
-    setDictDAO(new DictDAOdb(ds));
-    setDocDAO(new DocDAOdb(ds));
-    this.termDAO = new Term6DAODb(ds);
-    this.versionDAO = new VersionDAO(ds);
-    logger.debug("V6 persistance service attached");
+  public DBPersistanceServiceV6(final CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
+      final CrudOperations<Document, TIntSet> docDAO, final CrudOperations<Term, List<Term>> termDAO, final VersionDAO versionDAO) {
+    setDictDAO(dictDAO);
+    setDocDAO(docDAO);
+    this.termDAO = termDAO;
+    this.versionDAO = versionDAO;
+    logger.trace("V6 persistance service attached");
   }
 
   @Override
   public <B extends Batch> boolean addBatch(B batch) {
     this.getDictDAO().add(batch.getNewVocab());
     this.getDocDAO().add(batch.getDocs());
-    this.termDAO.setLatestVersion(this.versionDAO.getCurrentId());
     this.termDAO.add(batch.getTerms());
     return false;
   }

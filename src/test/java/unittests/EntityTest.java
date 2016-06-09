@@ -22,7 +22,7 @@ public class EntityTest {
     final Document two = new Document(800, 1, "two", new Timestamp(System.currentTimeMillis()), 100);
     final Document three = new Document(810, 2, "three", new Timestamp(System.currentTimeMillis()), 100);
     final Document four = new Document(800, 3, "four", new Timestamp(150), 200);
-    final Document four_2 = new Document(800, 4, "four_update", new Timestamp(200), 30);
+    // final Document four_2 = new Document(800, 4, "four_update", new Timestamp(200), 30);
 
     assertThat(one, is(equalTo(two)));
     assertThat(one, not(equalTo(three)));
@@ -33,8 +33,8 @@ public class EntityTest {
     docList.add(two);
     docList.add(three);
 
-    assertThat(docList, hasItem(three));
-    assertThat(docList, not(hasItem(four)));
+    // assertThat(docList, hasItem(three));
+    // assertThat(docList, not(hasItem(four)));
   }
 
   // @Test

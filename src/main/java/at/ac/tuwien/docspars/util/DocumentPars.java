@@ -11,7 +11,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.sql.SQLException;
 
 public class DocumentPars {
 
@@ -31,7 +30,7 @@ public class DocumentPars {
     this.processPropertiesHandler = processPropertiesHandler;
   }
 
-  public static void main(final String args[]) throws SQLException {
+  public static void main(final String args[]) {
 
     final ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
     final DocumentPars documentParser = (DocumentPars) context.getBean("docsPars");
@@ -42,9 +41,8 @@ public class DocumentPars {
       // and update process properties automatically
       documentParser.fileProvider.init();
       documentParser.environmentService.initialize(documentParser.processPropertiesHandler.getVariant());
-      logger.info("Process successfully initialized:\nProcess Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",
-          documentParser.processPropertiesHandler.getStart_offset(), documentParser.processPropertiesHandler.getMax_pages(),
-          documentParser.processPropertiesHandler.getBatch_size(), documentParser.processPropertiesHandler.getVariant());
+      documentParser.logSetupMsg();
+      documentParser.registerShutdownHook();
 
       while ((file = documentParser.fileProvider.getNextFile()) != null) {
         logger.info("Parsing File: {}", file.getAbsolutePath());
@@ -73,5 +71,28 @@ public class DocumentPars {
       logger.info("processed files: " + System.getProperty("line.separator") + documentParser.fileProvider.getProcessed());
       ((ConfigurableApplicationContext) context).close();
     }
+  }
+
+  private void registerShutdownHook() {
+    Thread mainThread = Thread.currentThread();
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        logger.info("Requesting graceful shutdown, waiting for already processed elements to be persisted");
+        EnvironmentService.terminationRequested = true;
+        try {
+          mainThread.join();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    });
+  }
+
+
+  void logSetupMsg() {
+    logger.info("Process successfully initialized:\nProcess Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",
+        processPropertiesHandler.getStart_offset(), processPropertiesHandler.getMax_pages(), processPropertiesHandler.getBatch_size(),
+        processPropertiesHandler.getVariant());
   }
 }

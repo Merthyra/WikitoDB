@@ -1,12 +1,12 @@
 package at.ac.tuwien.docspars.io.services;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
-import gnu.trove.map.TObjectIntMap;
 import gnu.trove.set.TIntSet;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PersistanceService {
 
@@ -18,6 +18,6 @@ public interface PersistanceService {
 
   public TIntSet readDocs();
 
-  public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict();
+  public Map<String, Dictionable> readDict();
 
 }

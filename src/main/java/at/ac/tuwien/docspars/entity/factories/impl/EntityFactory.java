@@ -1,55 +1,48 @@
 package at.ac.tuwien.docspars.entity.factories.impl;
 
 import at.ac.tuwien.docspars.entity.Mode;
-import at.ac.tuwien.docspars.entity.factories.DictCreationable;
 import at.ac.tuwien.docspars.entity.factories.DocumentCreationable;
 import at.ac.tuwien.docspars.entity.factories.TermCreationable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EntityFactory {
+  private static Logger logger = LogManager.getLogger(EntityFactory.class);
+  private DocumentCreationable docFact;
+  private DocumentCreationable docWithSingleTermInstanceFact;
+  private TermCreationable termFact;
+  private TermCreationable traceTermFact;
+  private boolean isInitialized;
 
-  private final DocumentCreationable docFact;
-  private final TermCreationable termFact;
-  private final DictCreationable dictFact;
+  public EntityFactory(DocumentFactory docFactory, DocumentWithSingleTermInstanceFactory docWithSingleTermInstanceFactory,
+      TermFactory termFactory, TraceTermFactory traceTermFactory) {
+    this.docFact = docFactory;
+    this.docWithSingleTermInstanceFact = docWithSingleTermInstanceFactory;
+    this.termFact = termFactory;
+    this.traceTermFact = traceTermFactory;
+  }
 
-  public EntityFactory(final Mode mode) {
-    switch (mode) {
-      case V1:
-        this.docFact = new DocumentFactory();
-        this.termFact = new TermFactory();
-        this.dictFact = new DictFactory();
-        break;
-      case V2:
-        this.docFact = new DocumentWithSingleTermInstanceFactory();
-        this.termFact = new TraceTermFactory();
-        this.dictFact = new DictFactory();
-        break;
-      case V3:
-        this.docFact = new DocumentWithSingleTermInstanceFactory();
-        this.termFact = new TraceTermFactory();
-        this.dictFact = new DictFactory();
-        break;
-      case V4:
-        this.docFact = new DocumentWithSingleTermInstanceFactory();
-        this.termFact = new TraceTermFactory();
-        this.dictFact = new DictFactory();
-        break;
-      default:
-        this.docFact = new DocumentWithSingleTermInstanceFactory();
-        this.termFact = new TermFactory();
-        this.dictFact = new DictFactory();
-        break;
+  public void init(Mode mode) {
+    if (!isInitialized) {
+      switch (mode) {
+        case V1:
+          break;
+        default:
+          this.docFact = docWithSingleTermInstanceFact;
+          this.termFact = traceTermFact;
+          break;
+      }
+      isInitialized = true;
+    } else {
+      logger.warn("EntityFactory has already been initialized");
     }
   }
 
-  public TermCreationable createTermFactory() {
+  public TermCreationable createTermBuilder() {
     return this.termFact;
   }
 
-  public DictCreationable createDictFactory() {
-    return this.dictFact;
-  }
-
-  public DocumentCreationable createDocFacory() {
+  public DocumentCreationable createDocBuilder() {
     return this.docFact;
   }
 }

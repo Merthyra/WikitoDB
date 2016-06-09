@@ -2,25 +2,26 @@ package at.ac.tuwien.docspars.io.daos.db.doc;
 
 import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-
-import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DocDAOdb6 extends DocDAOdb5 {
+public class Doc6DAOdb extends Doc5DAOdb {
 
-  public DocDAOdb6(DataSource dataSource) {
-    super(dataSource);
-
+  public Doc6DAOdb(final JdbcTemplate template) {
+    super(template);
   }
 
   @Override
+  @PerformanceMonitored
   public boolean add(List<Document> docs) {
-    final int[] updateCounts = getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.docs.update"), getPreparedStatementSetterForDocList(docs));
-    logger.debug("{} inserted {} docs to docs table", DocDAOdb.class.getTypeName(), updateCounts.length);
+    final int[] updateCounts =
+        getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.docs.update"), getPreparedStatementSetterForDocList(docs));
+    logger.debug("{} inserted {} docs to docs table", Doc1DAOdb.class.getTypeName(), updateCounts.length);
     return docs.size() == updateCounts.length;
   }
 

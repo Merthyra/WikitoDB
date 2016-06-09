@@ -1,31 +1,28 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.dict.DictHistDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.term.Term2DAODdb;
+import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-import at.ac.tuwien.docspars.util.ASCIIString2ByteArrayWrapper;
-import gnu.trove.map.TObjectIntMap;
 import gnu.trove.set.TIntSet;
 
-import javax.sql.DataSource;
-
 import java.util.List;
+import java.util.Map;
 
 public class DBPersistanceServiceV3 extends DBPersistanceService {
 
-  private final DictHistDAOdb dict_histDAO;
-  private final Term2DAODdb term_daoDB;
+  private final CrudOperations<Dictionable, Map<String, Integer>> dict_histDAO;
+  private final CrudOperations<Term, List<Term>> term_daoDB;
 
-  public DBPersistanceServiceV3(final DataSource ds) {
-    setDictDAO(new DictDAOdb(ds));
-    setDocDAO(new DocDAOdb(ds));
-    this.term_daoDB = new Term2DAODdb(ds);
-    this.dict_histDAO = new DictHistDAOdb(ds);
-    logger.debug("V3 persistance service attached");
+  public DBPersistanceServiceV3(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO, CrudOperations<Document, TIntSet> docDAO,
+      CrudOperations<Dictionable, Map<String, Integer>> dictHistDAO, CrudOperations<Term, List<Term>> termDAO) {
+    setDictDAO(dictDAO);
+    setDocDAO(docDAO);
+    this.dict_histDAO = dictHistDAO;
+    this.term_daoDB = termDAO;
+    logger.trace("V3 persistance service attached");
   }
 
   @Override
@@ -67,7 +64,7 @@ public class DBPersistanceServiceV3 extends DBPersistanceService {
 
   @Override
   @PerformanceMonitored
-  public TObjectIntMap<ASCIIString2ByteArrayWrapper> readDict() {
+  public Map<String, Dictionable> readDict() {
     return getDictDAO().read();
   }
 

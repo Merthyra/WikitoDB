@@ -2,8 +2,10 @@ package at.ac.tuwien.docspars.entity;
 
 public interface Dictionable {
 
-	public int getTId();
+  public int getTId();
 
-	public String getTerm();
+  public String getTerm();
+
+  public int getDf();
 
 }

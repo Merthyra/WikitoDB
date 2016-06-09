@@ -12,4 +12,9 @@ public class TermFactory implements TermCreationable {
     return new Term(doc, dict, pos);
   }
 
+  @Override
+  public void clear() {
+    // nothing to do here
+  }
+
 }

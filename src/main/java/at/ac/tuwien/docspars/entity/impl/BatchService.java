@@ -8,10 +8,10 @@ public class BatchService {
   private final NewBatch additionalElements;
   private Batch currentBatch;
 
-  public BatchService() {
-    this.updateElements = new UpdateBatch();
-    this.additionalElements = new NewBatch();
-    this.currentBatch = this.additionalElements;
+  public BatchService(UpdateBatch updateBatch, NewBatch newBatch) {
+    this.updateElements = updateBatch;
+    this.additionalElements = newBatch;
+    this.currentBatch = newBatch;
   }
 
   public void addDocument(final Document doc) {

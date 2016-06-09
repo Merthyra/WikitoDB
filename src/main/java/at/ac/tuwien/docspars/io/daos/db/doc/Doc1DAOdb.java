@@ -4,6 +4,7 @@ import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import org.springframework.dao.DataAccessException;
@@ -11,15 +12,13 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import javax.sql.DataSource;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampable {
+public class Doc1DAOdb implements CrudOperations<Document, TIntSet>, Timestampable {
 
   private Timestamp timestamp = null;
 
@@ -29,15 +28,15 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
     return jdbcTemplate;
   }
 
-  public DocDAOdb(final DataSource dataSource) {
-    this.jdbcTemplate = new JdbcTemplate(dataSource);
+  public Doc1DAOdb(final JdbcTemplate template) {
+    this.jdbcTemplate = template;
   }
 
   @Override
   public TIntSet read() {
     final ResultSetExtractor<TIntSet> resEx = getResultsetExtractor();
     final TIntSet retrievedDocs = this.jdbcTemplate.query(getReadStmnt(), resEx);
-    logger.debug("{} retrieved {} documents from docs table", DocDAOdb.class.getName(), retrievedDocs.size());
+    logger.debug("{} retrieved {} documents from docs table", Doc1DAOdb.class.getName(), retrievedDocs.size());
     return retrievedDocs;
   }
 
@@ -56,9 +55,10 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
   }
 
   @Override
+  @PerformanceMonitored
   public boolean add(final List<Document> docs) {
     final int[] updateCounts = this.jdbcTemplate.batchUpdate(getInsertStmnt(), getBatchPreparedStatementSetterForList(docs));
-    logger.debug("{} inserted {} docs to docs table", DocDAOdb.class.getTypeName(), updateCounts.length);
+    logger.debug("{} inserted {} docs to docs table", Doc1DAOdb.class.getTypeName(), updateCounts.length);
     return docs.size() == updateCounts.length;
   }
 
@@ -69,7 +69,7 @@ public class DocDAOdb implements CrudOperations<Document, TIntSet>, Timestampabl
         // sql.docs.insert=INSERT INTO docs (pageID, added, name, len) VALUES (?,?,?,?)
         ps.setInt(1, docs.get(i).getDId());
         ps.setInt(2, docs.get(i).getRevId());
-        ps.setTimestamp(3, DocDAOdb.this.getTimestamp());
+        ps.setTimestamp(3, Doc1DAOdb.this.getTimestamp());
         ps.setString(4, docs.get(i).getName());
         ps.setInt(5, docs.get(i).getLength());
       }

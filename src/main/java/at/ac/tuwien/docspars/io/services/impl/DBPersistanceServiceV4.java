@@ -1,25 +1,26 @@
 package at.ac.tuwien.docspars.io.services.impl;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.doc.DocDAOdb;
-import at.ac.tuwien.docspars.io.daos.db.term.Term4DAOdb;
+import at.ac.tuwien.docspars.entity.impl.Term;
+import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-
-import javax.sql.DataSource;
+import gnu.trove.set.TIntSet;
 
 import java.util.List;
+import java.util.Map;
 
 public class DBPersistanceServiceV4 extends DBPersistanceService {
 
-  private final Term4DAOdb termDAO;
+  private final CrudOperations<Term, Map<String, Integer>> termDAO;
 
-  public DBPersistanceServiceV4(final DataSource ds) {
-    setDictDAO(new DictDAOdb(ds));
-    setDocDAO(new DocDAOdb(ds));
-    this.termDAO = new Term4DAOdb(ds);
-    logger.debug("V4 persistance service attached");
+  public DBPersistanceServiceV4(final CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
+      final CrudOperations<Document, TIntSet> docDAO, final CrudOperations<Term, Map<String, Integer>> termDAO) {
+    setDictDAO(dictDAO);
+    setDocDAO(docDAO);
+    this.termDAO = termDAO;
+    logger.trace("V4 persistance service attached");
   }
 
   @Override

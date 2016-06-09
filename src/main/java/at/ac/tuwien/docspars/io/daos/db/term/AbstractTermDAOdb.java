@@ -4,19 +4,15 @@ import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
-
+import java.sql.Timestamp;
 import java.util.List;
 
 public abstract class AbstractTermDAOdb implements CrudOperations<Term, List<Term>> {
   private final JdbcTemplate jdbcTemplate;
+  protected Timestamp persistanceTimePoint;
 
-  AbstractTermDAOdb(DataSource ds) {
-    this.jdbcTemplate = new JdbcTemplate(ds);
-  }
-
-  AbstractTermDAOdb(JdbcTemplate jdbc) {
-    this.jdbcTemplate = jdbc;
+  AbstractTermDAOdb(JdbcTemplate template) {
+    this.jdbcTemplate = template;
   }
 
   @Override
@@ -46,6 +42,12 @@ public abstract class AbstractTermDAOdb implements CrudOperations<Term, List<Ter
 
   public JdbcTemplate getJdbcTemplate() {
     return jdbcTemplate;
+  }
+
+  @Override
+  public void setTimestamp(Timestamp stamp) {
+    this.persistanceTimePoint = stamp;
+
   }
 
 }

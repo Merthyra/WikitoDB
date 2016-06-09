@@ -1,15 +1,15 @@
 package at.ac.tuwien.docspars.io.daos.db.dict;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-
-import javax.sql.DataSource;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>, Timestampable {
+public class DictHistDAOdb implements CrudOperations<Dictionable, Map<String, Integer>>, Timestampable {
 
   private final JdbcTemplate jdbcTemplate;
   private Timestamp time = null;
@@ -29,17 +29,14 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
     this.jdbcTemplate = template;
   }
 
-  public DictHistDAOdb(final DataSource dataSource) {
-    this.jdbcTemplate = new JdbcTemplate(dataSource);
-  }
-
   @Override
   public Map<String, Integer> read() {
     throw new UnsupportedOperationException("History Dictionary should never be read!");
   }
 
   @Override
-  public boolean update(final List<Term> dicts) {
+  @PerformanceMonitored
+  public boolean update(final List<Dictionable> dicts) {
     final StringBuilder idsB = new StringBuilder();
     // StringBuilder valuesB = new StringBuilder();
     // concat tid values String for sql retrieval of df values
@@ -89,7 +86,7 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
               df_upd = 0;
             }
             // add new values to old df values
-            ps.setInt(3, df_old - df_upd + dicts.get(i).getTrace());
+            // ps.setInt(3, df_old - df_upd + dicts.get(i).getTrace());
           }
 
           @Override
@@ -101,7 +98,7 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
     return true;
   }
 
-  private ResultSetExtractor<Map<Integer, Integer>> extractDfValuesForTids(final List<Term> dicts) {
+  private ResultSetExtractor<Map<Integer, Integer>> extractDfValuesForTids(final List<Dictionable> dicts) {
     final ResultSetExtractor<Map<Integer, Integer>> resEx = new ResultSetExtractor<Map<Integer, Integer>>() {
       @Override
       public Map<Integer, Integer> extractData(final ResultSet res) throws SQLException, DataAccessException {
@@ -116,12 +113,31 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
   }
 
   @Override
-  public boolean add(final List<Term> dicts) {
+  @PerformanceMonitored
+  public boolean add(final List<Dictionable> dicts) {
 
     String idsB = buildConcatenatedListOfTids(dicts);
 
-    // retrieve current df values for all dict terms
-    final ResultSetExtractor<Map<Integer, Integer>> resEx = new ResultSetExtractor<Map<Integer, Integer>>() {
+    // getDfResultsMapForTerms(dicts);
+
+    // final Map<Integer, Integer> dfValues =
+    // this.jdbcTemplate.query(SQLStatements.getString("sql.dict_hist.read") + idsB.toString(), dfValueExtractor);
+    // logger.debug("{} extracted {} dict history df values", DictHistDAOdb.class.getName(), dfValues.size());
+
+    final int nrOfTsUpds = updateAllNullValuesWithTimestampOfRemoval(idsB);
+    logger.debug("{} updated {} dict history timestamp values", DictHistDAOdb.class.getName(), nrOfTsUpds);
+
+    final int[] updateCountsHist = insertNewDictionaryTermsWithUpdatedDfValues(dicts);
+    logger.debug("{} added {} dict entries to dict history table", DictHistDAOdb.class.getName(), updateCountsHist.length);
+    return true;
+  }
+
+  int updateAllNullValuesWithTimestampOfRemoval(String idsB) {
+    return this.jdbcTemplate.update(SQLStatements.getString("sql.dict_hist.update") + idsB, new Object[] {getTimestamp()});
+  }
+
+  private ResultSetExtractor<Map<Integer, Integer>> getDfResultsMapForTerms(final List<Dictionable> dicts) {
+    return new ResultSetExtractor<Map<Integer, Integer>>() {
       @Override
       public Map<Integer, Integer> extractData(final ResultSet res) throws SQLException, DataAccessException {
         final Map<Integer, Integer> dfValues = new HashMap<Integer, Integer>(dicts.size());
@@ -131,26 +147,13 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
         return dfValues;
       }
     };
-
-    final Map<Integer, Integer> dfValues = this.jdbcTemplate.query(SQLStatements.getString("sql.dict_hist.read") + idsB.toString(), resEx);
-    logger.debug(DictHistDAOdb.class.getName() + " extracted " + dfValues.size() + " dict history df values");
-
-    // now update all former null values in removed timestamps with timestamp of current batch
-    // set removed timestamp for all dict_hist elements affected
-    final int nrOfTsUpds = this.jdbcTemplate.update(SQLStatements.getString("sql.dict_hist.update") + idsB, new Object[] {getTimestamp()});
-    logger.trace(DictHistDAOdb.class.getName() + " updated " + nrOfTsUpds + " dict history timestamp values");
-    // assert(dfValues.size() == nrOfTsUpds);
-
-    final int[] updateCountsHist = updateCountsHistory(dicts, dfValues);
-    logger.debug(DictHistDAOdb.class.getName() + " added " + updateCountsHist.length + " dict entries to dict history table");
-    return true;
   }
 
-  private String buildConcatenatedListOfTids(final List<Term> dicts) {
+  private String buildConcatenatedListOfTids(final List<Dictionable> dicts) {
     return "(" + dicts.stream().map(t -> String.valueOf(t.getTId())).collect(Collectors.joining(",")) + ")";
   }
 
-  private int[] updateCountsHistory(final List<Term> dicts, final Map<Integer, Integer> dfValues) {
+  private int[] insertNewDictionaryTermsWithUpdatedDfValues(final List<Dictionable> dicts) {
     final int[] updateCountsHist =
         this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict_hist.insert"), new BatchPreparedStatementSetter() {
           @Override
@@ -159,12 +162,12 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
             ps.setInt(1, dicts.get(i).getTId());
             ps.setTimestamp(2, DictHistDAOdb.this.getTimestamp());
             // ps.setTimestamp(3, null);
-            Integer df_old = dfValues.get(dicts.get(i).getTId());
-            if (df_old == null) {
-              df_old = 0;
-            }
+            // Integer df_old = dfValues.get(dicts.get(i).getTId());
+            // if (df_old == null) {
+            // df_old = 0;
+            // }
             // add new values to old df values
-            ps.setInt(3, df_old + dicts.get(i).getTrace());
+            ps.setInt(3, dicts.get(i).getDf());
           }
 
           @Override
@@ -176,7 +179,7 @@ public class DictHistDAOdb implements CrudOperations<Term, Map<String, Integer>>
   }
 
   @Override
-  public boolean remove(final List<Term> dicts) {
+  public boolean remove(final List<Dictionable> dicts) {
     throw new UnsupportedOperationException("not implmented yet");
   }
 

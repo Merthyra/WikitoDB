@@ -1,13 +1,12 @@
 package at.ac.tuwien.docspars.io.daos.db.doc;
 
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
+public class Doc4DAOdb extends Doc1DAOdb {
 
-public class DocDAOdb4 extends DocDAOdb {
-
-  public DocDAOdb4(DataSource dataSource) {
-    super(dataSource);
+  public Doc4DAOdb(final JdbcTemplate template) {
+    super(template);
   }
 
   @Override

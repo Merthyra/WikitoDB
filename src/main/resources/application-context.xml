@@ -11,8 +11,8 @@
         http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd">
-      
-        
+
+
 	<bean id="docsPars" class="at.ac.tuwien.docspars.util.DocumentPars">
 		<constructor-arg name="environmentService" ref="environmentService" />
 		<constructor-arg name="fileProvider" ref="fileProvider" />
@@ -24,6 +24,9 @@
 		<constructor-arg name="persistanceFactory" ref="persistanceServiceFactory" />
 		<constructor-arg name="processPropertiesHandler" ref="processProperties" />
 		<constructor-arg name="metrics" ref="processMetrics" />
+		<constructor-arg name="batchService" ref="batchService" />
+		<constructor-arg name="entityFactory" ref="entityFactory" />
+		<constructor-arg name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 
 	<bean id="cliArgProcessor" class="at.ac.tuwien.docspars.util.CLIArgProcessor">
@@ -49,6 +52,98 @@
 		<constructor-arg name="onlyNew" value="${doc.onlyNew}" />
 	</bean>
 
+	<bean id="entityFactory"
+		class="at.ac.tuwien.docspars.entity.factories.impl.EntityFactory">
+		<constructor-arg name="docFactory">
+			<bean class="at.ac.tuwien.docspars.entity.factories.impl.DocumentFactory" />
+		</constructor-arg>
+		<constructor-arg name="docWithSingleTermInstanceFactory">
+			<bean
+				class="at.ac.tuwien.docspars.entity.factories.impl.DocumentWithSingleTermInstanceFactory" />
+		</constructor-arg>
+		<constructor-arg name="termFactory">
+			<bean class="at.ac.tuwien.docspars.entity.factories.impl.TermFactory" />
+		</constructor-arg>
+		<constructor-arg name="traceTermFactory">
+			<bean class="at.ac.tuwien.docspars.entity.factories.impl.TraceTermFactory" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="batchService" class="at.ac.tuwien.docspars.entity.impl.BatchService">
+		<constructor-arg name="updateBatch" ref="updateBatch" />
+		<constructor-arg name="newBatch" ref="newBatch" />
+	</bean>
+	
+	<bean id="dictionaryService" class="at.ac.tuwien.docspars.entity.factories.impl.DictionaryService"/>
+
+	<bean id="updateBatch" class="at.ac.tuwien.docspars.entity.impl.UpdateBatch" />
+
+	<bean id="newBatch" class="at.ac.tuwien.docspars.entity.impl.NewBatch" />
+
+	<bean id="dictDAOdb" class="at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+	
+	 <bean id="dictDAOdb3" class="at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb3">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+  </bean>
+	
+	<bean id="dictHistDAOdb" class="at.ac.tuwien.docspars.io.daos.db.dict.DictHistDAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="doc1DAOdb" class="at.ac.tuwien.docspars.io.daos.db.doc.Doc1DAOdb">
+		<constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="doc2DAOdb" class="at.ac.tuwien.docspars.io.daos.db.doc.Doc2DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="doc3DAOdb" class="at.ac.tuwien.docspars.io.daos.db.doc.Doc3DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="doc4DAOdb" class="at.ac.tuwien.docspars.io.daos.db.doc.Doc4DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="doc5DAOdb" class="at.ac.tuwien.docspars.io.daos.db.doc.Doc5DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="doc6DAOdb" class="at.ac.tuwien.docspars.io.daos.db.doc.Doc6DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="term1DAOdb" class="at.ac.tuwien.docspars.io.daos.db.term.Term1DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="term2DAOdb" class="at.ac.tuwien.docspars.io.daos.db.term.Term2DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="term3DAOdb" class="at.ac.tuwien.docspars.io.daos.db.term.Term3DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="term4DAOdb" class="at.ac.tuwien.docspars.io.daos.db.term.Term4DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="term5DAOdb" class="at.ac.tuwien.docspars.io.daos.db.term.Term5DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="term6DAOdb" class="at.ac.tuwien.docspars.io.daos.db.term.Term6DAOdb">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="versionDAOdb" class="at.ac.tuwien.docspars.io.daos.db.version.VersionDAO">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+	</bean>
+
 	<bean id="documentHandler" class="at.ac.tuwien.docspars.util.DocumentHandler">
 		<constructor-arg name="environmentService" ref="environmentService" />
 	</bean>
@@ -63,34 +158,52 @@
 		<constructor-arg name="v6Service" ref="dbPersistanceServiceV6" />
 	</bean>
 
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg index="0" ref="dataSource" />
+	</bean>
+
 	<bean id="dbPersistanceServiceV1"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV1">
-		<constructor-arg name="ds" ref="dataSource" />
+		<constructor-arg name="docDAO" ref="doc1DAOdb" />
+		<constructor-arg name="dictDAO" ref="dictDAOdb" />
+		<constructor-arg name="termDAO" ref="term1DAOdb" />
 	</bean>
 
 	<bean id="dbPersistanceServiceV2"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV2">
-		<constructor-arg name="ds" ref="dataSource" />
+		<constructor-arg name="docDAO" ref="doc2DAOdb" />
+		<constructor-arg name="dictDAO" ref="dictDAOdb" />
+		<constructor-arg name="termDAO" ref="term2DAOdb" />
 	</bean>
 
 	<bean id="dbPersistanceServiceV3"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV3">
-		<constructor-arg name="ds" ref="dataSource" />
+		<constructor-arg name="dictDAO" ref="dictDAOdb3" />
+		<constructor-arg name="docDAO" ref="doc3DAOdb" />
+		<constructor-arg name="dictHistDAO" ref="dictHistDAOdb" />
+		<constructor-arg name="termDAO" ref="term3DAOdb" />
 	</bean>
 
 	<bean id="dbPersistanceServiceV4"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV4">
-		<constructor-arg name="ds" ref="dataSource" />
+		<constructor-arg name="docDAO" ref="doc4DAOdb" />
+		<constructor-arg name="dictDAO" ref="dictDAOdb" />
+		<constructor-arg name="termDAO" ref="term4DAOdb" />
 	</bean>
 
 	<bean id="dbPersistanceServiceV5"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV5">
-		<constructor-arg name="ds" ref="dataSource" />
+		<constructor-arg name="docDAO" ref="doc5DAOdb" />
+		<constructor-arg name="dictDAO" ref="dictDAOdb" />
+		<constructor-arg name="termDAO" ref="term5DAOdb" />
 	</bean>
 
 	<bean id="dbPersistanceServiceV6"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV6">
-		<constructor-arg name="ds" ref="dataSource" />
+		<constructor-arg name="docDAO" ref="doc6DAOdb" />
+		<constructor-arg name="dictDAO" ref="dictDAOdb" />
+		<constructor-arg name="termDAO" ref="term6DAOdb" />
+		<constructor-arg name="versionDAO" ref="versionDAOdb" />
 	</bean>
 
 	<bean id="performanceMonitorAdvisor"
@@ -98,17 +211,20 @@
 		<property name="metrics" ref="processMetrics" />
 	</bean>
 
-	<bean id="processMetrics" class=" at.ac.tuwien.docspars.util.ProcessMetrics" />
+	<bean id="processMetrics" class="at.ac.tuwien.docspars.util.ProcessMetrics" />
+	
+<!-- 	<bean id="DocumentFrequencyService" class="at.ac.tuwien.docspars.util.DocumentFrequencyService"/> -->
 
 	<bean id="txManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<aop:config>
-	 <aop:pointcut id="springMonitoringPointcut" expression="@annotation(at.ac.tuwien.docspars.io.services.PerformanceMonitored)"/>
-	 <aop:advisor advice-ref="performanceMonitorAdvisor" pointcut-ref="springMonitoringPointcut" 
-      id="performanceLoggingInterceptorAdvisor"/>
+		<aop:pointcut id="springMonitoringPointcut"
+			expression="@annotation(at.ac.tuwien.docspars.io.services.PerformanceMonitored)" />
+		<aop:advisor advice-ref="performanceMonitorAdvisor"
+			pointcut-ref="springMonitoringPointcut" id="performanceLoggingInterceptorAdvisor" />
 	</aop:config>
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"

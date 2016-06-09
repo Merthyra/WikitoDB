@@ -22,14 +22,15 @@ public class PerformanceMonitorAdvisor implements MethodBeforeAdvice, AfterRetur
 
   @Override
   public void before(Method method, Object[] args, Object target) throws Throwable {
-    startTime = System.currentTimeMillis();
+    startTime = System.nanoTime();
   }
 
   @Override
   public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
-    Duration totalDuration = Duration.ofMillis(System.currentTimeMillis() - startTime);
+    Duration totalDuration = Duration.ofNanos(System.nanoTime() - startTime);
     metrics.addOperationTime(method, totalDuration);
-    logger.info("Executed {} on object {} in {} seconds!", method.getName(), target.getClass().getName(), totalDuration.getSeconds());
+    logger.info("Executed {} on object {} in {} milliseconds!", method.getName(), target.getClass().getName(),
+        totalDuration.getNano() / 1000000);
   }
 
 }

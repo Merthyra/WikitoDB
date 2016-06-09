@@ -8,14 +8,18 @@ public class Dict implements Dictionable {
 
   private final int tid;
   private final String term;
-  private int df = 0;
+  private DfValue df = null;
 
   public Dict(final int tid, final String term) {
-    if (tid <= 0 || term == null || term.length() <= 0 || term.length() > 100) {
-      throw new RuntimeException("Invalid initiation of Dictionary Element");
-    }
     this.tid = tid;
     this.term = term;
+    this.df = new DfValue();
+  }
+
+  public Dict(final int tid, final String term, final int did) {
+    this.tid = tid;
+    this.term = term;
+    this.df = did == 0 ? new DfValue() : new DfValue(did);
   }
 
   @Override
@@ -33,13 +37,14 @@ public class Dict implements Dictionable {
     return new EqualsBuilder().append(getTId(), rhs.getTId()).isEquals();
   }
 
-  /**
-   * Gets the df for Dict.
-   *
-   * @return df
-   */
+  @Override
   public int getDf() {
-    return this.df;
+    return df.getValue();
+  }
+
+  public Dict registerDocument(int did) {
+    df.registerDocument(did);
+    return this;
   }
 
   @Override
@@ -57,20 +62,9 @@ public class Dict implements Dictionable {
     return new HashCodeBuilder(9, 35).append(getTId()).hashCode();
   }
 
-  /**
-   * Sets the df to given df.
-   *
-   * @param df the df to set
-   */
-  public void setDf(final int df) {
-    this.df = df;
-  }
-
   @Override
   public String toString() {
-    return "Dict [tid=" + tid + ", term=" + term + ", df=" + df + "]";
+    return "Dict [tid=" + tid + ", term=" + term + ", df=" + df.getValue() + "]";
   }
-
-
 
 }

@@ -5,27 +5,21 @@ import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class Term2DAODdb extends AbstractTermDAOdb {
+public class Term2DAOdb extends AbstractTermDAOdb {
 
-  public Term2DAODdb(final JdbcTemplate template) {
+  public Term2DAOdb(final JdbcTemplate template) {
     super(template);
-  }
-
-  public Term2DAODdb(final DataSource ds) {
-    super(ds);
   }
 
   @Override
   public boolean add(final List<Term> terms) {
 
-    final int[] updateCounts = getJdbcTemplate().batchUpdate(
-        SQLStatements.getString("sql.terms2.insert"), new BatchPreparedStatementSetter() {
+    final int[] updateCounts =
+        getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.terms2.insert"), new BatchPreparedStatementSetter() {
           // sql.terms2.insert=INSERT INTO terms (tid, pageid, revid, tf) VALUES (?,?,?,?)
           @Override
           public void setValues(final PreparedStatement ps, final int i) throws SQLException {
@@ -40,7 +34,7 @@ public class Term2DAODdb extends AbstractTermDAOdb {
             return terms.size();
           }
         });
-    logger.debug("{} inserted {} terms to terms table",Term2DAODdb.class.getTypeName() ,updateCounts.length);
+    logger.debug("{} inserted {} terms to terms table", Term2DAOdb.class.getTypeName(), updateCounts.length);
     return updateCounts.length == terms.size();
   }
 
@@ -73,5 +67,6 @@ public class Term2DAODdb extends AbstractTermDAOdb {
     // TODO Auto-generated method stub
     return false;
   }
+
 
 }

@@ -48,8 +48,8 @@ public abstract class Batch implements Timestampable {
     return this.newVocab;
   }
 
-  public List<Term> getUniqueTermsForBatch() {
-    return this.batchTerms.stream().distinct().collect(Collectors.toList());
+  public List<Dictionable> getUniqueTermsForBatch() {
+    return this.batchTerms.stream().map(t -> t.getDict()).distinct().collect(Collectors.toList());
   }
 
   public abstract void persist(PersistanceService service);
@@ -66,7 +66,7 @@ public abstract class Batch implements Timestampable {
     this.newVocab.clear();
     this.batchTerms.clear();
     this.timestamp = null;
-    logger.info("batch reset");
+    logger.debug("batch reset");
   }
 
   public void setTimestamp(final Timestamp ts) {

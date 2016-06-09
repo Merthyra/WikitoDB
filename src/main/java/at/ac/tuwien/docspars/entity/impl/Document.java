@@ -46,7 +46,6 @@ public class Document implements Documentable, Timestampable, Revisionable {
     this.revision = rev;
     this.terms = terms;
     this.status = Status.OPENED;
-    this.status = Status.OPENED;
   }
 
   public void addAll(final Collection<Term> terms) {
@@ -74,7 +73,8 @@ public class Document implements Documentable, Timestampable, Revisionable {
       return false;
     }
     final Document rhs = (Document) obj;
-    return new EqualsBuilder().append(getDId(), rhs.getDId()).append(getName(), rhs.getName()).append(getLength(), rhs.getLength()).isEquals();
+    return new EqualsBuilder().append(getDId(), rhs.getDId()).append(getName(), rhs.getName()).append(getLength(), rhs.getLength())
+        .isEquals();
   }
 
   @Override
@@ -123,7 +123,8 @@ public class Document implements Documentable, Timestampable, Revisionable {
 
   @Override
   public String toString() {
-    return "Document [docId=" + docId + ", revision=" + revision + ", name=" + name + ", added=" + added + ", len=" + len + ", status=" + status + "]";
+    return "Document [docId=" + docId + ", revision=" + revision + ", name=" + name + ", added=" + added + ", len=" + len + ", status="
+        + status + "]";
   }
 
 }

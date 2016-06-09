@@ -20,9 +20,10 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
   public void process(final WikiPage page) {
     logger.trace("parsing page: {}", page.getTitle());
     // check if document fulfills basic criteria to be processed
-    if (this.docHandler.isDocumentProcessed(Integer.valueOf(page.getID())) || isFilteredOut(page)) {
+    int pageId = Integer.valueOf(page.getID());
+    if (!this.docHandler.isNextDocumentHandled(pageId) || isFilteredOut(page)) {
       this.docHandler.skipDocument();
-      logger.trace("document {}  with id: {} skipped because of process properties");
+      logger.trace("document {} with id: {} skipped because of process properties");
       return;
     }
     List<String> tokens = null;
@@ -36,7 +37,7 @@ public class WikiPageCallBackHandler implements PageCallbackHandler {
       logger.error("Error in tokenization of text stream {}", e1.getLocalizedMessage());
       return;
     }
-    this.docHandler.addDocument(Integer.parseInt(page.getID()), Integer.parseInt(page.getRevid()), wikiTitle, null, tokens);
+    this.docHandler.addDocument(pageId, Integer.parseInt(page.getRevid()), wikiTitle, null, tokens);
     logger.trace("document {} with Id {] successfully parsed and staged", page.getTitle(), page.getID());
   }
 

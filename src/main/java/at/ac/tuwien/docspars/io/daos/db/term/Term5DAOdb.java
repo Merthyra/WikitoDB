@@ -5,10 +5,9 @@ import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
-
-import javax.sql.DataSource;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,8 +22,8 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
 
   private Timestamp timestamp;
 
-  public Term5DAOdb(DataSource ds) {
-    super(ds);
+  public Term5DAOdb(final JdbcTemplate template) {
+    super(template);
   }
 
   @Override
@@ -56,12 +55,13 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
   }
 
   private void invalidatedOldTermEntries(Timestamp invalidatedAt, String listOfTidsForBatchUpdates) {
-    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms5.invalidateOldDf") + listOfTidsForBatchUpdates, new PreparedStatementSetter() {
-      @Override
-      public void setValues(PreparedStatement stmt) throws SQLException {
-        stmt.setTimestamp(1, invalidatedAt);
-      }
-    });
+    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms5.invalidateOldDf") + listOfTidsForBatchUpdates,
+        new PreparedStatementSetter() {
+          @Override
+          public void setValues(PreparedStatement stmt) throws SQLException {
+            stmt.setTimestamp(1, invalidatedAt);
+          }
+        });
   }
 
   private Map<Integer, Integer> readDfForTid(String listOfTerms) {

@@ -3,19 +3,23 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-
-import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
-public class Term6DAODb extends AbstractTermDAOdb {
+public class Term6DAOdb extends AbstractTermDAOdb {
 
-  private int lastVersionId = 0;
+  private Integer lastVersionId;
 
-  public Term6DAODb(DataSource ds) {
-    super(ds);
+  final String QUERY_LAST_VERSION_ID = "SELECT max(revid) FROM VERSIONS";
+
+
+  public Term6DAOdb(final JdbcTemplate template) {
+    super(template);
+    this.lastVersionId = getCurrentVersionId().orElse(0);
   }
 
   @Override
@@ -41,10 +45,6 @@ public class Term6DAODb extends AbstractTermDAOdb {
     return false;
   }
 
-  public void setLatestVersion(int latestVersion) {
-    this.lastVersionId = latestVersion;
-  }
-
   private BatchPreparedStatementSetter getBatchPreparedStatementSetterForList(List<Term> terms) {
     return new BatchPreparedStatementSetter() {
 
@@ -63,4 +63,17 @@ public class Term6DAODb extends AbstractTermDAOdb {
       }
     };
   }
+
+  void setLastVersionId(int versionId) {
+    this.lastVersionId = versionId;
+  }
+
+  void incrementVersionId() {
+    this.lastVersionId++;
+  }
+
+  public Optional<Integer> getCurrentVersionId() {
+    return Optional.ofNullable(this.getJdbcTemplate().queryForObject(QUERY_LAST_VERSION_ID, Integer.class));
+  }
+
 }

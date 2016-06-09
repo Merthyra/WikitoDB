@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ProcessMetrics {
 
@@ -104,32 +105,42 @@ public class ProcessMetrics {
     final long endTime = System.currentTimeMillis();
     final NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
     final DecimalFormat df = (DecimalFormat) nf;
-    final String sep = System.getProperty("line.separator");
+    final String newLine = System.getProperty("line.separator");
     df.applyPattern("###,###.###");
-    return sep + "Process Metrics for Previous Run:" + sep + sep + "Batch-Adds:                  \t" + df.format(this.addBatch) + sep
-        + "New Documents:	              \t" + df.format(this.numberOfNewDocuments) + sep + "New Dicts-Entries: 	        \t"
-        + df.format(this.numberOfNewDictEntries) + sep + "New Term-Entries:            \t" + df.format(this.numberOfNewTerms) + sep
-        + "New ALL Term-Entries: 	      \t"
-        + df.format(this.numberOfNewDocuments == 0 ? 0 : this.numberOfNewTerms / this.numberOfNewDocuments) + sep
-        + "avg-terms/batch:             \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewTerms / this.addBatch) + sep
-        + "avg-dicts/batch:             \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewDictEntries / this.addBatch) + sep
-        + "--------------------------------------------" + sep + "Batch-Updates:                \t" + df.format(this.updateBatch) + sep
-        + "Updated New Documents:        \t" + df.format(this.numberOfUpdateDocuments) + sep + "Updated New Dicts-Entries:    \t"
-        + df.format(this.numberOfUpdateDictEntries) + sep + "Updated New Term-Entries:     \t" + df.format(this.numberOfUpdateTerms) + sep
-        + "Updated ALL New Term-Entries: \t"
-        + df.format(this.numberOfUpdateDocuments == 0 ? 0 : this.numberOfUpdateTerms / this.numberOfUpdateDocuments) + sep
-        + "avg-terms/batch:              \t" + df.format(this.updateBatch == 0 ? 0 : this.numberOfUpdateTerms / this.updateBatch) + sep
-        + "avg-dicts/batch:              \t" + df.format(this.updateBatch == 0 ? 0 : this.numberOfUpdateDictEntries / this.updateBatch)
-        + sep + "--------------------------------------------" + sep + "skipped documents:            \t" + df.format(this.skippedElemets)
-        + sep + "total number of processed documents: " + df.format(this.processedElements) + sep + "total processed elements      \t" + sep
-        + sep + "total duration of intercepted operations [s]: " + "\n" + "++++++++++++++++++++++++++++++++++++++++++++" + "\n"
-        + getListOfInterceptedOperations() + "\t" + sep + "++++++++++++++++++++++++++++++++++++++++++++" + sep
-        + " -------------------- in ->   \t" + (((double) endTime - this.startTime) / 1000) + " seconds";
+    String horizontalLine = IntStream.rangeClosed(1, 50).mapToObj(i -> "-").collect(Collectors.joining("*")).toString();
+    String horizontalCrosses = IntStream.rangeClosed(1, 50).mapToObj(i -> "+").collect(Collectors.joining("*")).toString();
+    // @formatter:off
+    return newLine+newLine + "Process Metrics for Previous Run:" + newLine
+        + horizontalLine + newLine
+        + "Batch-Adds:                   \t" + df.format(this.addBatch) + newLine
+        + "New Documents:                \t" + df.format(this.numberOfNewDocuments) + newLine
+        + "New Dicts-Entries:            \t" + df.format(this.numberOfNewDictEntries) + newLine
+        + "New Term-Entries:             \t" + df.format(this.numberOfNewTerms) + newLine
+        + "New ALL Term-Entries: 	     \t" + df.format(this.numberOfNewDocuments == 0 ? 0 : this.numberOfNewTerms / this.numberOfNewDocuments) + newLine
+        + "avg-terms/batch:              \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewTerms / this.addBatch) + newLine
+        + "avg-dicts/batch:              \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewDictEntries / this.addBatch) + newLine
+        + horizontalLine + newLine
+        + "Batch-Updates:                \t" + df.format(this.updateBatch) + newLine
+        + "Updated New Documents:        \t" + df.format(this.numberOfUpdateDocuments) + newLine
+        + "Updated New Dicts-Entries:    \t" + df.format(this.numberOfUpdateDictEntries) + newLine + "Updated New Term-Entries:     \t" + df.format(this.numberOfUpdateTerms) + newLine
+        + "Updated ALL New Term-Entries: \t" + df.format(this.numberOfUpdateDocuments == 0 ? 0 : this.numberOfUpdateTerms / this.numberOfUpdateDocuments) + newLine
+        + "avg-terms/batch:              \t" + df.format(this.updateBatch == 0 ? 0 : this.numberOfUpdateTerms / this.updateBatch) + newLine
+        + "avg-dicts/batch:              \t" + df.format(this.updateBatch == 0 ? 0 : this.numberOfUpdateDictEntries / this.updateBatch) + newLine
+        + horizontalLine + newLine
+        + "skipped documents:            \t" + df.format(this.skippedElemets) + newLine
+        + "total number of processed documents: " + df.format(this.processedElements) + newLine
+        + "total processed elements      \t" + newLine + newLine
+        + "total duration of intercepted operations [s]: " + newLine
+        + horizontalCrosses + newLine
+        + getListOfInterceptedOperations() + "\t" + newLine
+        + horizontalCrosses + newLine
+        + " in ->   \t" + (((double) endTime - this.startTime) / 1000) + " seconds";
+    // @formatter:on
   }
 
   private String getListOfInterceptedOperations() {
     return operationTimes.entrySet().stream()
-        .map(es -> es.getKey().getClass().getName() + "::" + es.getKey().getName().toString() + " :: " + durationFormatHHMMSS(es.getValue()))
+        .map(es -> es.getKey().getDeclaringClass() + "::" + es.getKey().getName().toString() + " :: " + durationFormatHHMMSS(es.getValue()))
         .collect(Collectors.joining("\n"));
   }
 

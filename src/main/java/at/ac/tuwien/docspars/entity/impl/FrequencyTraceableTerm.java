@@ -7,17 +7,11 @@ import at.ac.tuwien.docspars.entity.Traceable;
 public class FrequencyTraceableTerm extends Term implements Traceable {
 
   // denotes the number term instances per document!
-  private int termFrequency;
+  private int termFrequency = 0;
 
   public FrequencyTraceableTerm(final Documentable doc, final Dictionable dict, final int pos) {
     super(doc, dict, pos);
     this.termFrequency = 1;
-  };
-
-  public FrequencyTraceableTerm(final Documentable doc, final Dictionable dict, final int pos,
-      final int freq) {
-    super(doc, dict, pos);
-    this.termFrequency = freq;
   };
 
   @Override
@@ -25,8 +19,10 @@ public class FrequencyTraceableTerm extends Term implements Traceable {
     return this.termFrequency;
   }
 
-  public void incrementTrace() {
+  @Override
+  public FrequencyTraceableTerm incrementedTrace() {
     this.termFrequency++;
+    return this;
   }
 
   @Override
@@ -36,8 +32,7 @@ public class FrequencyTraceableTerm extends Term implements Traceable {
 
   @Override
   public String toString() {
-    return "tid:" + getTId() + " term:" + getTerm() + " did:" + getTId() + " tf:"
-        + getTrace() + " number of occurrences " + getTrace();
+    return "tid:" + getTId() + " term:" + getTerm() + " did:" + getTId() + " tf:" + getTrace() + " number of occurrences " + getTrace();
   }
 
 }

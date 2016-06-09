@@ -93,8 +93,11 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
   @Override
   public void setTrace(final int trace) {
     this.trace = trace;
+  }
 
-
+  public Term incrementedTrace() {
+    this.trace++;
+    return this;
   }
 
   public int getDocLength() {
@@ -106,7 +109,20 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
   }
 
   @Override
+  public int getDf() {
+    return this.dict.getDf();
+  }
+
+  @Override
   public String toString() {
     return "tid:" + getTId() + " term:" + getTerm() + " did:" + getDId();
+  }
+
+  public Dictionable getDict() {
+    return dict;
+  }
+
+  public Documentable getDoc() {
+    return doc;
   }
 }

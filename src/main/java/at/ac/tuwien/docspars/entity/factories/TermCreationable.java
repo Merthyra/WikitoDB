@@ -8,4 +8,6 @@ public interface TermCreationable {
 
   public Term createTerm(Documentable doc, Dictionable dict, int pos);
 
+  public void clear();
+
 }

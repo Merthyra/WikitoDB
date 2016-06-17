@@ -8,29 +8,29 @@ import org.springframework.aop.MethodBeforeAdvice;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PerformanceMonitorAdvisor implements MethodBeforeAdvice, AfterReturningAdvice {
 
   private static final Logger logger = LogManager.getLogger(PerformanceMonitorAdvisor.class);
   private ProcessMetrics metrics;
+  private static final Map<Class<?>, Long> startTimes = new HashMap<>();
 
   public void setMetrics(ProcessMetrics metrics) {
     this.metrics = metrics;
   }
 
-  private long startTime = 0;
-
   @Override
   public void before(Method method, Object[] args, Object target) throws Throwable {
-    startTime = System.nanoTime();
+    startTimes.put(target.getClass(), System.currentTimeMillis());
   }
 
   @Override
   public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
-    Duration totalDuration = Duration.ofNanos(System.nanoTime() - startTime);
-    metrics.addOperationTime(method, totalDuration);
-    logger.info("Executed {} on object {} in {} milliseconds!", method.getName(), target.getClass().getName(),
-        totalDuration.getNano() / 1000000);
+    Duration totalDuration = Duration.ofMillis(System.currentTimeMillis() - startTimes.get(target.getClass()));
+    String executedMethodId = target.getClass().getSimpleName() + "::" + method.getName();
+    metrics.addOperationTime(executedMethodId, totalDuration);
+    logger.info("Executed {} in {} !", executedMethodId, ProcessMetrics.formatDurationHHMMSSsss(totalDuration));
   }
-
 }

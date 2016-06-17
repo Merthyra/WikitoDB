@@ -200,8 +200,8 @@ public class ProcessPropertiesHandler {
     this.updates = updates;
   }
 
-  public boolean isReportLimitReached(final int processedItemCount) {
-    return this.reportLimit <= processedItemCount;
+  public boolean isReportConfirmed(final int processedItemCount) {
+    return processedItemCount % this.reportLimit == 0;
   }
 
   public boolean isOnlyNewDocumentProcessed() {

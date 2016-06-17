@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
@@ -30,32 +31,34 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
   public boolean add(List<Term> listOfTerms) {
     String listOfTidsForBatchUpdates = buildConcatedTidStringFromTermList(listOfTerms);
     Map<Integer, Integer> oldDfValues = readDfForTid(listOfTidsForBatchUpdates);
-    invalidatedOldTermEntries(listOfTerms.get(0).getTimestamp(), listOfTidsForBatchUpdates);
+    invalidatedOldTermEntries(getTimestamp(), listOfTidsForBatchUpdates);
     insertNewTerms(listOfTerms, oldDfValues);
     return true;
   }
 
-  private void insertNewTerms(List<Term> listOfTerms, Map<Integer, Integer> oldDfValues) {
+  private void insertNewTerms(List<Term> terms, Map<Integer, Integer> oldDfValues) {
     this.getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.terms5.insert"), new BatchPreparedStatementSetter() {
       @Override
       public void setValues(PreparedStatement stmt, int i) throws SQLException {
-        stmt.setInt(1, listOfTerms.get(i).getTId());
-        stmt.setInt(2, listOfTerms.get(i).getDId());
-        stmt.setInt(3, listOfTerms.get(i).getRevId());
-        stmt.setTimestamp(4, listOfTerms.get(i).getTimestamp());
-        stmt.setInt(5, listOfTerms.get(i).getTrace() + oldDfValues.get(listOfTerms.get(i)));
-        stmt.setInt(6, listOfTerms.get(i).getLength());
+        stmt.setInt(1, terms.get(i).getTId());
+        stmt.setInt(2, terms.get(i).getDId());
+        stmt.setInt(3, terms.get(i).getRevId());
+        stmt.setTimestamp(4, getTimestamp());
+        Optional<Integer> oldDf = Optional.ofNullable(oldDfValues.get(terms.get(i).getTId()));
+        stmt.setInt(5, terms.get(i).getTrace());
+        stmt.setInt(6, terms.get(i).getDict().getDf() + oldDf.orElse(0));
+        stmt.setInt(7, terms.get(i).getLength());
       }
 
       @Override
       public int getBatchSize() {
-        return listOfTerms.size();
+        return terms.size();
       }
     });
   }
 
   private void invalidatedOldTermEntries(Timestamp invalidatedAt, String listOfTidsForBatchUpdates) {
-    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms5.invalidateOldDf") + listOfTidsForBatchUpdates,
+    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms5.update") + listOfTidsForBatchUpdates,
         new PreparedStatementSetter() {
           @Override
           public void setValues(PreparedStatement stmt) throws SQLException {
@@ -65,7 +68,7 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
   }
 
   private Map<Integer, Integer> readDfForTid(String listOfTerms) {
-    return getJdbcTemplate().query(SQLStatements.getString("sql.terms4.read") + listOfTerms, createResultSetExtractor());
+    return getJdbcTemplate().query(SQLStatements.getString("sql.terms4.read") + listOfTerms, resultsetExtractorMapForDfAndTermId());
   }
 
   // returns concatenated tid list
@@ -73,7 +76,7 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
     return "(" + listOfTerms.stream().map(t -> String.valueOf(t.getTId())).collect(Collectors.joining(",")) + ")";
   }
 
-  private ResultSetExtractor<Map<Integer, Integer>> createResultSetExtractor() {
+  private ResultSetExtractor<Map<Integer, Integer>> resultsetExtractorMapForDfAndTermId() {
     // retrieve current df values for all dict terms
     return new ResultSetExtractor<Map<Integer, Integer>>() {
       @Override
@@ -97,6 +100,7 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
     throw new UnsupportedOperationException("Updates are not supported for PersistanceMode 5");
   }
 
+  @Override
   public void setTimestamp(Timestamp stamp) {
     this.timestamp = stamp;
   }

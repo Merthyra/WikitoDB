@@ -1,16 +1,14 @@
 package at.ac.tuwien.docspars.util;
 
 import at.ac.tuwien.docspars.entity.impl.Batch;
-import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,7 +26,7 @@ public class ProcessMetrics {
   private int processedElements;
 
   private final long startTime;
-  private Map<Method, Duration> operationTimes = new HashMap<>();
+  private Map<String, Duration> operationTimes = new HashMap<>();
 
   private int addBatch;
   private int updateBatch;
@@ -91,13 +89,8 @@ public class ProcessMetrics {
     this.skippedElemets++;
   }
 
-  public void addOperationTime(Method target, Duration duration) {
+  public void addOperationTime(String target, Duration duration) {
     this.operationTimes.merge(target, duration, Duration::plus);
-  }
-
-  public Duration getOperationTime(Method target) {
-    Optional<Duration> durationOfTarget = Optional.ofNullable(operationTimes.get(target));
-    return durationOfTarget.orElse(Duration.ZERO);
   }
 
   @Override
@@ -134,13 +127,17 @@ public class ProcessMetrics {
         + horizontalCrosses + newLine
         + getListOfInterceptedOperations() + "\t" + newLine
         + horizontalCrosses + newLine
-        + " in ->   \t" + (((double) endTime - this.startTime) / 1000) + " seconds";
-    // @formatter:on
+        + " in ->   \t" + DurationFormatUtils.formatDuration((endTime-startTime) , "HH:mm:ss.SSS");
+        // @formatter:on
+  }
+
+  private Duration elapsedTime() {
+    return Duration.ofNanos(System.nanoTime() - startTime);
   }
 
   private String getListOfInterceptedOperations() {
     return operationTimes.entrySet().stream()
-        .map(es -> es.getKey().getDeclaringClass() + "::" + es.getKey().getName().toString() + " :: " + durationFormatHHMMSS(es.getValue()))
+        .map(es -> es.getKey() + "::" + formatDurationHHMMSSsss(es.getValue())).sorted()
         .collect(Collectors.joining("\n"));
   }
 
@@ -148,16 +145,19 @@ public class ProcessMetrics {
    * @return a intermediate short String representation of the current process metrics
    */
   public String getIntermediateReport() {
+    final Duration elapsed = elapsedTime();
     return String.format("Total docs: %s, skipped: %s, batches: %s, time elapsed: %s, avg(item-persist-ratio)[items/min]: %s",
         this.processedElements, this.skippedElemets, (this.addBatch + this.updateBatch),
-        DateFormatUtils.format((System.currentTimeMillis() - this.startTime), "HHMMSS:sss"),
-        getSumOfAllPersistedItems() / 60000 / (System.currentTimeMillis() - this.startTime));
+        formatDurationHHMMSSsss(elapsed),
+        (getSumOfAllPersistedItems() / (elapsed.getSeconds() / 60)));
   }
 
-  private String durationFormatHHMMSS(Duration duration) {
-    long hours = duration.toHours();
-    long minutes = duration.minusHours(hours).toMinutes();
-    long seconds = duration.minusHours(hours).minusMinutes(minutes).getSeconds();
-    return String.format("%d:%02d:%02d hh:mm:SS", hours, minutes, seconds);
+  public static String formatDurationHHMMSSsss(Duration duration) {
+    // final long hours = duration.toHours();
+    // final long minutes = duration.minusHours(hours).toMinutes();
+    // final long seconds = duration.minusHours(hours).minusMinutes(minutes).getSeconds();
+    // final long millis = duration.minusHours(hours).minusMinutes(minutes).minusSeconds(seconds).toMillis();
+    // return String.format("%02d:%02d:%02d.%03d hh:mm:SS.sss", hours, minutes, seconds, millis);
+    return DurationFormatUtils.formatDuration(duration.toMillis(), "HH:mm:ss.SSS");
   }
 }

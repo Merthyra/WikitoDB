@@ -29,22 +29,27 @@ public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dict>>
     this.jdbcTemplate = template;
   }
 
-
   @Override
+  @PerformanceMonitored
   public Map<String, Dict> read() {
+    final Map<String, Dict> dicts = this.jdbcTemplate.query(getLookupString(), getResultSetExtractor());
+    logger.debug("{} read {} dict entries from dict table", DictDAOdb.class.getTypeName(), dicts.size());
+    return dicts;
+  }
+
+  ResultSetExtractor<Map<String, Dict>> getResultSetExtractor() {
     final ResultSetExtractor<Map<String, Dict>> resEx = new ResultSetExtractor<Map<String, Dict>>() {
       @Override
       public Map<String, Dict> extractData(final ResultSet res) throws SQLException, DataAccessException {
         final Map<String, Dict> dict = new HashMap<String, Dict>();
         while (res.next()) {
-          dict.put(res.getString("term"), new Dict(res.getInt("tid"), res.getString("term")));
+          final String term = res.getString("term");
+          dict.put(term, new Dict(res.getInt("tid"), term));
         }
         return dict;
       }
     };
-    final Map<String, Dict> dicts = this.jdbcTemplate.query(SQLStatements.getString("sql.dict.read"), resEx);
-    logger.debug("{} read {} dict entries from dict table", DictDAOdb.class.getTypeName(), dicts.size());
-    return dicts;
+    return resEx;
   }
 
   @Override
@@ -67,9 +72,19 @@ public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dict>>
         return dicts.size();
       }
     });
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     logger.debug("{} wrote {} dict entries to dict table", DictDAOdb.class.getTypeName(), updateCounts.length);
     return updateCounts.length == dicts.size();
 
+  }
+
+  String getLookupString() {
+    return SQLStatements.getString("sql.dict.read");
   }
 
   @Override

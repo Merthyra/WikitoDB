@@ -84,7 +84,15 @@
     <constructor-arg name="template" ref="jdbcTemplate" />
 	</bean>
 	
-	 <bean id="dictDAOdb3" class="at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb3">
+	<bean id="dictDAOdb3" class="at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb3">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+  </bean>
+  
+  <bean id="dictDAOdb4" class="at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb4">
+    <constructor-arg name="template" ref="jdbcTemplate" />
+  </bean>
+  
+   <bean id="dictDAOdb5" class="at.ac.tuwien.docspars.io.daos.db.dict.DictDAOdb5">
     <constructor-arg name="template" ref="jdbcTemplate" />
   </bean>
 	
@@ -186,15 +194,15 @@
 
 	<bean id="dbPersistanceServiceV4"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV4">
+		<constructor-arg name="dictDAO" ref="dictDAOdb4" />
 		<constructor-arg name="docDAO" ref="doc4DAOdb" />
-		<constructor-arg name="dictDAO" ref="dictDAOdb" />
 		<constructor-arg name="termDAO" ref="term4DAOdb" />
 	</bean>
 
 	<bean id="dbPersistanceServiceV5"
 		class="at.ac.tuwien.docspars.io.services.impl.DBPersistanceServiceV5">
 		<constructor-arg name="docDAO" ref="doc5DAOdb" />
-		<constructor-arg name="dictDAO" ref="dictDAOdb" />
+		<constructor-arg name="dictDAO" ref="dictDAOdb5" />
 		<constructor-arg name="termDAO" ref="term5DAOdb" />
 	</bean>
 
@@ -206,8 +214,7 @@
 		<constructor-arg name="versionDAO" ref="versionDAOdb" />
 	</bean>
 
-	<bean id="performanceMonitorAdvisor"
-		class="at.ac.tuwien.docspars.io.services.PerformanceMonitorAdvisor">
+	<bean id="performanceMonitorAdvisor" class="at.ac.tuwien.docspars.io.services.PerformanceMonitorAdvisor" scope="singleton">
 		<property name="metrics" ref="processMetrics" />
 	</bean>
 

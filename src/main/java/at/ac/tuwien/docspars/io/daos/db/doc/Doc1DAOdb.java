@@ -33,6 +33,7 @@ public class Doc1DAOdb implements CrudOperations<Document, TIntSet>, Timestampab
   }
 
   @Override
+  @PerformanceMonitored
   public TIntSet read() {
     final ResultSetExtractor<TIntSet> resEx = getResultsetExtractor();
     final TIntSet retrievedDocs = this.jdbcTemplate.query(getReadStmnt(), resEx);
@@ -106,6 +107,7 @@ public class Doc1DAOdb implements CrudOperations<Document, TIntSet>, Timestampab
     return this.timestamp;
   }
 
+  @Override
   public void setTimestamp(final Timestamp time) {
     this.timestamp = time;
   }

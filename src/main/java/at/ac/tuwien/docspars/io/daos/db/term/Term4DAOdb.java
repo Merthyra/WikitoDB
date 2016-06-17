@@ -2,10 +2,10 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.PreparedStatement;
@@ -20,51 +20,70 @@ import java.util.stream.Collectors;
 public class Term4DAOdb extends AbstractTermDAOdb {
 
   private Timestamp timestamp;
+  private final String SET_DF_TIMESTAMP_WHERE_NULL = "update terms4 set rem_df = ? where rem_df is null and tid = ?";
 
   public Term4DAOdb(final JdbcTemplate template) {
     super(template);
   }
 
   @Override
+  @PerformanceMonitored
   public boolean add(List<Term> listOfTerms) {
-
-    String listOfTidsForBatchUpdates = buildConcatedTidStringFromTermList(listOfTerms);
-    Map<Integer, Integer> oldDfValues = readDfForTid(listOfTidsForBatchUpdates);
-    invalidateOldTermEntries(listOfTerms.get(0).getTimestamp(), listOfTidsForBatchUpdates);
-    insertNewTermEntriesWithUpdatedDfValues(listOfTerms, oldDfValues);
+    // String listOfTidsForBatchUpdates = buildConcatedTidStringFromTermList(listOfTerms);
+    // Map<Integer, Integer> oldDfValues = readDfForTid(listOfTidsForBatchUpdates);
+    invalidateOldTermEntries(listOfTerms);
+    insertNewTermEntriesWithUpdatedDfValues(listOfTerms);
+    logger.debug("inserted {} terms into {} table", listOfTerms.size(), this.getClass().getSimpleName());;
     return true;
   }
 
-  private void insertNewTermEntriesWithUpdatedDfValues(List<Term> timestamp, Map<Integer, Integer> oldDfValues) {
+  private void insertNewTermEntriesWithUpdatedDfValues(List<Term> terms) {
     this.getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.terms4.insert"), new BatchPreparedStatementSetter() {
       @Override
       public void setValues(PreparedStatement stmt, int i) throws SQLException {
-        stmt.setInt(1, timestamp.get(i).getTId());
-        stmt.setInt(2, timestamp.get(i).getDId());
-        stmt.setInt(3, timestamp.get(i).getRevId());
-        stmt.setTimestamp(4, timestamp.get(i).getTimestamp());
-        stmt.setInt(5, timestamp.get(i).getTrace() + oldDfValues.get(timestamp.get(i)));
+        stmt.setInt(1, terms.get(i).getTId());
+        stmt.setInt(2, terms.get(i).getDId());
+        stmt.setInt(3, terms.get(i).getRevId());
+        stmt.setInt(4, terms.get(i).getTrace());
+        stmt.setInt(5, terms.get(i).getDict().getDf());
       }
 
       @Override
       public int getBatchSize() {
-        return timestamp.size();
+        return terms.size();
       }
     });
   }
 
-  private void invalidateOldTermEntries(Timestamp timeStamp, String listOfTidsForBatchUpdates) {
-    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms4.update") + "(" + listOfTidsForBatchUpdates + ")",
-        new PreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement stmt) throws SQLException {
-            stmt.setTimestamp(1, timeStamp);
-          }
-        });
+  // private void invalidateOldTermEntries(Timestamp timeStamp, String listOfTidsForBatchUpdates) {
+  // this.getJdbcTemplate().update(SQLStatements.getString("sql.terms4.update") + " " + listOfTidsForBatchUpdates,
+  // new PreparedStatementSetter() {
+  // @Override
+  // public void setValues(PreparedStatement stmt) throws SQLException {
+  // stmt.setTimestamp(1, timeStamp);
+  // }
+  // });
+  // }
+
+  private void invalidateOldTermEntries(List<Term> termsToInvalidateDf) {
+
+    getJdbcTemplate().batchUpdate(SET_DF_TIMESTAMP_WHERE_NULL, new BatchPreparedStatementSetter() {
+      @Override
+      public void setValues(PreparedStatement ps, int i) throws SQLException {
+        ps.setInt(2, termsToInvalidateDf.get(i).getTId());
+        ps.setTimestamp(1, getTimetstamp());
+
+      }
+
+      @Override
+      public int getBatchSize() {
+        return termsToInvalidateDf.size();
+      }
+    });
   }
 
   private Map<Integer, Integer> readDfForTid(String listOfTerms) {
-    return getJdbcTemplate().query(SQLStatements.getString("sql.terms4.read") + listOfTerms, createResultSetExtractor());
+    return getJdbcTemplate().query(SQLStatements.getString("sql.terms4.read") + listOfTerms, dfResultMapExtractorForTermId());
   }
 
   // return concatenated tid list
@@ -72,7 +91,7 @@ public class Term4DAOdb extends AbstractTermDAOdb {
     return "(" + listOfTerms.stream().map(t -> String.valueOf(t.getTId())).collect(Collectors.joining(",")) + ")";
   }
 
-  private ResultSetExtractor<Map<Integer, Integer>> createResultSetExtractor() {
+  private ResultSetExtractor<Map<Integer, Integer>> dfResultMapExtractorForTermId() {
     // retrieve current df values for all dict terms
     return new ResultSetExtractor<Map<Integer, Integer>>() {
       @Override
@@ -100,6 +119,7 @@ public class Term4DAOdb extends AbstractTermDAOdb {
     return this.timestamp;
   }
 
+  @Override
   public void setTimestamp(Timestamp stamp) {
     this.timestamp = stamp;
   }

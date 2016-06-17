@@ -1,7 +1,6 @@
 package at.ac.tuwien.docspars.io.daos.db.dict;
 
 import at.ac.tuwien.docspars.entity.impl.Dict;
-import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -13,7 +12,7 @@ import java.util.Map;
 
 public class DictDAOdb3 extends DictDAOdb {
 
-  protected final String READ_CURRENT_DF_VALUES_FROM_DICT_HIST =
+  private final String READ_CURRENT_DF_VALUES_FROM_DICT_HIST =
       "select dict.tid, dict.term, terms3.did from dict join terms3 on terms3.tid = dict.tid";
 
   public DictDAOdb3(JdbcTemplate template) {
@@ -21,8 +20,7 @@ public class DictDAOdb3 extends DictDAOdb {
   }
 
   @Override
-  @PerformanceMonitored
-  public Map<String, Dict> read() {
+  protected ResultSetExtractor<Map<String, Dict>> getResultSetExtractor() {
     ResultSetExtractor<Map<String, Dict>> dfValueExtractor = new ResultSetExtractor<Map<String, Dict>>() {
       @Override
       public Map<String, Dict> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -34,9 +32,12 @@ public class DictDAOdb3 extends DictDAOdb {
         return dictVal;
       }
     };
-    Map<String, Dict> dictionaryWithDf = super.jdbcTemplate.query(READ_CURRENT_DF_VALUES_FROM_DICT_HIST, dfValueExtractor);
-    logger.info("read {} and returned {} values ", this.getClass(), dictionaryWithDf.size());
-    return dictionaryWithDf;
+    return dfValueExtractor;
+  }
+
+  @Override
+  String getLookupString() {
+    return READ_CURRENT_DF_VALUES_FROM_DICT_HIST;
   }
 
 }

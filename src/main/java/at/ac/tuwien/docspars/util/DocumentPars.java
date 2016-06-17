@@ -66,8 +66,9 @@ public class DocumentPars {
       logger.fatal("Unspecified Exception/Error StackTrace: \n" + e);
       e.printStackTrace();
     } finally {
-      logger.info("End of Processing:\n Wrote:\n " + documentParser.documentHandler != null
-          ? documentParser.environmentService.getProcessMetrics() : "no process metrics available");
+      logger.info("End of Processing:\n Wrote:\n "
+          + documentParser.documentHandler != null ? documentParser.environmentService.getProcessMetrics()
+              : "no process metrics available");
       logger.info("processed files: " + System.getProperty("line.separator") + documentParser.fileProvider.getProcessed());
       ((ConfigurableApplicationContext) context).close();
     }
@@ -88,7 +89,6 @@ public class DocumentPars {
       }
     });
   }
-
 
   void logSetupMsg() {
     logger.info("Process successfully initialized:\nProcess Properties: offset: {} maxPages: {} batch-size: {}  db-mode: {}",

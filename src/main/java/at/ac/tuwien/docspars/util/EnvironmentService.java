@@ -69,7 +69,6 @@ public class EnvironmentService {
     triggerIntermediateReport();
   }
 
-
   private void updateProcessVariables(final int did, final Document newlyCreatedDoc) {
     this.batchService.addDocument(newlyCreatedDoc);
     this.persistedDocs.add(did);
@@ -77,7 +76,7 @@ public class EnvironmentService {
   }
 
   private void triggerIntermediateReport() {
-    if (this.processPropertiesHandler.isReportLimitReached(++this.docCounter)) {
+    if (this.processPropertiesHandler.isReportConfirmed(++this.docCounter)) {
       logger.info(this.processMetrics.getIntermediateReport());
     }
   }

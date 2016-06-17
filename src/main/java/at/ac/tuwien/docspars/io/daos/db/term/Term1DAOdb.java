@@ -2,6 +2,7 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -17,6 +18,7 @@ public class Term1DAOdb extends AbstractTermDAOdb {
   }
 
   @Override
+  @PerformanceMonitored
   public boolean add(final List<Term> terms) {
 
     final int[] updateCounts =

@@ -6,15 +6,16 @@
 	<Appenders>
 		<Console name="console-log" target="SYSTEM_OUT">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1.} - %msg%n</pattern>
+				<pattern>%level{WARN=W, DEBUG=D, ERROR=E, TRACE=T, INFO=I} %d{HH:mm:ss.SSS} %c{1.} - %msg%n</pattern>
 			</PatternLayout>
 		</Console>
 		<RollingFile name="trace-log" fileName="${log-path}/trace.log" filePattern="${log-path}/trace-log-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
-				<pattern>[%-5level]{WARN=W, DEBUG=D, ERROR=E, TRACE=T, INFO=I} %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1.} - %msg%n</pattern>
+				<pattern>%level{WARN=W, DEBUG=D, ERROR=E, TRACE=T, INFO=I} %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1.} - %msg%n</pattern>
 			</PatternLayout>
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<OnStartupTriggeringPolicy />
 			</Policies>
 		</RollingFile>
 		<RollingFile name="error-log" fileName="${log-path}/error.log" filePattern="${log-path}/error-log-%d{yyyy-MM-dd}.log">

@@ -13,14 +13,14 @@ public class DictionaryService {
   private Map<String, Dictionable> persistedDict = new HashMap<>();
   private int indexNr = 0;
 
-  public Dict locateOrCreateDictionaryEntry(final String term) {
-    Optional<Dictionable> dictElem = Optional.ofNullable(this.persistedDict.get(term));
-    if (dictElem.isPresent()) {
-      return (Dict) dictElem.get();
-    }
+  public Dict createNewDictionaryEntry(final String term) {
     Dict newDict = new Dict(++indexNr, term);
     persistedDict.put(term, newDict);
     return newDict;
+  }
+
+  public Optional<Dictionable> getDictFromMemory(final String term) {
+    return Optional.ofNullable(this.persistedDict.get(term));
   }
 
   public void setup(PersistanceService service) {

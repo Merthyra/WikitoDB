@@ -63,7 +63,7 @@ public class CLIArgProcessor {
     OptionBuilder.withArgName("pageoffset");
     OptionBuilder.hasArg();
     OptionBuilder.withDescription(
-        "number of Documents to be scipped before starting, may be useful to continue parsing of partly processed files");
+        "number of Documents to be skipped before starting, may be useful to continue parsing of partly processed files");
     final Option offset = OptionBuilder.create("o");
     OptionBuilder.withArgName("inputsourcefolder");
     OptionBuilder.hasArg();

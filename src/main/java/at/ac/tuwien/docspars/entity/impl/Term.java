@@ -125,4 +125,9 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
   public Documentable getDoc() {
     return doc;
   }
+
+  @Override
+  public Dictionable registerDocument(int documentId) {
+    return this.dict.registerDocument(documentId);
+  }
 }

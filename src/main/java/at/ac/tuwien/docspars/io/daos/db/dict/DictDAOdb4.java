@@ -1,5 +1,6 @@
 package at.ac.tuwien.docspars.io.daos.db.dict;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Dict;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -17,9 +18,9 @@ public class DictDAOdb4 extends DictDAOdb {
   }
 
   @Override
-  ResultSetExtractor<Map<String, Dict>> getResultSetExtractor() {
+  ResultSetExtractor<Map<String, Dictionable>> getResultSetExtractor() {
     return rs -> {
-      final Map<String, Dict> dictionary = new HashMap<>();
+      final Map<String, Dictionable> dictionary = new HashMap<>();
       while (rs.next()) {
         final String term = rs.getString("term");
         final int tid = rs.getInt("tid");

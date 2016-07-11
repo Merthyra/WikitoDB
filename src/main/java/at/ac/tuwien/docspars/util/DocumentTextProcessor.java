@@ -98,8 +98,9 @@ public class DocumentTextProcessor {
    * @return trimed string with length min(MAX_TITLE_LENGTH, length(str))
    */
   public static String trimTextTitle(String title) {
-    if (title.length() >= MAX_TITLE_LENGTH) {
-      title = title.substring(0, MAX_TITLE_LENGTH - 2);
+    String tailoredTitle = deAccent(title);
+    if (tailoredTitle.length() >= MAX_TITLE_LENGTH) {
+      title = tailoredTitle.substring(0, MAX_TITLE_LENGTH - 3);
     }
     return title;
   }

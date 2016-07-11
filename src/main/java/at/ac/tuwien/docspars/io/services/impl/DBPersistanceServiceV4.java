@@ -15,8 +15,8 @@ public class DBPersistanceServiceV4 extends DBPersistanceService {
 
   private final CrudOperations<Term, Map<String, Integer>> termDAO;
 
-  public DBPersistanceServiceV4(final CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
-      final CrudOperations<Document, TIntSet> docDAO, final CrudOperations<Term, Map<String, Integer>> termDAO) {
+  public DBPersistanceServiceV4(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO, CrudOperations<Document, TIntSet> docDAO,
+      final CrudOperations<Term, Map<String, Integer>> termDAO) {
     setDictDAO(dictDAO);
     setDocDAO(docDAO);
     this.termDAO = termDAO;

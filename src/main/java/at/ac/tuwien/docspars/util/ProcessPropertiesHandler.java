@@ -136,6 +136,10 @@ public class ProcessPropertiesHandler {
     return this.maxTermLength;
   }
 
+  boolean isDocumentFrequencyStored() {
+    return (this.variant == Mode.V3 || this.variant == Mode.V4 || this.variant == Mode.V5);
+  }
+
   /**
    * @return the max_pages
    */

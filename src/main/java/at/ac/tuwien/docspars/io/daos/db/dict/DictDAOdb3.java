@@ -1,5 +1,6 @@
 package at.ac.tuwien.docspars.io.daos.db.dict;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Dict;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,11 +21,11 @@ public class DictDAOdb3 extends DictDAOdb {
   }
 
   @Override
-  protected ResultSetExtractor<Map<String, Dict>> getResultSetExtractor() {
-    ResultSetExtractor<Map<String, Dict>> dfValueExtractor = new ResultSetExtractor<Map<String, Dict>>() {
+  protected ResultSetExtractor<Map<String, Dictionable>> getResultSetExtractor() {
+    ResultSetExtractor<Map<String, Dictionable>> dfValueExtractor = new ResultSetExtractor<Map<String, Dictionable>>() {
       @Override
-      public Map<String, Dict> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        final Map<String, Dict> dictVal = new HashMap<>();
+      public Map<String, Dictionable> extractData(ResultSet rs) throws SQLException, DataAccessException {
+        final Map<String, Dictionable> dictVal = new HashMap<>();
         while (rs.next()) {
           Integer did = rs.getInt(3);
           dictVal.merge(rs.getString(2), new Dict(rs.getInt(1), rs.getString(2), rs.getInt(3)), (v1, v2) -> v1.registerDocument(did));

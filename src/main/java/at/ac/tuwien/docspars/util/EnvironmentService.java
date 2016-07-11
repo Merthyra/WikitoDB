@@ -1,5 +1,6 @@
 package at.ac.tuwien.docspars.util;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Mode;
 import at.ac.tuwien.docspars.entity.factories.DocumentCreationable;
 import at.ac.tuwien.docspars.entity.factories.TermCreationable;
@@ -7,7 +8,6 @@ import at.ac.tuwien.docspars.entity.factories.impl.DictionaryService;
 import at.ac.tuwien.docspars.entity.factories.impl.EntityFactory;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.BatchService;
-import at.ac.tuwien.docspars.entity.impl.Dict;
 import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.io.services.PersistanceServiceFactory;
@@ -96,9 +96,20 @@ public class EnvironmentService {
   }
 
   private void addTerm(final Document doc, final String term, final int pos) {
-    final Dict dict = dictService.locateOrCreateDictionaryEntry(term);
-    dict.registerDocument(doc.getDId());
+    final Dictionable dict = dictService.getDictFromMemory(term).orElseGet(
+        () -> {
+          final Dictionable newDictEntry = dictService.createNewDictionaryEntry(term);
+          this.batchService.getActiveBatch().addNewVocab(newDictEntry);
+          return newDictEntry;
+        });
+    makeDictionaryAwareOfDocument(dict, doc.getDId());
     doc.addTerm(termFactory.createTerm(doc, dict, pos));
+  }
+
+  private void makeDictionaryAwareOfDocument(Dictionable dict, int documentId) {
+    if (processPropertiesHandler.isDocumentFrequencyStored()) {
+      dict.registerDocument(documentId);
+    }
   }
 
   private void persistChangesWhenBatchSizeExceeds() {

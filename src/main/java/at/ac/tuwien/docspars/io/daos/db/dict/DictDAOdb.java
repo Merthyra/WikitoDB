@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dict>> {
+public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dictionable>> {
 
   protected JdbcTemplate jdbcTemplate;
 
@@ -31,17 +31,17 @@ public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dict>>
 
   @Override
   @PerformanceMonitored
-  public Map<String, Dict> read() {
-    final Map<String, Dict> dicts = this.jdbcTemplate.query(getLookupString(), getResultSetExtractor());
+  public Map<String, Dictionable> read() {
+    final Map<String, Dictionable> dicts = this.jdbcTemplate.query(getLookupString(), getResultSetExtractor());
     logger.debug("{} read {} dict entries from dict table", DictDAOdb.class.getTypeName(), dicts.size());
     return dicts;
   }
 
-  ResultSetExtractor<Map<String, Dict>> getResultSetExtractor() {
-    final ResultSetExtractor<Map<String, Dict>> resEx = new ResultSetExtractor<Map<String, Dict>>() {
+  ResultSetExtractor<Map<String, Dictionable>> getResultSetExtractor() {
+    final ResultSetExtractor<Map<String, Dictionable>> resEx = new ResultSetExtractor<Map<String, Dictionable>>() {
       @Override
-      public Map<String, Dict> extractData(final ResultSet res) throws SQLException, DataAccessException {
-        final Map<String, Dict> dict = new HashMap<String, Dict>();
+      public Map<String, Dictionable> extractData(final ResultSet res) throws SQLException, DataAccessException {
+        final Map<String, Dictionable> dict = new HashMap<>();
         while (res.next()) {
           final String term = res.getString("term");
           dict.put(term, new Dict(res.getInt("tid"), term));
@@ -72,12 +72,6 @@ public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dict>>
         return dicts.size();
       }
     });
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
     logger.debug("{} wrote {} dict entries to dict table", DictDAOdb.class.getTypeName(), updateCounts.length);
     return updateCounts.length == dicts.size();
 

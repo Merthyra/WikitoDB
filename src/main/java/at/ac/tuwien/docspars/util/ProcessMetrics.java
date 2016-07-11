@@ -96,6 +96,7 @@ public class ProcessMetrics {
   @Override
   public String toString() {
     final long endTime = System.currentTimeMillis();
+    final long timeElapsed = endTime - startTime;
     final NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
     final DecimalFormat df = (DecimalFormat) nf;
     final String newLine = System.getProperty("line.separator");
@@ -104,14 +105,21 @@ public class ProcessMetrics {
     String horizontalCrosses = IntStream.rangeClosed(1, 50).mapToObj(i -> "+").collect(Collectors.joining("*")).toString();
     // @formatter:off
     return newLine+newLine + "Process Metrics for Previous Run:" + newLine
+        + horizontalCrosses + newLine
+        + "NEW ENTRIES" + newLine
         + horizontalLine + newLine
         + "Batch-Adds:                   \t" + df.format(this.addBatch) + newLine
-        + "New Documents:                \t" + df.format(this.numberOfNewDocuments) + newLine
-        + "New Dicts-Entries:            \t" + df.format(this.numberOfNewDictEntries) + newLine
-        + "New Term-Entries:             \t" + df.format(this.numberOfNewTerms) + newLine
-        + "New ALL Term-Entries: 	     \t" + df.format(this.numberOfNewDocuments == 0 ? 0 : this.numberOfNewTerms / this.numberOfNewDocuments) + newLine
+        + "Nr. of Documents:             \t" + df.format(this.numberOfNewDocuments) + newLine
+        + "Nr. of Dicts-Entries:         \t" + df.format(this.numberOfNewDictEntries) + newLine
+        + "Nr. of Term-Entries:          \t" + df.format(this.numberOfNewTerms) + newLine
+        + "avg Terms/Document:           \t" + df.format(this.numberOfNewDocuments == 0 ? 0 : this.numberOfNewTerms / this.numberOfNewDocuments) + newLine
         + "avg-terms/batch:              \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewTerms / this.addBatch) + newLine
         + "avg-dicts/batch:              \t" + df.format(this.addBatch == 0 ? 0 : this.numberOfNewDictEntries / this.addBatch) + newLine
+        + "avg terms per minute:         \t" + df.format(this.numberOfNewTerms/minutesFromMillis(timeElapsed)) + newLine
+        + "avg dicts per minute:         \t" + df.format(this.numberOfNewDictEntries/minutesFromMillis(timeElapsed)) + newLine
+        + "avg docs per minute:          \t" + df.format(this.numberOfNewDocuments/minutesFromMillis(timeElapsed)) + newLine
+        + horizontalLine + newLine
+        + "UPDATED ENTRIES" + newLine
         + horizontalLine + newLine
         + "Batch-Updates:                \t" + df.format(this.updateBatch) + newLine
         + "Updated New Documents:        \t" + df.format(this.numberOfUpdateDocuments) + newLine
@@ -127,12 +135,12 @@ public class ProcessMetrics {
         + horizontalCrosses + newLine
         + getListOfInterceptedOperations() + "\t" + newLine
         + horizontalCrosses + newLine
-        + " in ->   \t" + DurationFormatUtils.formatDuration((endTime-startTime) , "HH:mm:ss.SSS");
-        // @formatter:on
+        + " in ->   \t" + formatDurationHHMMSSsss(timeElapsed);
+     // @formatter:on
   }
 
   private Duration elapsedTime() {
-    return Duration.ofNanos(System.nanoTime() - startTime);
+    return Duration.ofMillis(System.currentTimeMillis() - startTime);
   }
 
   private String getListOfInterceptedOperations() {
@@ -141,12 +149,16 @@ public class ProcessMetrics {
         .collect(Collectors.joining("\n"));
   }
 
+  private long minutesFromMillis(long millis) {
+    return Duration.ofMillis(millis).getSeconds();
+  }
+
   /**
    * @return a intermediate short String representation of the current process metrics
    */
   public String getIntermediateReport() {
     final Duration elapsed = elapsedTime();
-    return String.format("Total docs: %s, skipped: %s, batches: %s, time elapsed: %s, avg(item-persist-ratio)[items/min]: %s",
+    return String.format("Total docs: %s, skipped: %s, batches: %s, time elapsed: %s, avg item-persist-ratio[items/min]: %s",
         this.processedElements, this.skippedElemets, (this.addBatch + this.updateBatch),
         formatDurationHHMMSSsss(elapsed),
         (getSumOfAllPersistedItems() / (elapsed.getSeconds() / 60)));
@@ -159,5 +171,14 @@ public class ProcessMetrics {
     // final long millis = duration.minusHours(hours).minusMinutes(minutes).minusSeconds(seconds).toMillis();
     // return String.format("%02d:%02d:%02d.%03d hh:mm:SS.sss", hours, minutes, seconds, millis);
     return DurationFormatUtils.formatDuration(duration.toMillis(), "HH:mm:ss.SSS");
+  }
+
+  public static String formatDurationHHMMSSsss(long durationInMillis) {
+    // final long hours = duration.toHours();
+    // final long minutes = duration.minusHours(hours).toMinutes();
+    // final long seconds = duration.minusHours(hours).minusMinutes(minutes).getSeconds();
+    // final long millis = duration.minusHours(hours).minusMinutes(minutes).minusSeconds(seconds).toMillis();
+    // return String.format("%02d:%02d:%02d.%03d hh:mm:SS.sss", hours, minutes, seconds, millis);
+    return DurationFormatUtils.formatDuration(durationInMillis, "HH:mm:ss.SSS");
   }
 }

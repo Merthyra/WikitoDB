@@ -7,13 +7,11 @@ import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -35,24 +33,19 @@ public class Doc1DAOdb implements CrudOperations<Document, TIntSet>, Timestampab
   @Override
   @PerformanceMonitored
   public TIntSet read() {
-    final ResultSetExtractor<TIntSet> resEx = getResultsetExtractor();
-    final TIntSet retrievedDocs = this.jdbcTemplate.query(getReadStmnt(), resEx);
+    final TIntSet retrievedDocs = this.jdbcTemplate.query(getReadStmnt(), getResultsetExtractor());
     logger.debug("{} retrieved {} documents from docs table", Doc1DAOdb.class.getName(), retrievedDocs.size());
     return retrievedDocs;
   }
 
   ResultSetExtractor<TIntSet> getResultsetExtractor() {
-    final ResultSetExtractor<TIntSet> resEx = new ResultSetExtractor<TIntSet>() {
-      @Override
-      public TIntSet extractData(final ResultSet res) throws SQLException, DataAccessException {
-        final TIntSet docids = new TIntHashSet();
-        while (res.next()) {
-          docids.add(res.getInt("did"));
-        }
-        return docids;
+    return res -> {
+      final TIntSet docids = new TIntHashSet();
+      while (res.next()) {
+        docids.add(res.getInt("did"));
       }
+      return docids;
     };
-    return resEx;
   }
 
   @Override

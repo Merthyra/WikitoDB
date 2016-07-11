@@ -16,7 +16,8 @@ public class DBPersistanceServiceV2 extends DBPersistanceService {
 
   private CrudOperations<Term, List<Term>> termDAO2;
 
-  public DBPersistanceServiceV2(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO, CrudOperations<Document, TIntSet> docDAO,
+  public DBPersistanceServiceV2(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
+      CrudOperations<Document, TIntSet> docDAO,
       CrudOperations<Term, List<Term>> termDAO) {
     this.setDictDAO(dictDAO);
     this.setDocDAO(docDAO);

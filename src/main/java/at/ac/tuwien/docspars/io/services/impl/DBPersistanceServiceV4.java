@@ -6,17 +6,17 @@ import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-import gnu.trove.set.TIntSet;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DBPersistanceServiceV4 extends DBPersistanceService {
 
   private final CrudOperations<Term, Map<String, Integer>> termDAO;
 
-  public DBPersistanceServiceV4(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO, CrudOperations<Document, TIntSet> docDAO,
-      final CrudOperations<Term, Map<String, Integer>> termDAO) {
+  public DBPersistanceServiceV4(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
+      final CrudOperations<Document, Map<Integer, Set<Integer>>> docDAO, final CrudOperations<Term, Map<String, Integer>> termDAO) {
     setDictDAO(dictDAO);
     setDocDAO(docDAO);
     this.termDAO = termDAO;

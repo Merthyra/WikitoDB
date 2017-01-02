@@ -50,6 +50,7 @@
 		<constructor-arg name="dictsCached" value="${doc.maxDictCache}" />
 		<constructor-arg name="reportLimit" value="${doc.reportLimit}" />
 		<constructor-arg name="onlyNew" value="${doc.onlyNew}" />
+		<constructor-arg name="updates" value="${doc.updatesInclued}"/>
 	</bean>
 
 	<bean id="entityFactory"

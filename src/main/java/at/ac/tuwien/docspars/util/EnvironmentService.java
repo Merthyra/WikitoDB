@@ -11,20 +11,22 @@ import at.ac.tuwien.docspars.entity.impl.BatchService;
 import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.io.services.PersistanceService;
 import at.ac.tuwien.docspars.io.services.PersistanceServiceFactory;
-import gnu.trove.set.TIntSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.TransactionSystemException;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class EnvironmentService {
 
   private static final Logger logger = LogManager.getLogger(EnvironmentService.class);
   public static volatile boolean terminationRequested = false;
   // Set of document IDs stored in database
-  private TIntSet persistedDocs;
+  private Map<Integer, Set<Integer>> persistedDocs;
   private int docCounter = 0;
 
   private PersistanceService persistService;
@@ -63,16 +65,25 @@ public class EnvironmentService {
     setBatchMode(did);
     final Document newlyCreatedDoc = docFactory.createDocument(did, revid, name, added, content.size());
     addContentToDocument(newlyCreatedDoc, content);
-    updateProcessVariables(did, newlyCreatedDoc);
+    updateProcessVariables(did, revid, newlyCreatedDoc);
     persistChangesWhenBatchSizeExceeds();
     logger.trace("{} processed and added to batch", newlyCreatedDoc.toString());
     triggerIntermediateReport();
   }
 
-  private void updateProcessVariables(final int did, final Document newlyCreatedDoc) {
+  private void updateProcessVariables(final int did, final int revid, final Document newlyCreatedDoc) {
     this.batchService.addDocument(newlyCreatedDoc);
-    this.persistedDocs.add(did);
+    this.persistedDocs.merge(did, createSetAndAddElem(did), (oldSet, newSet) -> {
+      oldSet.addAll(newSet);
+      return oldSet;
+    });
     this.processMetrics.reportDocumentProcessed();
+  }
+
+  private Set<Integer> createSetAndAddElem(Integer did) {
+    final Set<Integer> revIdSet = new HashSet<>();
+    revIdSet.add(did);
+    return revIdSet;
   }
 
   private void triggerIntermediateReport() {
@@ -128,7 +139,7 @@ public class EnvironmentService {
   }
 
   private boolean isNew(int id) {
-    return !this.persistedDocs.contains(id);
+    return !this.persistedDocs.containsKey(id);
   }
 
   private boolean isMaxElementsReached() {
@@ -183,7 +194,7 @@ public class EnvironmentService {
     this.processMetrics.skipDocument();
   }
 
-  public TIntSet getPersistedDocs() {
+  public Map<Integer, Set<Integer>> getPersistedDocs() {
     return this.persistedDocs;
   }
 
@@ -193,13 +204,37 @@ public class EnvironmentService {
     this.processMetrics.skipDocument();
   }
 
-  public boolean doHandleNextDocument(int id) {
-    if (isMaxElementsReached() || terminationRequested) {
+  public boolean doHandleNextDocument(int did, int revid) {
+    if (isDocSkippedDueToOffset(did)) {
+      return false;
+    } else if (isMaxElementsReached() || terminationRequested) {
       shutDown();
     }
-    if ((this.processPropertiesHandler.isOnlyNewDocumentProcessed() && this.persistedDocs.contains(id)) || this.isSkippedByOffset(id)) {
+    else if (isUpdateUnwantedButDocNotNew(did)) {
+      return false;
+    }
+    else if (shouldOnlyNewDocsBeAddedAndDocIsNew(did)) {
+      return false;
+    }
+    else if (documentWithSameRevisionAlreadyExists(did, revid)) {
       return false;
     }
     return true;
+  }
+
+  private boolean isDocSkippedDueToOffset(int did) {
+    return this.isSkippedByOffset(did);
+  }
+
+  private boolean documentWithSameRevisionAlreadyExists(int did, int revid) {
+    return this.persistedDocs.get(did).stream().filter(elem -> elem.equals(revid)).findAny().isPresent();
+  }
+
+  private boolean shouldOnlyNewDocsBeAddedAndDocIsNew(int did) {
+    return this.processPropertiesHandler.isNewDocOmitted() && isNew(did);
+  }
+
+  private boolean isUpdateUnwantedButDocNotNew(int did) {
+    return (!this.processPropertiesHandler.isUpdateProcessed() && !isNew(did));
   }
 }

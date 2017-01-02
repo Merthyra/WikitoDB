@@ -2,7 +2,6 @@ package at.ac.tuwien.docspars.io.daos.db.dict;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.Timestampable;
-import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
@@ -200,6 +199,7 @@ public class DictHistDAOdb implements CrudOperations<Dictionable, Map<String, In
     return this.time;
   }
 
+  @Override
   public void setTimestamp(final Timestamp time) {
     this.time = time;
   }

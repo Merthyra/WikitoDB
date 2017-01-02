@@ -75,9 +75,11 @@ public class CLIArgProcessor {
     OptionBuilder.withDescription("which variant to use [V1 (default), V2, V3, V4, V5] ");
     final Option variant = OptionBuilder.create("v");
     OptionBuilder.withArgName("u");
-    OptionBuilder.hasArg();
-    OptionBuilder.withDescription("which variant to use [V1 (default), V2, V3, V4, V5] ");
+    OptionBuilder.withDescription("when flag is set document updates will be processed");
     final Option setUpdates = OptionBuilder.create("u");
+    OptionBuilder.withArgName("on");
+    OptionBuilder.withDescription("when flag is set, new documents are ommited");
+    final Option ommitNewDocs = OptionBuilder.create("on");
     this.options.addOption(help);
     this.options.addOption(version);
     this.options.addOption(debug);
@@ -89,6 +91,7 @@ public class CLIArgProcessor {
     this.options.addOption(systimestamp);
     this.options.addOption(variant);
     this.options.addOption(setUpdates);
+    this.options.addOption(ommitNewDocs);
   }
 
   private void parse(final String[] args) {
@@ -97,7 +100,6 @@ public class CLIArgProcessor {
       // parse the command line arguments
       this.cl = parser.parse(this.options, args);
     } catch (final ParseException exp) {
-      // oops, something went wrong
       System.out.println(exp.getMessage());
       final HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp("Docs2DB", this.options);
@@ -188,7 +190,6 @@ public class CLIArgProcessor {
       }
     }
     if (this.cl.hasOption("v")) {
-      // DBVariant db = DBVariant.valueOf(cl.getOptionValue("v"));
       int version = 0;
       try {
         version = Integer.parseInt(this.cl.getOptionValue("v"));
@@ -204,9 +205,13 @@ public class CLIArgProcessor {
       this.pH.setVariant(db);
       logger.info("SET PROCESS PARAMETER DB VARIANT TO " + this.pH.getVariant());
     }
-    // to be removed, not required any more
     if (this.cl.hasOption("u")) {
-      this.pH.setUpdates(true);
+      this.pH.setUpdatesProcessed(true);
+      logger.info("Enabled update mode");
+    }
+    if (this.cl.hasOption("on")) {
+      this.pH.setOmittNewDocs(true);
+      logger.info("Enabled update mode");
     }
   }
 

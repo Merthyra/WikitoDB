@@ -20,10 +20,11 @@ public class ProcessPropertiesHandler {
   private int dictsCached;
   private boolean updates;
   private final int reportLimit;
-  private final boolean onlyNew;
+  private boolean newDocsOmitted;
 
   public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format,
-      final String language, final String sc, final int maxLength, final int dictsCached, final int reportLimit, final String onlyNew) {
+      final String language, final String sc, final int maxLength, final int dictsCached, final int reportLimit,
+      final String newDocsOmitted, final String updates) {
     this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;
     this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
     this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
@@ -34,10 +35,10 @@ public class ProcessPropertiesHandler {
       throw new RuntimeException("db variant unnkown: " + sc);
     }
     this.maxTermLength = maxLength;
-    this.updates = false;
+    this.updates = Boolean.valueOf(updates);
     this.dictsCached = dictsCached;
     this.reportLimit = reportLimit;
-    this.onlyNew = Boolean.valueOf(onlyNew);
+    this.newDocsOmitted = Boolean.valueOf(newDocsOmitted);
     logger.info("Properties successfully initialized");
   }
 
@@ -55,7 +56,7 @@ public class ProcessPropertiesHandler {
     this.updates = false;
     this.dictsCached = 0;
     this.reportLimit = 20;
-    this.onlyNew = true;
+    this.newDocsOmitted = false;
   }
 
   public boolean skipPageDueToOffset() {
@@ -191,16 +192,9 @@ public class ProcessPropertiesHandler {
   }
 
   /**
-   * @return the updates
-   */
-  public boolean isUpdates() {
-    return this.updates;
-  }
-
-  /**
    * @param updates the updates to set
    */
-  public void setUpdates(final boolean updates) {
+  public void setUpdatesProcessed(final boolean updates) {
     this.updates = updates;
   }
 
@@ -208,8 +202,16 @@ public class ProcessPropertiesHandler {
     return processedItemCount % this.reportLimit == 0;
   }
 
-  public boolean isOnlyNewDocumentProcessed() {
-    return this.onlyNew;
+  public boolean isUpdateProcessed() {
+    return this.updates;
+  }
+
+  public void setOmittNewDocs(boolean b) {
+    this.newDocsOmitted = true;
+  }
+
+  public boolean isNewDocOmitted() {
+    return this.newDocsOmitted;
   }
 
 }

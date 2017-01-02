@@ -6,10 +6,10 @@ import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.version.VersionDAO;
-import gnu.trove.set.TIntSet;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DBPersistanceServiceV6 extends DBPersistanceService {
 
@@ -18,7 +18,8 @@ public class DBPersistanceServiceV6 extends DBPersistanceService {
   private Integer latestVersion;
 
   public DBPersistanceServiceV6(final CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
-      final CrudOperations<Document, TIntSet> docDAO, final CrudOperations<Term, List<Term>> termDAO, final VersionDAO versionDAO) {
+      final CrudOperations<Document, Map<Integer, Set<Integer>>> docDAO, final CrudOperations<Term, List<Term>> termDAO,
+      final VersionDAO versionDAO) {
     setDictDAO(dictDAO);
     setDocDAO(docDAO);
     this.termDAO = termDAO;

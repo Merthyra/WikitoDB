@@ -32,24 +32,7 @@ public class Doc5DAOdb extends Doc1DAOdb {
     super(template);
   }
 
-  // @Override
-  // @PerformanceMonitored
-  // public TIntSet read() {
-  // final ResultSetExtractor<TIntSet> resEx = new ResultSetExtractor<TIntSet>() {
-  // @Override
-  // public TIntSet extractData(final ResultSet res) throws SQLException, DataAccessException {
-  // final TIntSet docids = new TIntHashSet();
-  // while (res.next()) {
-  // docids.add(res.getInt("did"));
   // }
-  // return docids;
-  // }
-  // };
-  // final TIntSet retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs5.read"), resEx);
-  // logger.debug("{} retrieved {} documents from docs table", this.getClass().getName(), retrievedDocs.size());
-  // return retrievedDocs;
-  // }
-
   @Override
   public boolean remove(final List<Document> docs) {
     // TODO

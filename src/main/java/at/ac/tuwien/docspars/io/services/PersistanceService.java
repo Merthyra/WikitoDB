@@ -3,10 +3,10 @@ package at.ac.tuwien.docspars.io.services;
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Batch;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import gnu.trove.set.TIntSet;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface PersistanceService {
 
@@ -16,7 +16,7 @@ public interface PersistanceService {
 
   public boolean remove(List<Document> docs);
 
-  public TIntSet readDocs();
+  public Map<Integer, Set<Integer>> readDocs();
 
   public Map<String, Dictionable> readDict();
 

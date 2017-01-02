@@ -29,7 +29,7 @@ public class DocumentHandler {
     this.environmentService.skipDocument();
   }
 
-  public boolean isNextDocumentHandled(int id) {
-    return this.environmentService.doHandleNextDocument(id);
+  public boolean isNextDocumentHandled(int did, int revid) {
+    return this.environmentService.doHandleNextDocument(did, revid);
   }
 }

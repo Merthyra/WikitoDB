@@ -3,15 +3,10 @@ package at.ac.tuwien.docspars.io.daos.db.doc;
 import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -35,23 +30,6 @@ public class Doc5DAOdb extends Doc1DAOdb {
 
   public Doc5DAOdb(final JdbcTemplate template) {
     super(template);
-  }
-
-  @Override
-  public TIntSet read() {
-    final ResultSetExtractor<TIntSet> resEx = new ResultSetExtractor<TIntSet>() {
-      @Override
-      public TIntSet extractData(final ResultSet res) throws SQLException, DataAccessException {
-        final TIntSet docids = new TIntHashSet();
-        while (res.next()) {
-          docids.add(res.getInt("did"));
-        }
-        return docids;
-      }
-    };
-    final TIntSet retrievedDocs = this.jdbcTemplate.query(SQLStatements.getString("sql.docs.read"), resEx);
-    logger.debug(Doc5DAOdb.class.getName() + " retrieved " + retrievedDocs.size() + " documents from docs table");
-    return retrievedDocs;
   }
 
   @Override

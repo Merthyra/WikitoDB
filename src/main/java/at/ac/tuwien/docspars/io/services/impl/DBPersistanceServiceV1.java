@@ -6,16 +6,17 @@ import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-import gnu.trove.set.TIntSet;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DBPersistanceServiceV1 extends DBPersistanceService {
 
   private CrudOperations<Term, List<Term>> termDAO1;
 
-  public DBPersistanceServiceV1(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO, CrudOperations<Document, TIntSet> docDAO,
+  public DBPersistanceServiceV1(CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
+      CrudOperations<Document, Map<Integer, Set<Integer>>> docDAO,
       CrudOperations<Term, List<Term>> termDAO) {
     this.setDictDAO(dictDAO);
     this.setDocDAO(docDAO);
@@ -38,8 +39,7 @@ public class DBPersistanceServiceV1 extends DBPersistanceService {
   public <B extends Batch> boolean updateBatch(B batch) {
     getDocDAO().setTimestamp(batch.getTimestamp());
     getDocDAO().remove(batch.getDocs());
-    addBatch(batch);
-    return true;
+    return addBatch(batch);
   }
 
   @Override
@@ -56,7 +56,7 @@ public class DBPersistanceServiceV1 extends DBPersistanceService {
 
   @Override
   @PerformanceMonitored
-  public TIntSet readDocs() {
+  public Map<Integer, Set<Integer>> readDocs() {
     return getDocDAO().read();
   }
 

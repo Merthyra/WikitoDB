@@ -14,7 +14,7 @@ public class Term6DAOdb extends AbstractTermDAOdb {
 
   private Integer lastVersionId;
 
-  final String QUERY_LAST_VERSION_ID = "SELECT max(revid) FROM VERSIONS";
+  final String QUERY_LAST_VERSION_ID = "SELECT max(vid) FROM VERSIONS";
 
 
   public Term6DAOdb(final JdbcTemplate template) {

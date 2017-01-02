@@ -14,7 +14,6 @@ public class Doc4DAOdb extends Doc1DAOdb {
     return SQLStatements.getString("sql.docs4.insert");
   }
 
-
   @Override
   String getReadStmnt() {
     return SQLStatements.getString("sql.docs4.read");

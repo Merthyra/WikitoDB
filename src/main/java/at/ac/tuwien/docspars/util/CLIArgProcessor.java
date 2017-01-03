@@ -211,7 +211,7 @@ public class CLIArgProcessor {
     }
     if (this.cl.hasOption("on")) {
       this.pH.setOmittNewDocs(true);
-      logger.info("Enabled update mode");
+      logger.info("Enabled no new documents added");
     }
   }
 

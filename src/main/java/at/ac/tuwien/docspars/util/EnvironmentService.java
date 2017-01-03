@@ -209,14 +209,11 @@ public class EnvironmentService {
       return false;
     } else if (isMaxElementsReached() || terminationRequested) {
       shutDown();
-    }
-    else if (isUpdateUnwantedButDocNotNew(did)) {
+    } else if (isUpdateUnwantedButDocNotNew(did)) {
       return false;
-    }
-    else if (shouldOnlyNewDocsBeAddedAndDocIsNew(did)) {
+    } else if (shouldOnlyNewDocsBeAddedAndDocIsNew(did)) {
       return false;
-    }
-    else if (documentWithSameRevisionAlreadyExists(did, revid)) {
+    } else if (documentWithSameRevisionAlreadyExists(did, revid)) {
       return false;
     }
     return true;
@@ -227,7 +224,12 @@ public class EnvironmentService {
   }
 
   private boolean documentWithSameRevisionAlreadyExists(int did, int revid) {
-    return this.persistedDocs.get(did).stream().filter(elem -> elem.equals(revid)).findAny().isPresent();
+    final Set<Integer> revids = this.persistedDocs.get(did);
+    if (revids == null) {
+      return false;
+    } else {
+      return revids.stream().filter(elem -> elem.equals(revid)).findAny().isPresent();
+    }
   }
 
   private boolean shouldOnlyNewDocsBeAddedAndDocIsNew(int did) {

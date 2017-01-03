@@ -1,8 +1,5 @@
 package at.ac.tuwien.docspars.util;
 
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
-
 import at.ac.tuwien.docspars.entity.Mode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,23 +19,32 @@ public class ProcessPropertiesHandler {
   private final int reportLimit;
   private boolean newDocsOmitted;
 
-  public ProcessPropertiesHandler(final int batch_size, final int start_offset, final int max_pages, final String date_format,
-      final String language, final String sc, final int maxLength, final int dictsCached, final int reportLimit,
-      final String newDocsOmitted, final String updates) {
+  public ProcessPropertiesHandler(
+      final int batch_size,
+      final int start_offset,
+      final int max_pages,
+      final String date_format,
+      final String language,
+      final String sc,
+      final int maxLength,
+      final int dictsCached,
+      final int reportLimit,
+      final String newDocsOmitted,
+      final String updates) {
     this.batch_size = batch_size > Integer.MAX_VALUE ? Integer.MAX_VALUE : batch_size;
     this.start_offset = start_offset > Integer.MAX_VALUE ? Integer.MAX_VALUE : start_offset;
     this.max_pages = max_pages > Integer.MAX_VALUE ? Integer.MAX_VALUE : max_pages;
-    this.date_format = date_format;
-    this.lan = language;
-    this.variant = Mode.valueOf(sc);
+    this.date_format = date_format.trim();
+    this.lan = language.trim();
+    this.variant = Mode.valueOf(sc.trim());
     if (this.variant == null) {
       throw new RuntimeException("db variant unnkown: " + sc);
     }
     this.maxTermLength = maxLength;
-    this.updates = Boolean.valueOf(updates);
+    this.updates = Boolean.valueOf(updates.trim());
     this.dictsCached = dictsCached;
     this.reportLimit = reportLimit;
-    this.newDocsOmitted = Boolean.valueOf(newDocsOmitted);
+    this.newDocsOmitted = Boolean.valueOf(newDocsOmitted.trim());
     logger.info("Properties successfully initialized");
   }
 

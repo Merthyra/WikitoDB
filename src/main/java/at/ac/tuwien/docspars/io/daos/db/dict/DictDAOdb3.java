@@ -2,6 +2,9 @@ package at.ac.tuwien.docspars.io.daos.db.dict;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
 import at.ac.tuwien.docspars.entity.impl.Dict;
+import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -13,8 +16,9 @@ import java.util.Map;
 
 public class DictDAOdb3 extends DictDAOdb {
 
-  private final String READ_CURRENT_DF_VALUES_FROM_DICT_HIST =
-      "select dict.tid, dict.term, terms3.did from dict join terms3 on terms3.tid = dict.tid";
+  private final String READ_CURRENT_DF_VALUES_FROM_DICT_HIST = SQLStatements.getString("sql.dict.readdf");
+  private final Logger logger = LogManager.getLogger(this.getClass());
+
 
   public DictDAOdb3(JdbcTemplate template) {
     super(template);

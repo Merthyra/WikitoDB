@@ -3,40 +3,37 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
-import org.springframework.dao.DataAccessException;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
 
   private Timestamp timestamp;
+  private final Logger logger = LogManager.getLogger(this.getClass());
+
 
   public Term5DAOdb(final JdbcTemplate template) {
     super(template);
   }
 
   @Override
+  @PerformanceMonitored
   public boolean add(List<Term> listOfTerms) {
-    String listOfTidsForBatchUpdates = buildConcatedTidStringFromTermList(listOfTerms);
-    Map<Integer, Integer> oldDfValues = readDfForTid(listOfTidsForBatchUpdates);
-    invalidatedOldTermEntries(getTimestamp(), listOfTidsForBatchUpdates);
-    insertNewTerms(listOfTerms, oldDfValues);
+    invalidatedOldTermEntries(listOfTerms);
+    insertNewTerms(listOfTerms);
     return true;
   }
 
-  private void insertNewTerms(List<Term> terms, Map<Integer, Integer> oldDfValues) {
+  private void insertNewTerms(List<Term> terms) {
     this.getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.terms5.insert"), new BatchPreparedStatementSetter() {
       @Override
       public void setValues(PreparedStatement stmt, int i) throws SQLException {
@@ -44,9 +41,8 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
         stmt.setInt(2, terms.get(i).getDId());
         stmt.setInt(3, terms.get(i).getRevId());
         stmt.setTimestamp(4, getTimestamp());
-        Optional<Integer> oldDf = Optional.ofNullable(oldDfValues.get(terms.get(i).getTId()));
         stmt.setInt(5, terms.get(i).getTrace());
-        stmt.setInt(6, terms.get(i).getDict().getDf() + oldDf.orElse(0));
+        stmt.setInt(6, terms.get(i).getDict().getDf());
         stmt.setInt(7, terms.get(i).getLength());
       }
 
@@ -57,37 +53,21 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
     });
   }
 
-  private void invalidatedOldTermEntries(Timestamp invalidatedAt, String listOfTidsForBatchUpdates) {
-    this.getJdbcTemplate().update(SQLStatements.getString("sql.terms5.update") + listOfTidsForBatchUpdates,
-        new PreparedStatementSetter() {
+  private void invalidatedOldTermEntries(List<Term> listOfTidsForBatchUpdates) {
+    final List<Term> distinctTerms = listOfTidsForBatchUpdates.stream().distinct().collect(Collectors.toList());
+    this.getJdbcTemplate().batchUpdate("UPDATE wiki.terms5 SET rem_df = null WHERE rem_df IS null AND tid = ?",
+        new BatchPreparedStatementSetter() {
+
           @Override
-          public void setValues(PreparedStatement stmt) throws SQLException {
-            stmt.setTimestamp(1, invalidatedAt);
+          public void setValues(PreparedStatement ps, int i) throws SQLException {
+            ps.setInt(1, distinctTerms.get(i).getDf());
+          }
+
+          @Override
+          public int getBatchSize() {
+            return listOfTidsForBatchUpdates.size();
           }
         });
-  }
-
-  private Map<Integer, Integer> readDfForTid(String listOfTerms) {
-    return getJdbcTemplate().query(SQLStatements.getString("sql.terms4.read") + listOfTerms, resultsetExtractorMapForDfAndTermId());
-  }
-
-  // returns concatenated tid list
-  private String buildConcatedTidStringFromTermList(List<Term> listOfTerms) {
-    return "(" + listOfTerms.stream().map(t -> String.valueOf(t.getTId())).collect(Collectors.joining(",")) + ")";
-  }
-
-  private ResultSetExtractor<Map<Integer, Integer>> resultsetExtractorMapForDfAndTermId() {
-    // retrieve current df values for all dict terms
-    return new ResultSetExtractor<Map<Integer, Integer>>() {
-      @Override
-      public Map<Integer, Integer> extractData(final ResultSet res) throws SQLException, DataAccessException {
-        final Map<Integer, Integer> dfValues = new HashMap<Integer, Integer>();
-        while (res.next()) {
-          dfValues.put(new Integer(res.getInt("tid")), new Integer(res.getInt("df")));
-        }
-        return dfValues;
-      }
-    };
   }
 
   @Override
@@ -109,5 +89,24 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
   public Timestamp getTimestamp() {
     return this.timestamp;
   }
+
+  @Override
+  public List<Term> read() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean create() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean drop() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
 
 }

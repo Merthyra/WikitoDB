@@ -2,6 +2,8 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -10,6 +12,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class Term3DAOdb extends AbstractTermDAOdb {
+
+  private final Logger logger = LogManager.getLogger(this.getClass());
 
   public Term3DAOdb(final JdbcTemplate template) {
     super(template);
@@ -67,7 +71,6 @@ public class Term3DAOdb extends AbstractTermDAOdb {
     // TODO Auto-generated method stub
     return false;
   }
-
 
 
 }

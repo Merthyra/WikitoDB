@@ -32,10 +32,8 @@ public class Doc5DAOdb extends Doc1DAOdb {
     super(template);
   }
 
-  // }
   @Override
   public boolean remove(final List<Document> docs) {
-    // TODO
     return false;
   }
 
@@ -44,12 +42,9 @@ public class Doc5DAOdb extends Doc1DAOdb {
     return new BatchPreparedStatementSetter() {
       @Override
       public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-        // sql.docs.insert=INSERT INTO docs (pageID, added, name, len) VALUES (?,?,?,?)
         ps.setInt(1, docs.get(i).getDId());
         ps.setInt(2, docs.get(i).getRevId());
-        // ps.setTimestamp(3, DocReducedDAOdb.this.getTimestamp());
         ps.setString(3, docs.get(i).getName());
-        // ps.setInt(5, docs.get(i).getLength());
       }
 
       @Override
@@ -66,8 +61,6 @@ public class Doc5DAOdb extends Doc1DAOdb {
         this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.docs.update"), new BatchPreparedStatementSetter() {
           @Override
           public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-            // (docid, added, removed, name, len)
-            // UPDATE docs SET removed = ? WHERE pageid = ? AND revid = ?
             ps.setTimestamp(1, docs.get(i).getTimestamp());
             ps.setInt(2, docs.get(i).getDId());
             ps.setInt(3, docs.get(i).getDId());
@@ -84,13 +77,11 @@ public class Doc5DAOdb extends Doc1DAOdb {
 
   @Override
   public boolean create() {
-    // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   public boolean drop() {
-    // TODO Auto-generated method stub
     return false;
   }
 

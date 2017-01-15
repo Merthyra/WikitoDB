@@ -15,7 +15,6 @@ public class DBPersistanceServiceV6 extends DBPersistanceService {
 
   private final CrudOperations<Term, List<Term>> termDAO;
   private final VersionDAO versionDAO;
-  private Integer latestVersion;
 
   public DBPersistanceServiceV6(final CrudOperations<Dictionable, Map<String, Dictionable>> dictDAO,
       final CrudOperations<Document, Map<Integer, Set<Integer>>> docDAO, final CrudOperations<Term, List<Term>> termDAO,
@@ -29,8 +28,14 @@ public class DBPersistanceServiceV6 extends DBPersistanceService {
 
   @Override
   public <B extends Batch> boolean addBatch(B batch) {
+    this.versionDAO.setTimestamp(batch.getTimestamp());
+    this.versionDAO.addVersion();
+    final Integer latestVid = this.versionDAO.getLatestVersion();
+    batch.setVid(latestVid);
     this.getDictDAO().add(batch.getNewVocab());
+    this.getDocDAO().addParameter("vid", latestVid);
     this.getDocDAO().add(batch.getDocs());
+    this.termDAO.addParameter("vid", latestVid);
     this.termDAO.add(batch.getTerms());
     return false;
   }
@@ -45,6 +50,10 @@ public class DBPersistanceServiceV6 extends DBPersistanceService {
   public boolean remove(List<Document> docs) {
     // TODO Auto-generated method stub
     return false;
+  }
+
+  public void addParameter(String key, Object value) {
+
   }
 
 }

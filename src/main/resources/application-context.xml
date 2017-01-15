@@ -221,8 +221,6 @@
 
 	<bean id="processMetrics" class="at.ac.tuwien.docspars.util.ProcessMetrics" />
 	
-<!-- 	<bean id="DocumentFrequencyService" class="at.ac.tuwien.docspars.util.DocumentFrequencyService"/> -->
-
 	<bean id="txManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />

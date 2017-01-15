@@ -10,14 +10,14 @@ import java.util.Set;
 
 public interface PersistanceService {
 
-  public <B extends Batch> boolean addBatch(B batch);
+  <B extends Batch> boolean addBatch(B batch);
 
-  public <B extends Batch> boolean updateBatch(B batch);
+  <B extends Batch> boolean updateBatch(B batch);
 
-  public boolean remove(List<Document> docs);
+  boolean remove(List<Document> docs);
 
-  public Map<Integer, Set<Integer>> readDocs();
+  Map<Integer, Set<Integer>> readDocs();
 
-  public Map<String, Dictionable> readDict();
+  Map<String, Dictionable> readDict();
 
 }

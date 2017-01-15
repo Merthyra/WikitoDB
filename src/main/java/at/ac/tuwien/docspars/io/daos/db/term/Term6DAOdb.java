@@ -2,30 +2,31 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 public class Term6DAOdb extends AbstractTermDAOdb {
 
-  private Integer lastVersionId;
+  private Integer vid;
+  private final Logger logger = LogManager.getLogger(this.getClass());
 
   final String QUERY_LAST_VERSION_ID = "SELECT max(vid) FROM VERSIONS";
 
 
   public Term6DAOdb(final JdbcTemplate template) {
     super(template);
-    this.lastVersionId = getCurrentVersionId().orElse(0);
   }
 
   @Override
+  @PerformanceMonitored
   public boolean add(List<Term> terms) {
-    // first obtain very last element from versions table, if not already present
-    // secondly write records into the tables
     writeTersmsToTermsTable(terms);
     return true;
   }
@@ -46,13 +47,14 @@ public class Term6DAOdb extends AbstractTermDAOdb {
   }
 
   private BatchPreparedStatementSetter getBatchPreparedStatementSetterForList(List<Term> terms) {
+    final Integer currentVid = (Integer) getParameter("vid");
     return new BatchPreparedStatementSetter() {
 
       @Override
       public void setValues(PreparedStatement stmt, int index) throws SQLException {
         stmt.setInt(1, terms.get(index).getTId());
         stmt.setInt(2, terms.get(index).getDId());
-        stmt.setInt(3, lastVersionId);
+        stmt.setInt(3, currentVid);
         stmt.setInt(4, terms.get(index).getTrace());
       }
 
@@ -64,16 +66,30 @@ public class Term6DAOdb extends AbstractTermDAOdb {
     };
   }
 
-  void setLastVersionId(int versionId) {
-    this.lastVersionId = versionId;
+  public Integer getVid() {
+    return vid;
   }
 
-  void incrementVersionId() {
-    this.lastVersionId++;
+  public void setVid(Integer vid) {
+    this.vid = vid;
   }
 
-  public Optional<Integer> getCurrentVersionId() {
-    return Optional.ofNullable(this.getJdbcTemplate().queryForObject(QUERY_LAST_VERSION_ID, Integer.class));
+  @Override
+  public List<Term> read() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean create() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean drop() {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }

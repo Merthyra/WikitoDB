@@ -1,10 +1,13 @@
 package at.ac.tuwien.docspars.io.daos.db.dict;
 
 import at.ac.tuwien.docspars.entity.Dictionable;
+import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Dict;
-import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
+import at.ac.tuwien.docspars.io.daos.db.AbstractCrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,14 +16,14 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dictionable>> {
+public class DictDAOdb extends AbstractCrudOperations<Dictionable, Map<String, Dictionable>> implements Timestampable {
 
   protected JdbcTemplate jdbcTemplate;
+  private final Logger logger = LogManager.getLogger(this.getClass());
 
   @SuppressWarnings("unused")
   private DictDAOdb() {}
@@ -82,19 +85,13 @@ public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dictio
   }
 
   @Override
-  public boolean drop() {
+  public boolean remove(List<Dictionable> a) {
     // TODO Auto-generated method stub
     return false;
   }
 
   @Override
-  public boolean remove(final List<Dictionable> a) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public boolean update(final List<Dictionable> a) {
+  public boolean update(List<Dictionable> a) {
     // TODO Auto-generated method stub
     return false;
   }
@@ -106,9 +103,9 @@ public class DictDAOdb implements CrudOperations<Dictionable, Map<String, Dictio
   }
 
   @Override
-  public void setTimestamp(Timestamp stamp) {
+  public boolean drop() {
     // TODO Auto-generated method stub
-
+    return false;
   }
 
 }

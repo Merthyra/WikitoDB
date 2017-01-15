@@ -3,6 +3,8 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -12,6 +14,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class Term1DAOdb extends AbstractTermDAOdb {
+  private final Logger logger = LogManager.getLogger(this.getClass());
+
 
   public Term1DAOdb(final JdbcTemplate template) {
     super(template);
@@ -56,6 +60,24 @@ public class Term1DAOdb extends AbstractTermDAOdb {
   public void setTimestamp(Timestamp stamp) {
     // TODO Auto-generated method stub
 
+  }
+
+  @Override
+  public List<Term> read() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean create() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean drop() {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }

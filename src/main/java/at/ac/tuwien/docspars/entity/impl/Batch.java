@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class Batch implements Timestampable {
@@ -18,6 +19,7 @@ public abstract class Batch implements Timestampable {
   private final List<Dictionable> newVocab = new ArrayList<>();
   private final List<Term> batchTerms = new ArrayList<>();
   private Timestamp timestamp;
+  private Integer vid = null;
   private static final Logger logger = LogManager.getLogger(Batch.class);
 
   public Batch() {}
@@ -50,6 +52,14 @@ public abstract class Batch implements Timestampable {
 
   public List<Dictionable> getUniqueTermsForBatch() {
     return this.batchTerms.stream().map(t -> t.getDict()).distinct().collect(Collectors.toList());
+  }
+
+  public Optional<Integer> getVid() {
+    return Optional.ofNullable(this.vid);
+  }
+
+  public void setVid(Integer vid) {
+    this.vid = vid;
   }
 
   public abstract void persist(PersistanceService service);

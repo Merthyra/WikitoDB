@@ -2,9 +2,11 @@ package at.ac.tuwien.docspars.io.daos.db.doc;
 
 import at.ac.tuwien.docspars.entity.Timestampable;
 import at.ac.tuwien.docspars.entity.impl.Document;
-import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
+import at.ac.tuwien.docspars.io.daos.db.AbstractCrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,9 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Doc1DAOdb implements CrudOperations<Document, Map<Integer, Set<Integer>>>, Timestampable {
+public class Doc1DAOdb extends AbstractCrudOperations<Document, Map<Integer, Set<Integer>>> implements Timestampable {
 
   private Timestamp timestamp = null;
+  private final Logger logger = LogManager.getLogger(this.getClass());
 
   private final JdbcTemplate jdbcTemplate;
 
@@ -42,13 +45,13 @@ public class Doc1DAOdb implements CrudOperations<Document, Map<Integer, Set<Inte
     return retrievedDocs;
   }
 
-  ResultSetExtractor<Map<Integer, Set<Integer>>> extractDocumentDidAndRevid() {
+  protected ResultSetExtractor<Map<Integer, Set<Integer>>> extractDocumentDidAndRevid() {
     final ResultSetExtractor<Map<Integer, Set<Integer>>> resEx = new ResultSetExtractor<Map<Integer, Set<Integer>>>() {
       @Override
       public Map<Integer, Set<Integer>> extractData(final ResultSet res) throws SQLException, DataAccessException {
         final Map<Integer, Set<Integer>> docids = new HashMap<>();
         while (res.next()) {
-          final Integer revid = res.getInt("revId");
+          final Integer revid = res.getInt(getVersionColumnName());
           docids.merge(
               res.getInt("did"),
               createSetAndAddElem(revid), (oldVal, newVal) -> {
@@ -62,7 +65,7 @@ public class Doc1DAOdb implements CrudOperations<Document, Map<Integer, Set<Inte
     return resEx;
   }
 
-  private Set<Integer> createSetAndAddElem(Integer revId) {
+  protected Set<Integer> createSetAndAddElem(Integer revId) {
     final Set<Integer> set = new HashSet<>();
     set.add(revId);
     return set;
@@ -153,5 +156,10 @@ public class Doc1DAOdb implements CrudOperations<Document, Map<Integer, Set<Inte
   String getDeleteStmnt() {
     return SQLStatements.getString("sql.docs1.update");
   }
+
+  String getVersionColumnName() {
+    return "revid";
+  }
+
 }
 

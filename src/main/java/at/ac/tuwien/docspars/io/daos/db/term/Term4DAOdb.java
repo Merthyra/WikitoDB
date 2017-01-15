@@ -3,6 +3,8 @@ package at.ac.tuwien.docspars.io.daos.db.term;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,7 +22,9 @@ import java.util.stream.Collectors;
 public class Term4DAOdb extends AbstractTermDAOdb {
 
   private Timestamp timestamp;
-  private final String SET_DF_TIMESTAMP_WHERE_NULL = "update terms4 set rem_df = ? where rem_df is null and tid = ?";
+  private final String SET_DF_TIMESTAMP_WHERE_NULL = "update wiki.terms4 set rem_df = ? where rem_df is null and tid = ?";
+  private final Logger logger = LogManager.getLogger(this.getClass());
+
 
   public Term4DAOdb(final JdbcTemplate template) {
     super(template);
@@ -54,16 +58,6 @@ public class Term4DAOdb extends AbstractTermDAOdb {
       }
     });
   }
-
-  // private void invalidateOldTermEntries(Timestamp timeStamp, String listOfTidsForBatchUpdates) {
-  // this.getJdbcTemplate().update(SQLStatements.getString("sql.terms4.update") + " " + listOfTidsForBatchUpdates,
-  // new PreparedStatementSetter() {
-  // @Override
-  // public void setValues(PreparedStatement stmt) throws SQLException {
-  // stmt.setTimestamp(1, timeStamp);
-  // }
-  // });
-  // }
 
   private void invalidateOldTermEntries(List<Term> termsToInvalidateDf) {
 
@@ -122,6 +116,24 @@ public class Term4DAOdb extends AbstractTermDAOdb {
   @Override
   public void setTimestamp(Timestamp stamp) {
     this.timestamp = stamp;
+  }
+
+  @Override
+  public List<Term> read() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean create() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean drop() {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }

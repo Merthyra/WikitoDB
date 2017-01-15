@@ -1,32 +1,31 @@
 package at.ac.tuwien.docspars.io.daos.db;
 
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.sql.Timestamp;
 import java.util.List;
 
+
 public interface CrudOperations<A, C> {
 
-  final static Logger logger = LogManager.getLogger(CrudOperations.class);
+  boolean add(List<A> a);
 
-  @PerformanceMonitored
-  public boolean add(List<A> a);
+  boolean remove(List<A> a);
 
-  @PerformanceMonitored
-  public boolean remove(List<A> a);
+  boolean update(List<A> a);
 
-  @PerformanceMonitored
-  public boolean update(List<A> a);
+  C read();
 
-  @PerformanceMonitored
-  public C read();
+  boolean create();
 
-  public boolean create();
+  boolean drop();
 
-  public boolean drop();
+  void setTimestamp(Timestamp stamp);
 
-  public void setTimestamp(Timestamp stamp);
+  Timestamp getTimestamp();
+
+  void addParameter(String key, Object value);
+
+  Object getParameter(String key);
 
 }

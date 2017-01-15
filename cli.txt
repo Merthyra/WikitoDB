@@ -1,0 +1,7 @@
+-b batchsize
+-m maxpages
+-o offset
+-i inputsourcefolder
+-v variant (v 1)
+-u document updated when revid different?
+-on omitt new documents

@@ -8,18 +8,18 @@ public class Dict implements Dictionable {
 
   private final int tid;
   private final String term;
-  private DfValue df = null;
+  private int df = 0;
 
   public Dict(final int tid, final String term) {
     this.tid = tid;
     this.term = term;
-    this.df = new DfValue();
+    this.df = 0;
   }
 
-  public Dict(final int tid, final String term, final int did) {
+  public Dict(final int tid, final String term, final int df) {
     this.tid = tid;
     this.term = term;
-    this.df = did == 0 ? new DfValue() : new DfValue(did);
+    this.df = df;
   }
 
   @Override
@@ -39,12 +39,7 @@ public class Dict implements Dictionable {
 
   @Override
   public int getDf() {
-    return df.getValue();
-  }
-
-  public Dict registerDocument(int did) {
-    df.registerDocument(did);
-    return this;
+    return df;
   }
 
   @Override
@@ -64,7 +59,12 @@ public class Dict implements Dictionable {
 
   @Override
   public String toString() {
-    return "Dict [tid=" + tid + ", term=" + term + ", df=" + df.getValue() + "]";
+    return "Dict [tid=" + tid + ", term=" + term + ", df=" + df + "]";
+  }
+
+  @Override
+  public int incrementDf() {
+    return ++this.df;
   }
 
 }

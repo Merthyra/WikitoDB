@@ -127,7 +127,8 @@ public class Term implements Dictionable, Documentable, Traceable, Revisionable 
   }
 
   @Override
-  public Dictionable registerDocument(int documentId) {
-    return this.dict.registerDocument(documentId);
+  public int incrementDf() {
+    return this.dict.incrementDf();
   }
+
 }

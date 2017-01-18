@@ -1,7 +1,5 @@
 package at.ac.tuwien.docspars.io.daos.db;
 
-import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
-
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -27,5 +25,7 @@ public interface CrudOperations<A, C> {
   void addParameter(String key, Object value);
 
   Object getParameter(String key);
+
+  void createIntermediateDictionary(List<A> intermediateDict);
 
 }

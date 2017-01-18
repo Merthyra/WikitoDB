@@ -56,6 +56,39 @@ public class DictDAOdb extends AbstractCrudOperations<Dictionable, Map<String, D
   }
 
   @Override
+  public void createIntermediateDictionary(List<Dictionable> batchVocab) {
+    try {
+      dropIntermediateTermsTable();
+    } catch (Exception ex) {
+      logger.info("no intermediate table present");
+    }
+
+    createIntermediateTermsTable(batchVocab);
+  }
+
+  protected void createIntermediateTermsTable(List<Dictionable> dicts) {
+    this.jdbcTemplate.batchUpdate("create table wiki.invalidate_dict (tid int, df int)");
+    this.jdbcTemplate.batchUpdate("INSERT INTO wiki.invalidate_dict (tid, df) values (?,?)", new BatchPreparedStatementSetter() {
+
+      @Override
+      public void setValues(PreparedStatement ps, int i) throws SQLException {
+        ps.setInt(1, dicts.get(i).getTId());
+        ps.setInt(2, dicts.get(i).getDf());
+      }
+
+      @Override
+      public int getBatchSize() {
+        return dicts.size();
+      }
+    });
+
+  }
+
+  protected void dropIntermediateTermsTable() {
+    this.jdbcTemplate.update("DROP TABLE wiki.invalidate_dict");
+  }
+
+  @Override
   @PerformanceMonitored
   public boolean add(final List<Dictionable> dicts) {
     int[] updateCounts = null;
@@ -107,5 +140,6 @@ public class DictDAOdb extends AbstractCrudOperations<Dictionable, Map<String, D
     // TODO Auto-generated method stub
     return false;
   }
+
 
 }

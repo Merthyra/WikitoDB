@@ -113,13 +113,13 @@ public class EnvironmentService {
           this.batchService.getActiveBatch().addNewVocab(newDictEntry);
           return newDictEntry;
         });
-    makeDictionaryAwareOfDocument(dict, doc.getDId());
+    countDocumentFreq(dict, doc);
     doc.addTerm(termFactory.createTerm(doc, dict, pos));
   }
 
-  private void makeDictionaryAwareOfDocument(Dictionable dict, int documentId) {
+  private void countDocumentFreq(Dictionable dict, Document doc) {
     if (processPropertiesHandler.isDocumentFrequencyStored()) {
-      dict.registerDocument(documentId);
+      batchService.notifyHasDict(dict, doc);
     }
   }
 

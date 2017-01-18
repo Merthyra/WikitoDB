@@ -8,6 +8,6 @@ public interface Dictionable {
 
   public int getDf();
 
-  Dictionable registerDocument(int documentId);
+  public int incrementDf();
 
 }

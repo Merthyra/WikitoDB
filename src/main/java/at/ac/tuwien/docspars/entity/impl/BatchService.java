@@ -55,4 +55,8 @@ public class BatchService {
     return getAddBatch().getSize() + getUpdateBatch().getSize();
   }
 
+  public void notifyHasDict(Dictionable dict, Document doc) {
+    this.getActiveBatch().notifyHasDict(dict, doc);
+  }
+
 }

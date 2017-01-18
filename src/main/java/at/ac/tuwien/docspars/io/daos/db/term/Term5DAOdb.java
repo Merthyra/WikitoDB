@@ -13,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
 
@@ -28,7 +27,7 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
   @Override
   @PerformanceMonitored
   public boolean add(List<Term> listOfTerms) {
-    invalidatedOldTermEntries(listOfTerms);
+    invalidatedOldTermEntries();
     insertNewTerms(listOfTerms);
     return true;
   }
@@ -53,21 +52,14 @@ public class Term5DAOdb extends AbstractTermDAOdb implements Timestampable {
     });
   }
 
-  private void invalidatedOldTermEntries(List<Term> listOfTidsForBatchUpdates) {
-    final List<Term> distinctTerms = listOfTidsForBatchUpdates.stream().distinct().collect(Collectors.toList());
-    this.getJdbcTemplate().batchUpdate("UPDATE wiki.terms5 SET rem_df = null WHERE rem_df IS null AND tid = ?",
-        new BatchPreparedStatementSetter() {
-
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, distinctTerms.get(i).getDf());
-          }
-
-          @Override
-          public int getBatchSize() {
-            return listOfTidsForBatchUpdates.size();
-          }
-        });
+  private void invalidatedOldTermEntries() {
+    getJdbcTemplate().update("UPDATE wiki.terms5 set rem_df = '" + getTimestamp()
+        + "' where rem_df is null and not exists "
+        + "(select sub.tid, sub.did, inv.df from (select max(did) as did, terms.tid from wiki.terms5 terms "
+        + "join wiki.invalidate_dict inv on inv.tid = terms.tid where rem_df is null "
+        + "group by terms.tid) as sub "
+        + "join wiki.invalidate_dict inv on inv.tid = sub.tid"
+        + " where terms5.tid = sub.tid and terms5.did = sub.did)");
   }
 
   @Override

@@ -27,6 +27,7 @@ public class DBPersistanceServiceV5 extends DBPersistanceService {
   @PerformanceMonitored
   public <V extends Batch> boolean addBatch(V batch) {
     this.getDictDAO().add(batch.getNewVocab());
+    this.getDictDAO().createIntermediateDictionary(batch.getUniqueTermsForBatch());
     this.getDocDAO().setTimestamp(batch.getTimestamp());
     this.getDocDAO().add(batch.getDocs());
     this.termDAO.setTimestamp(batch.getTimestamp());

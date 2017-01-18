@@ -84,4 +84,10 @@ public abstract class AbstractCrudOperations<A, C> implements CrudOperations<A, 
     return this.parameters.get(key);
   }
 
+
+  @Override
+  public void createIntermediateDictionary(List<A> uniqueBatch) {
+    // Do nothing by default
+  }
+
 }

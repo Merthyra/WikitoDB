@@ -16,7 +16,8 @@ import java.util.Map;
 
 public class DictDAOdb3 extends DictDAOdb {
 
-  private final String READ_CURRENT_DF_VALUES_FROM_DICT_HIST = SQLStatements.getString("sql.dict.readdf");
+  private final String READ_CURRENT_DF_VALUES_FROM_DICT_HIST = SQLStatements.getString(
+      "SELECT terms.tid, dict.term, terms.df from (select tid, count(*) as df from wiki.terms3 group by tid) as terms join wiki.dict on dict.tid = terms.tid");
   private final Logger logger = LogManager.getLogger(this.getClass());
 
 
@@ -31,8 +32,7 @@ public class DictDAOdb3 extends DictDAOdb {
       public Map<String, Dictionable> extractData(ResultSet rs) throws SQLException, DataAccessException {
         final Map<String, Dictionable> dictVal = new HashMap<>();
         while (rs.next()) {
-          Integer did = rs.getInt(3);
-          dictVal.merge(rs.getString(2), new Dict(rs.getInt(1), rs.getString(2), rs.getInt(3)), (v1, v2) -> v1.registerDocument(did));
+          dictVal.put(rs.getString(2), new Dict(rs.getInt(1), rs.getString(2), rs.getInt(3)));
         }
         return dictVal;
       }

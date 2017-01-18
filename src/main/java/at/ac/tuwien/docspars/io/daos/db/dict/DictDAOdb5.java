@@ -1,8 +1,12 @@
 package at.ac.tuwien.docspars.io.daos.db.dict;
 
+import at.ac.tuwien.docspars.entity.Dictionable;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.List;
 
 public class DictDAOdb5 extends DictDAOdb4 {
 
@@ -13,6 +17,13 @@ public class DictDAOdb5 extends DictDAOdb4 {
 
   public DictDAOdb5(JdbcTemplate template) {
     super(template);
+  }
+
+  @Override
+  @PerformanceMonitored
+  public boolean add(final List<Dictionable> dicts) {
+    createIntermediateDictionary(dicts);
+    return super.add(dicts);
   }
 
   @Override

@@ -18,7 +18,6 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DictHistDAOdb extends AbstractCrudOperations<Dictionable, Map<String, Integer>>
 {
@@ -170,10 +169,6 @@ public class DictHistDAOdb extends AbstractCrudOperations<Dictionable, Map<Strin
     this.jdbcTemplate.update("DROP TABLE wiki.invalidate_dict");
   }
 
-
-  private String buildConcatenatedListOfTids(final List<Dictionable> dicts) {
-    return "(" + dicts.stream().map(t -> String.valueOf(t.getTId())).collect(Collectors.joining(",")) + ")";
-  }
 
   private int[] insertNewDictionaryTermsWithUpdatedDfValues(final List<Dictionable> dicts) {
     final int[] updateCountsHist =

@@ -28,4 +28,10 @@ public abstract class AbstractTermDAOdb extends AbstractCrudOperations<Term, Lis
 
   }
 
+  @Override
+  public Timestamp getTimestamp() {
+    return this.persistanceTimePoint;
+
+  }
+
 }

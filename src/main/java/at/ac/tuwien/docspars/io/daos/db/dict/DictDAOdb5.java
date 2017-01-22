@@ -11,7 +11,7 @@ import java.util.List;
 public class DictDAOdb5 extends DictDAOdb4 {
 
   private final static String READ_CURRENT_DF =
-      "select dict.tid, dict.term, docs5.did from wiki.dict join wiki.terms5  on terms5.tid = dict.tid join wiki.docs5 on docs5.did = terms5.did";
+      "select dict.tid, dict.term, terms5.df from wiki.dict join wiki.terms5  on terms5.tid = dict.tid where rem_df is null";
   private final Logger logger = LogManager.getLogger(this.getClass());
 
 

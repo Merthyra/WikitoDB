@@ -1,7 +1,8 @@
 package at.ac.tuwien.docspars.io.daos.db.term;
 
+import static at.ac.tuwien.docspars.io.daos.db.SQLStatements.*;
+
 import at.ac.tuwien.docspars.entity.impl.Term;
-import at.ac.tuwien.docspars.io.daos.db.SQLStatements;
 import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,8 +18,6 @@ public class Term6DAOdb extends AbstractTermDAOdb {
   private Integer vid;
   private final Logger logger = LogManager.getLogger(this.getClass());
 
-  final String QUERY_LAST_VERSION_ID = "SELECT max(vid) FROM VERSIONS";
-
 
   public Term6DAOdb(final JdbcTemplate template) {
     super(template);
@@ -32,7 +31,7 @@ public class Term6DAOdb extends AbstractTermDAOdb {
   }
 
   private void writeTersmsToTermsTable(List<Term> terms) {
-    this.getJdbcTemplate().batchUpdate(SQLStatements.getString("sql.terms6.insert"), getBatchPreparedStatementSetterForList(terms));
+    this.getJdbcTemplate().batchUpdate(getString("sql.terms6.insert"), getBatchPreparedStatementSetterForList(terms));
 
   }
 

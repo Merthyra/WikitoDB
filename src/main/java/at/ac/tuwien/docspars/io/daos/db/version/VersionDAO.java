@@ -20,7 +20,7 @@ public class VersionDAO {
   }
 
   private Integer queryMaxVid() {
-    Integer dums = this.jdbcTemplate.queryForObject("select max(vid) from versions", Integer.class);
+    Integer dums = this.jdbcTemplate.queryForObject(SQLStatements.getString("sql.versions.read.maxvid"), Integer.class);
     return dums != null ? dums : 0;
   }
 

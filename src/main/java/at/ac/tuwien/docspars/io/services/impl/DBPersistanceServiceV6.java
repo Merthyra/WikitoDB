@@ -6,6 +6,7 @@ import at.ac.tuwien.docspars.entity.impl.Document;
 import at.ac.tuwien.docspars.entity.impl.Term;
 import at.ac.tuwien.docspars.io.daos.db.CrudOperations;
 import at.ac.tuwien.docspars.io.daos.db.version.VersionDAO;
+import at.ac.tuwien.docspars.io.services.PerformanceMonitored;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class DBPersistanceServiceV6 extends DBPersistanceService {
   }
 
   @Override
+  @PerformanceMonitored
   public <B extends Batch> boolean addBatch(B batch) {
     this.versionDAO.setTimestamp(batch.getTimestamp());
     this.versionDAO.addVersion();

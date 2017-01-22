@@ -92,14 +92,12 @@ public class DictDAOdb extends AbstractCrudOperations<Dictionable, Map<String, D
   @PerformanceMonitored
   public boolean add(final List<Dictionable> dicts) {
     int[] updateCounts = null;
-    // String[] currTerm = new String[dicts.size()];
-    // try {
+
     updateCounts = this.jdbcTemplate.batchUpdate(SQLStatements.getString("sql.dict.insert"), new BatchPreparedStatementSetter() {
       @Override
       public void setValues(final PreparedStatement ps, final int i) throws SQLException {
 
         ps.setInt(1, dicts.get(i).getTId());
-        // currTerm[i] = dicts.get(i).getTerm();
         ps.setString(2, dicts.get(i).getTerm());
       }
 
